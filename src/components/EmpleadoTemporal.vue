@@ -6,11 +6,11 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Código o nombre del empleado" :registros="empleados"
-                            placeholder="Código o nombre del empleado" />
+                        <SearchTable nombreCampo="Planilla eventual" placeholder="Planilla eventual" :showModal="showModal"
+                            :registros="empleados" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de identificación" :registros="tiposIdentificacion"
+                        <SearchList nombreCampo="Tipo de identificación" nombreItem="des_tip" :registros="tiposIdentificacion"
                             placeholder="Tipo de identificación" />
                     </div>
                 </div>
@@ -27,74 +27,19 @@
                     </div>
                 </div>
                 <div class="row">
-                    <label for="" style="text-align: left; margin:20px 0px 20px 0px">Expedición del documento de
+                    <label for="" style="text-align: left; margin:20px 0px 0px 0px">Expedición del documento de
                         identidad</label>
                     <div class="col">
-                        <div class="row" id="contenedor-select">
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Pais:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                                    <input type="text" @click="hover3 = !hover3" autocomplete="off"
-                                        @input="filterResults(pais, paises, 'paises')" class="form-control"
-                                        id="exampleInputEmail2" placeholder="pais" aria-describedby="emailHelp"
-                                        v-model="pais" />
-                                    <span class="input-group-text" id="basic-addon3"><i
-                                            class="bi bi-chevron-compact-down"></i></span>
-                                </div>
-                            </div>
-                            <div v-if="hover3 && paises.length > 0" id="select1" @mouseleave="hover3 = false">
-                                <div id="lista1" v-for="(item, index) in paisesFilter" :key="index"
-                                    @click="pais = item.nombre, departamentoId(pais), hover3 = !hover3, filterResults('', paises, 'paises')">
-                                    {{ item.nombre }}
-                                </div>
-                            </div>
-                        </div>
+                        <SearchList nombreCampo="Pais" ref="pais" nombreItem="nom_pai" :registros="paises"
+                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
-                        <div class="row" id="contenedor-select">
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Departamento:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                                    <input type="text" @click="hover4 = !hover4" autocomplete="off"
-                                        @input="filterResults(departamento, departamentos, 'departamentos')"
-                                        class="form-control" id="exampleInputEmail2"
-                                        placeholder="Código o nombre del empleado" aria-describedby="emailHelp"
-                                        v-model="departamento" />
-                                    <span class="input-group-text" id="basic-addon3"><i
-                                            class="bi bi-chevron-compact-down"></i></span>
-                                </div>
-                            </div>
-                            <div v-if="hover4 && departamentos.length > 0" id="select1" @mouseleave="hover4 = false">
-                                <div id="lista1" v-for="(item, index) in departamentosFilter" :key="index"
-                                    @click="departamento = item.nombre, departamentoId(departamento), hover4 = !hover4, filterResults('', departamentos, 'departamentos')">
-                                    {{ item.nombre }}
-                                </div>
-                            </div>
-                        </div>
+                        <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
+                            @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
-                        <div class="row" id="contenedor-select">
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Ciudad:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                                    <input type="text" @click="hover5 = !hover5" autocomplete="off"
-                                        @input="filterResults(ciudad, ciudades, 'ciudades')" class="form-control"
-                                        id="exampleInputEmail2" placeholder="Ciudad" aria-describedby="emailHelp"
-                                        v-model="ciudad" />
-                                    <span class="input-group-text" id="basic-addon3"><i
-                                            class="bi bi-chevron-compact-down"></i></span>
-                                </div>
-                            </div>
-                            <div v-if="hover5 && ciudades.length > 0" id="select1" @mouseleave="hover5 = false">
-                                <div id="lista1" v-for="(item, index) in ciudadesFilter" :key="index"
-                                    @click="ciudad = item.nombre, departamentoId(ciudad), hover5 = !hover5, filterResults('', ciudades, 'ciudades')">
-                                    {{ item.nombre }}
-                                </div>
-                            </div>
-                        </div>
+                        <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
+                            placeholder="Ciudad" />
                     </div>
                 </div>
             </div>
@@ -104,98 +49,95 @@
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Primer nombre</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="primer_nombre" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Segundo nombre</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="segundo_nombre" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Primer apellido</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="primer_apellido" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Segundo apellido</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="segundo_apellido" />
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" :registros="paises" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Departamento" :registros="departamentos" placeholder="Departamento" />
+                        <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
+                            placeholder="Departamento" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Ciudad" :registros="ciudades" placeholder="Ciudad" />
+                        <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
+                            placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Género" :registros="ciudades" placeholder="Género" />
+                        <SearchList nombreCampo="Género" nombreItem="des_gen" :registros="generos" placeholder="Género" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado civil" :registros="ciudades" placeholder="Estado civil" />
+                        <SearchList nombreCampo="Estado civil" nombreItem="des_est" :registros="estadosCiviles" placeholder="Estado civil" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="fecha_nacimiento" />
                     </div>
                 </div>
             </div>
             <h6 class="tituloseccion">Datos Básicos del Empleado</h6>
             <div id="seccion">
-                <!-- <div class="row">
-                    <div class="col">
-                        <SearchList nombreCampo="Estado civil" :registros="ciudades" placeholder="Estado civil"/>
-                    </div>
-                </div> -->
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Grupo sanguineo" :registros="ciudades" placeholder="Grupo sanguineo" />
+                        <SearchList nombreCampo="Grupo sanguineo" :registros="municipios" placeholder="Grupo sanguineo" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Factor RH" :registros="ciudades" placeholder="Factor RH" />
+                        <SearchList nombreCampo="Factor RH" :registros="municipios" placeholder="Factor RH" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Clase Libreta Militar" :registros="ciudades"
+                        <SearchList nombreCampo="Clase Libreta Militar" :registros="municipios"
                             placeholder="Clase Libreta Militar" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Nacionalidad" :registros="ciudades" placeholder="Nacionalidad" />
+                        <SearchList nombreCampo="Nacionalidad" :registros="municipios" placeholder="Nacionalidad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de libreta militar</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="numero_libreta_militar" />
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Distrito libreta militar</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="distrito_libreta_militar" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Estatura</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="estatura" />
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Peso</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="peso" />
                     </div>
                 </div>
             </div>
@@ -204,56 +146,58 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" :registros="ciudades" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Departamento" :registros="ciudades" placeholder="Departamento" />
+                        <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
+                            placeholder="Departamento" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Ciudad" :registros="ciudades" placeholder="Ciudad" />
+                        <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
+                            placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Dirección</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="direccion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Barrio</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="barrio" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="telefono" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Celular</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="celular" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo electrónico:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="correo" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo electrónico alternativo:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                            v-model="correo_alternativo" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">En caso de emergencia avisar a:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="avisar_emergencia" />
                     </div>
                 </div>
                 <div class="row">
@@ -261,7 +205,8 @@
                         <label class="form-check-label" for="flexSwitchCheckChecked">Autoriza el manejo de datos a la
                             compañía?</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="manejo_datos" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
@@ -270,30 +215,30 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Régimen salarial" :registros="ciudades" placeholder="Régimen salarial" />
+                        <SearchList nombreCampo="Régimen salarial" :registros="municipios" placeholder="Régimen salarial" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Forma de pago" :registros="ciudades" placeholder="Forma de pago" />
+                        <SearchList nombreCampo="Forma de pago" :registros="municipios" placeholder="Forma de pago" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Código del banco" :registros="ciudades" placeholder="Código del banco" />
+                        <SearchList nombreCampo="Código del banco" :registros="municipios" placeholder="Código del banco" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="numero_cuenta" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Pago electrónico:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="pago_electronico" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modalidad Retención" :registros="ciudades"
+                        <SearchList nombreCampo="Modalidad Retención" :registros="municipios"
                             placeholder="Modalidad Retención" />
                     </div>
                 </div>
@@ -301,46 +246,49 @@
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Porcentaje de Retención:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="porcentaje_retencion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Valor Salud Año Anterior:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="salud_anio_anteior" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Cálculo IMAN" :registros="ciudades" placeholder="Cálculo IMAN" />
+                        <SearchList nombreCampo="Cálculo IMAN" :registros="municipios" placeholder="Cálculo IMAN" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Estabilidad Laboral</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="estabilidad_laboral" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Vacaciones" :registros="ciudades" placeholder="Vacaciones" />
+                        <SearchList nombreCampo="Vacaciones" :registros="municipios" placeholder="Vacaciones" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Días de vacaciones por año:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="dias_vacaciones" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Sábado es hábil</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="sabado_habil" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Pagar día 31</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="pagar_31" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
@@ -351,39 +299,41 @@
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de contrato:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="numero_contrato" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha Celebración:</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="fecha_celebracion" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de contrato" :registros="ciudades" placeholder="Tipo de contrato" />
+                        <SearchList nombreCampo="Tipo de contrato" :registros="municipios" placeholder="Tipo de contrato" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado Laboral del Empleado" :registros="ciudades"
+                        <SearchList nombreCampo="Estado Laboral del Empleado" :registros="municipios"
                             placeholder="Estado Laboral del Empleado" />
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de contrato</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" :registros="ciudades" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Departamento" :registros="ciudades" placeholder="Departamento" />
+                        <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
+                            placeholder="Departamento" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Ciudad" :registros="ciudades" placeholder="Ciudad" />
+                        <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
+                            placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Notas al contrato:</label>
-                        <textarea class="form-control" aria-label="With textarea"></textarea>
+                        <textarea class="form-control" v-model="nota_contrato" aria-label="With textarea"></textarea>
                     </div>
                 </div>
             </div>
@@ -391,13 +341,13 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Compañía" :registros="ciudades" placeholder="Compañía" />
+                        <SearchList nombreCampo="Compañía" :registros="municipios" placeholder="Compañía" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Sucursal" :registros="ciudades" placeholder="Sucursal" />
+                        <SearchList nombreCampo="Sucursal" :registros="municipios" placeholder="Sucursal" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Centro de costos" :registros="ciudades" placeholder="Centro de costos" />
+                        <SearchList nombreCampo="Centro de costos" :registros="municipios" placeholder="Centro de costos" />
                     </div>
                 </div>
                 <div class="row">
@@ -405,21 +355,23 @@
                         <label class="form-check-label" for="flexSwitchCheckChecked">Distribución por Centro de Costos
                             Local:</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="distribucion_centro_costos" type="checkbox"
+                                role="switch" id="flexSwitchCheckChecked">
                         </div>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Distribución por Centro de Costos
                             NIIF:</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="distribucion_centro_costos_nif" type="checkbox"
+                                role="switch" id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Observaciones:</label>
-                        <textarea class="form-control" aria-label="With textarea"></textarea>
+                        <textarea class="form-control" v-model="observaciones" aria-label="With textarea"></textarea>
                     </div>
                 </div>
             </div>
@@ -429,17 +381,18 @@
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Vivienda:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="vivienda" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Salud / Medicina Prepagada:</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="medicina_prepagada" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Dependiente:</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="dependiente" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
@@ -450,87 +403,91 @@
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Salario Básico:</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="salario_basico" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Cargo" :registros="ciudades" placeholder="Cargo" />
+                        <SearchList nombreCampo="Cargo" :registros="municipios" placeholder="Cargo" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Lider?</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="lider" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de labor</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" :registros="ciudades" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Departamento" :registros="ciudades" placeholder="Departamento" />
+                        <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
+                            placeholder="Departamento" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Ciudad" :registros="ciudades" placeholder="Ciudad" />
+                        <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
+                            placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha ingreso:</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="fecha_ingreso" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha finalización:</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="fecha_finalizacion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">No. días periodo prueba:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="periodo_prueba" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha finalización periodo prueba:</label>
                         <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="finalizacion_periodo_prueba" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modo de liquidación" :registros="ciudades"
+                        <SearchList nombreCampo="Modo de liquidación" :registros="municipios"
                             placeholder="Modo de liquidación" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Horas contratadas al mes:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="horas_contratadas" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Valor hora:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="valor_hora" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Clase de salario" :registros="ciudades" placeholder="Clase de salario" />
+                        <SearchList nombreCampo="Clase de salario" :registros="municipios" placeholder="Clase de salario" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de salud" :registros="ciudades" placeholder="Fondo de salud" />
+                        <SearchList nombreCampo="Fondo de salud" :registros="municipios" placeholder="Fondo de salud" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de pensión" :registros="ciudades" placeholder="Fondo de pensión" />
+                        <SearchList nombreCampo="Fondo de pensión" :registros="municipios" placeholder="Fondo de pensión" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Caja de compensación" :registros="ciudades"
+                        <SearchList nombreCampo="Caja de compensación" :registros="municipios"
                             placeholder="Caja de compensación" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Administradora de riesgos laborales" :registros="ciudades"
+                        <SearchList nombreCampo="Administradora de riesgos laborales" :registros="municipios"
                             placeholder="Administradora de riesgos laborales" />
                     </div>
                 </div>
@@ -538,23 +495,24 @@
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Porcentaje ARL:</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                            v-model="porcentaje_arl" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Fonde de Cesantías" :registros="ciudades"
+                        <SearchList nombreCampo="Fonde de Cesantías" :registros="municipios"
                             placeholder="Fonde de Cesantías" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Tipo medidas certificadas (DIAN)" :registros="ciudades"
+                        <SearchList nombreCampo="Tipo medidas certificadas (DIAN)" :registros="municipios"
                             placeholder="Tipo medidas certificadas (DIAN)" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de cotizante" :registros="ciudades" placeholder="Tipo de cotizante" />
+                        <SearchList nombreCampo="Tipo de cotizante" :registros="municipios"
+                            placeholder="Tipo de cotizante" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Subtipo de cotizante" :registros="ciudades"
+                        <SearchList nombreCampo="Subtipo de cotizante" :registros="municipios"
                             placeholder="Subtipo de cotizante" />
                     </div>
                 </div>
@@ -562,13 +520,15 @@
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Extranjero no pensión?</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="extranjero_no_pension" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Reside en el extranjero?</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="reside_en_extranjero" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
@@ -576,13 +536,15 @@
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Pago por días</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="pago_por_dias" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Es variable - comisiones?</label>
                         <div class="col form-check form-switch" style="clear: both;">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                            <input class="form-check-input" v-model="es_variable" type="checkbox" role="switch"
+                                id="flexSwitchCheckChecked">
                         </div>
                     </div>
                 </div>
@@ -590,16 +552,18 @@
             <h6 class="tituloseccion">Plantilla para Control de Liquidación</h6>
             <div id="seccion">
                 <div class="col">
-                    <SearchList nombreCampo="Planilla eventual" :registros="ciudades" placeholder="Planilla eventual" />
+                    <SearchList nombreCampo="Planilla eventual" :registros="municipios" placeholder="Planilla eventual" />
                 </div>
-                <div class="col">
-                    <SearchTable :registros="empleados"/>
-                </div>
+                <!-- <div class="col">
+                    <SearchTable nombreCampo="Planilla eventual" placeholder="Planilla eventual"
+                        :showModal="showModal" :registros="empleados" />
+                </div> -->
             </div>
         </form>
     </div>
 </template>
 <script>
+import axios from 'axios';
 import SearchList from './SearchList.vue';
 import SearchTable from './SearchTable.vue';
 
@@ -610,17 +574,72 @@ export default {
     },
     data() {
         return {
+            URL_API: process.env.VUE_APP_URL_API,
             pais: '',
             paises: [],
             departamento: '',
             departamentos: [],
             ciudad: '',
-            ciudades: [],
+            municipios: [],
             tipoIdentificacion: '',
             tiposIdentificacion: [],
             empleado: '',
             empleados: [],
+            genero:'',
+            generos:[],
+            estadoCivil:'',
+            estadosCiviles:[],
+            showModal: true,
             numero_identificacion: '',
+            codigo_alterno: '',
+            primer_nombre: '',
+            segundo_nombre: '',
+            primer_apellido: '',
+            segundo_apellido: '',
+            fecha_nacimiento: '',
+            numero_libreta_militar: '',
+            distrito_libreta_militar: '',
+            estatura: '',
+            peso: '',
+            direccion: '',
+            barrio: '',
+            telefono: '',
+            celular: '',
+            correo: '',
+            correo_alternativo: '',
+            avisar_emergencia: '',
+            manejo_datos: '',
+            numero_cuenta: '',
+            pago_electronico: '',
+            porcentaje_retencion: '',
+            salud_anio_anteior: '',
+            estabilidad_laboral: false,
+            dias_vacaciones: '',
+            sabado_habil: false,
+            pagar_31: false,
+            numero_contrato: '',
+            fecha_celebracion: '',
+            nota_contrato: '',
+            distribucion_centro_costos: '',
+            distribucion_centro_costos_nif: '',
+            observaciones: '',
+            vivienda: '',
+            medicina_prepagada: '',
+            dependiente: '',
+            salario_basico: '',
+            lider: false,
+            fecha_ingreso: '',
+            fecha_finalizacion: '',
+            periodo_prueba: '',
+            finalizacion_periodo_prueba: '',
+            horas_contratadas: '',
+            valor_hora: '',
+            porcentaje_arl: '',
+            extranjero_no_pension: false,
+            reside_en_extranjero: false,
+            pago_por_dias: false,
+            es_variable: false,
+
 
         };
     },
@@ -629,30 +648,14 @@ export default {
         this.getEmpleados()
         this.getTiposIdentificacion()
         this.getPaises()
-        this.getDepartamentos()
-        this.getCiudades()
+        this.getGenero()
+        this.getEstadoCivil()
+    },
+    mounted() {
+        console.log(this.$refs.pais)
     },
 
     methods: {
-        filterResults(value, array, nombrearray) {
-            const search = array.filter(item => item.nombre.toLowerCase().match(value.toLowerCase()));
-
-            if (nombrearray == 'empleados') {
-                this.empleadosFilter = search
-            }
-            if (nombrearray == 'tiposIdentificacion') {
-                this.tiposIdentificacionFilter = search
-            }
-            if (nombrearray == 'paises') {
-                this.paisesFilter = search
-            }
-            if (nombrearray == 'departamentos') {
-                this.departamentosFilter = search
-            }
-            if (nombrearray == 'ciudades') {
-                this.ciudadesFilter = search
-            }
-        },
         getEmpleados() {
             this.empleadosFilter = this.empleados = [
                 {
@@ -697,142 +700,58 @@ export default {
                 },
             ]
         },
-        getTiposIdentificacion() {
-            this.tiposIdentificacionFilter = this.tiposIdentificacion = [
-                {
-                    "id": 1,
-                    "codigo": "1",
-                    "nombre": "Cédula de ciudadania",
-                },
-                {
-                    "id": 2,
-                    "codigo": "2",
-                    "nombre": "Cédula de extrangería",
-                },
-                {
-                    "id": 3,
-                    "codigo": "3",
-                    "nombre": "Pasaporte",
-                },
-
-            ]
-        },
         getPaises() {
-            this.paisesFilter = this.paises = [
-                {
-                    "id": 1,
-                    "codigo": "1",
-                    "nombre": "Colombia",
-                },
-                {
-                    "id": 2,
-                    "codigo": "2",
-                    "nombre": "Venezuela",
-                },
-                {
-                    "id": 3,
-                    "codigo": "3",
-                    "nombre": "Perú",
-                },
-                {
-                    "id": 4,
-                    "codigo": "3",
-                    "nombre": "Ecuador",
-                },
-
-            ]
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/paises", config).then(function (result) {
+                self.paises = result.data;
+            });
         },
-        getDepartamentos() {
-            // let config = this.configHeader();
-            // let self = this;
-            // axios.get(self.URL_API + "api/v1/departamentos", config).then(function (result) {
-            //     self.departamentos = result.data;
-            //     self.departamentosFilter = result.data;
-            //     // self.listas.splice(3, 0, result.data)
-            // });
-            this.departamentosFilter = this.departamentos = [
-                {
-                    "id": 1,
-                    "codigo": "1",
-                    "nombre": "Amazonas",
-                },
-                {
-                    "id": 1,
-                    "codigo": "2",
-                    "nombre": "Antiouia",
-                },
-                {
-                    "id": 2,
-                    "codigo": "3",
-                    "nombre": "Arauca",
-                },
-                {
-                    "id": 3,
-                    "codigo": "4",
-                    "nombre": "Atlántico",
-                },
-                {
-                    "id": 4,
-                    "codigo": "5",
-                    "nombre": "Bogotá",
-                },
-                {
-                    "id": 4,
-                    "codigo": "6",
-                    "nombre": "Caldas",
-                },
-                {
-                    "id": 4,
-                    "codigo": "7",
-                    "nombre": "caquetá",
-                },
-                {
-                    "id": 4,
-                    "codigo": "8",
-                    "nombre": "casanare",
-                },
-                {
-                    "id": 4,
-                    "codigo": "9",
-                    "nombre": "cauca",
-                },
-            ]
+        getDepartamentos(item) {
+            // console.log(this.$refs.pais)
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/departamentos/" + item, config).then(function (result) {
+                self.departamentos = result.data;
+            });
+
 
         },
-        getCiudades() {
-            this.ciudadesFilter = this.ciudades = [
-                {
-                    "id": 1,
-                    "codigo": "1",
-                    "nombre": "Medellín",
+        getMunicipios(item) {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/municipios/" + item, config).then(function (result) {
+                self.municipios = result.data;
+            });
+        },
+        getTiposIdentificacion() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/tipodocumentolista", config).then(function (result) {
+                self.tiposIdentificacion = result.data;
+            });
+        },
+        getGenero() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/genero", config).then(function (result) {
+                self.generos = result.data;
+            });
+        },
+        getEstadoCivil() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/estadocivil", config).then(function (result) {
+                self.estadosCiviles = result.data;
+            });
+        },
+        configHeader() {
+            let config = {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token"),
                 },
-                {
-                    "id": 1,
-                    "codigo": "2",
-                    "nombre": "Bogotá",
-                },
-                {
-                    "id": 2,
-                    "codigo": "3",
-                    "nombre": "Santamarta",
-                },
-                {
-                    "id": 3,
-                    "codigo": "4",
-                    "nombre": "Itagui",
-                },
-                {
-                    "id": 4,
-                    "codigo": "5",
-                    "nombre": "caldas",
-                },
-                {
-                    "id": 4,
-                    "codigo": "6",
-                    "nombre": "cartagena",
-                },
-            ]
-
+            };
+            return config;
         },
     },
 };
@@ -912,4 +831,5 @@ span {
     height: 38px;
 }
 
-/* Fin select con filtro personalizado */</style>
+/* Fin select con filtro personalizado */
+</style>

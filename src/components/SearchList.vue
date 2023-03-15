@@ -1,23 +1,23 @@
 <template>
-        <div id="contenedor-select">
-            <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
-                <div class="input-group">
-                    <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                    <input type="text" @click="hover = !hover" autocomplete="off"
-                        @input="filterResults(registro, registros, 'registros')" class="form-control"
-                        id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp"
-                        v-model="registro" />
-                    <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span>
-                </div>
-            </div>
-            <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">
-                <div id="lista1" v-for="(item, index) in registrosFilter" :key="index"
-                    @click="registro = item.nombre, departamentoId(registro), hover = !hover, filterResults('', registros, 'registros')">
-                    {{ item.nombre }}
-                </div>
+    <div id="contenedor-select">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
+                <input type="text" @click="hover = !hover" autocomplete="off"
+                    @input="filterResults(registro, registros, 'registros')" class="form-control" id="exampleInputEmail2"
+                    :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
+                <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span>
             </div>
         </div>
+        <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">
+            <div id="lista1" v-for="(item, index) in registrosFilter" :key="index"
+                @click="registro = nombreItems(item), hover = !hover, filterResults('', registros, 'registros'), listaEnCadena(item)">
+                {{ nombreItems(item) }}
+                <!-- {{ item.nom_pai != null ? item.nom_pai: item.nom_dep != null? item.nom_dep: item.nom_ciu != null ? item.nom_ciu: '' }} -->
+            </div>
+        </div>
+    </div>
 </template>
 <script>
 export default {
@@ -25,30 +25,45 @@ export default {
         nombreCampo: {},
         placeholder: {},
         registros: [],
-        // registrosFilter: []
+        nombreItem: {}
     },
     data() {
         return {
-            // label: 'prueba componente',
-            // placeholder: 'placeholder',
             hover: false,
             registro: '',
-            // registros: [],
-            registrosFilter: this.registros
+            registrosFilter: [],//this.registros,
         }
     },
 
+    watch: {
+        registros: function () { // Valida que se haya llenado un campo de firma para limpiar el pad de firmas
+            this.registrosFilter = this.registros
+        }
+    },
     created() {
 
     },
     methods: {
+        nombreItems(item) {
+            return item[this.nombreItem];
+        },
         filterResults(value, array, nombrearray) {
-            const search = array.filter(item => item.nombre.toLowerCase().match(value.toLowerCase()));
+            const search = array.filter(item => this.nombreItems(item).toLowerCase().match(value.toLowerCase()));
 
             if (nombrearray == 'registros') {
                 this.registrosFilter = search
             }
         },
+        listaEnCadena(item) {
+            switch (this.nombreItem) {
+                case 'nom_pai':
+                    this.$emit('getDepartamentos', item.cod_pai)
+                    break;
+                case 'nom_dep':
+                    this.$emit('getMunicipios', item.cod_dep)
+                    break;
+            }
+        }
     }
 };
 </script>
