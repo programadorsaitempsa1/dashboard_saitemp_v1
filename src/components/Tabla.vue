@@ -9,12 +9,14 @@
             </div>
         </div>
         <div v-if="items_tabla2.length > 1 && filtroComponente()" class="row" style="text-align:left;clear:both">
-            <span @click="filtros = !filtros" style="cursor:pointer">Filtro avanzado de búsqueda <i v-if="filtros"  class="bi bi-chevron-down"></i><i v-if="!filtros" class="bi bi-chevron-compact-up"></i></span>
+            <span @click="filtros = !filtros" style="cursor:pointer">Filtro avanzado de búsqueda <i v-if="filtros"
+                    class="bi bi-chevron-down"></i><i v-if="!filtros" class="bi bi-chevron-compact-up"></i></span>
         </div>
         <div v-if="filtros" class="row" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
             <div class="col-xs-3 col-md-3">
                 <label for="exampleFormControlInput1" class="form-label" style="float:left">Campo</label>
-                <select class="form-select form-select-sm" @change="tipoCampo(indice_campo)" v-model="indice_campo" aria-label="Default select example">
+                <select class="form-select form-select-sm" @change="tipoCampo(indice_campo)" v-model="indice_campo"
+                    aria-label="Default select example">
                     <option v-for="item, index in tabla2" :key="index">{{ index == 0 ? 'Por favor seleccione un campo':item.nombre }}</option>
                 </select>
             </div>
@@ -34,53 +36,57 @@
             </div>
             <div v-if="tipo_de_campo == 'fecha'" class="col-xs-3 col-md-3">
                 <div class="mb-3">
-                    <label for="exampleInputEmail1" style="float:left" class="form-label">{{operador != 'Entre' ? 'Fecha':'Fecha inicial'}}</label>
-                    <input type="date" class="form-control form-control-sm" id="exampleInputEmail2" aria-describedby="emailHelp"
-                        v-model="valor_comparar" />
+                    <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operador != 'Entre' ?
+                        'Fecha' : 'Fecha inicial' }}</label>
+                    <input type="date" class="form-control form-control-sm" id="exampleInputEmail2"
+                        aria-describedby="emailHelp" v-model="valor_comparar" />
                 </div>
             </div>
             <div v-else class="col-xs-3 col-md-3">
                 <div v-if="calculado == 'true'">
                     <label for="exampleFormControlInput1" class="form-label" style="float:left">Valor</label>
-                    <select class="form-select form-select-sm" @change="idCampo(valor_comparar2)" v-model="valor_comparar2" aria-label="Default select example">
+                    <select class="form-select form-select-sm" @change="idCampo(valor_comparar2)" v-model="valor_comparar2"
+                        aria-label="Default select example">
                         <option v-for="item, index in listaItem" :key="index">{{ item.nombre }}</option>
                     </select>
                 </div>
                 <div v-if="calculado == 'false'" class="mb-3">
-                    <label for="exampleInputEmail1" style="float:left" class="form-label">{{operador != 'Entre' ? 'Valor':'Valor inicial'}}</label>
-                    <input type="text" class="form-control form-control-sm" autocomplete="off" id="exampleInputEmail2" aria-describedby="emailHelp"
-                        v-model="valor_comparar" />
+                    <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operador != 'Entre' ?
+                        'Valor' : 'Valor inicial' }}</label>
+                    <input type="text" class="form-control form-control-sm" autocomplete="off" id="exampleInputEmail2"
+                        aria-describedby="emailHelp" v-model="valor_comparar" />
                 </div>
             </div>
             <div v-if="tipo_de_campo == 'fecha' && operador == 'Entre'" class="col-xs-3 col-md-3">
                 <div class="mb-3">
                     <label for="exampleInputEmail1" style="float:left" class="form-label">Fecha final</label>
-                    <input type="date" class="form-control form-control-sm" id="exampleInputEmail2" aria-describedby="emailHelp"
-                        v-model="valor_comparar2" />
+                    <input type="date" class="form-control form-control-sm" id="exampleInputEmail2"
+                        aria-describedby="emailHelp" v-model="valor_comparar2" />
                 </div>
             </div>
             <div v-if="tipo_de_campo == 'numero' && operador == 'Entre'" class="col-xs-3 col-md-3">
                 <div class="mb-3">
                     <label for="exampleInputEmail1" style="float:left" class="form-label">Valor final</label>
-                    <input type="text" class="form-control form-control-sm" id="exampleInputEmail2" aria-describedby="emailHelp"
-                        v-model="valor_comparar2" />
+                    <input type="text" class="form-control form-control-sm" id="exampleInputEmail2"
+                        aria-describedby="emailHelp" v-model="valor_comparar2" />
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-3 col-md-3">
-                        <button @click="filtrar()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
-                            Realizar búsqueda
-                        </button>
+                    <button @click="filtrar()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
+                        Realizar búsqueda
+                    </button>
                 </div>
-                <div v-if="ruta == '/navbar/reporteitems' && this.campo != '' && this.operador && this.valor_comparar" class="col-xs-3 col-md-3">
-                        <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
-                            <a :href="URL_API+'api/v1/itemsexport/'+base64consulta" rel="noopener noreferrer">Exportar excel</a>  
-                        </button>
+                <div v-if="ruta == '/navbar/reporteitems' && this.campo != '' && this.operador && this.valor_comparar"
+                    class="col-xs-3 col-md-3">
+                    <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
+                        <a :href="URL_API + 'api/v1/itemsexport/' + base64consulta" rel="noopener noreferrer">Exportar excel</a>
+                    </button>
                 </div>
                 <div class="col-xs-3 col-md-3">
-                        <button @click="getRegistros()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
-                            Borrar búsqueda
-                        </button>
+                    <button @click="getRegistros()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
+                        Borrar búsqueda
+                    </button>
                 </div>
             </div>
         </div>
@@ -105,8 +111,8 @@
                 </button>
             </div>
             <div v-if="check.length > 1" class="col-xs-3 col-md-3">
-                <button type="button" style="margin-top: 35px; background-color:#E74C3C;color:white" @click="masiveDeleteMessage()"
-                    class="btn btn-sm">
+                <button type="button" style="margin-top: 35px; background-color:#E74C3C;color:white"
+                    @click="masiveDeleteMessage()" class="btn btn-sm">
                     Eliminar seleccionados
                 </button>
             </div>
@@ -121,8 +127,8 @@
                 <thead>
                     <tr>
                         <th v-if="ruta != '/navbar/reporteitems'" scope="col">Seleccionar</th>
-                        <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col"
-                            v-for="(item, index) in tabla2" :key="index">
+                        <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
+                            :key="index">
                             {{ item.nombre }}
                         </th>
                         <th v-if="ruta != '/navbar/reporteitems'" colspan="2">Acciones</th>
@@ -136,11 +142,12 @@
                                     v-model="check" type="checkbox" :value="item.id" />
                             </div>
                         </td>
-                        <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify">{{ item2 == 'id' ? index + 1 : item[item2] ==
-                null ? 'Sin datos' : item2.includes('valor') ?
-                    formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
-                        item[item2] }}
-                    </td>
+                        <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify">{{ item2 == 'id' ? index +
+                            1 : item[item2] ==
+                                null ? 'Sin datos' : item2.includes('valor') ?
+                            formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
+                                item[item2] }}
+                        </td>
                         <td v-if="ruta != '/navbar/reporteitems'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
@@ -169,11 +176,11 @@
                                     : 'background-color:#21618C'
                             " class="page-link" v-for="(item, index) in links.links" :key="index"
                                 @click="pagination(item.url), currentUrl = item.url, goScroll('up')">{{
-    index == 0
-    ? "Anterior"
-    : index == siguiente - 1
-        ? "siguiente"
-        : item.label
+                                    index == 0
+                                    ? "Anterior"
+                                    : index == siguiente - 1
+                                        ? "siguiente"
+                                        : item.label
                                 }}</a>
                         </li>
                     </ul>
@@ -204,7 +211,7 @@ export default {
         heigth_container: {},
         massiveUpdate: {},
         campos: {},
-        listas:[]
+        listas: []
     },
     data() {
         return {
@@ -225,13 +232,13 @@ export default {
             operador: '',
             valor_comparar: '',
             valor_comparar2: '',
-            tipo_de_campo:'',
-            indice_campo:'',
-            filtros:false,
-            calculado:'',
-            listaItem:[],
-            ruta : this.$route.path,
-            base64consulta:''
+            tipo_de_campo: '',
+            indice_campo: '',
+            filtros: false,
+            calculado: '',
+            listaItem: [],
+            ruta: this.$route.path,
+            base64consulta: ''
         };
     },
 
@@ -249,33 +256,33 @@ export default {
     },
 
     methods: {
-        filtroComponente(){
+        filtroComponente() {
 
-            if(this.ruta.includes('costos')){
+            if (this.ruta.includes('costos')) {
                 return true
             }
-            else if(this.ruta.includes('reporteitems')){
+            else if (this.ruta.includes('reporteitems')) {
                 return true
             }
-            else if(this.ruta.includes('sigcontratos')){
+            else if (this.ruta.includes('sigcontratos')) {
                 return true
             }
-            else if(this.ruta.includes('empleados')){
+            else if (this.ruta.includes('empleados')) {
                 return true
             }
-            else if(this.ruta.includes('zonas')){
+            else if (this.ruta.includes('zonas')) {
                 return true
             }
         },
-        exportar(){
+        exportar() {
             let self = this;
             let cadena = this.campo + '/' + this.operador + '/' + this.valor_comparar + '/' + self.valor_comparar2
             this.base64consulta = (btoa(cadena))
         },
-        filtrar(){
+        filtrar() {
             let self = this;
             let config = self.configHeader();
-             let cadena = this.campo + '/' + this.operador + '/' + this.valor_comparar + '/' + self.valor_comparar2
+            let cadena = this.campo + '/' + this.operador + '/' + this.valor_comparar + '/' + self.valor_comparar2
             // const encryptedText = this.CryptoJS.AES.encrypt(cadena, localStorage.getItem("access_token").substring(0,32)).toString()
             // let base64 = (btoa(encryptedText))
             let base64 = (btoa(cadena))
@@ -287,26 +294,26 @@ export default {
             // console.log(localStorage.getItem("access_token").substring(0,32),'contyraseña')
 
             axios
-                .get(self.URL_API + "api/v1/" + self.endpoint + "filtro/"+base64, config)
+                .get(self.URL_API + "api/v1/" + self.endpoint + "filtro/" + base64, config)
                 .then(function (result) {
                     self.llenarTabla(result)
                 });
         },
-        tipoCampo(campo){
-            this.tabla2.forEach((item,index)=>{                
-                if(item.nombre == campo){
+        tipoCampo(campo) {
+            this.tabla2.forEach((item, index) => {
+                if (item.nombre == campo) {
                     this.tipo_de_campo = item.tipo
                     this.campo = this.campos2[index]
                     this.calculado = item.calculado
-                    if(item.calculado == 'true'){
+                    if (item.calculado == 'true') {
                         this.listaItem = this.listas[index]
                     }
                 }
             })
         },
-        idCampo(campo){
-            this.listaItem.forEach(item=>{
-                if(campo == item.nombre){
+        idCampo(campo) {
+            this.listaItem.forEach(item => {
+                if (campo == item.nombre) {
                     this.valor_comparar = item.id
                 }
             })
@@ -357,9 +364,9 @@ export default {
             });
         },
         sortDesc(numero) {
-           
+
             this.items_tabla2.reverse(function (a, b) {
-                if (Object.values(a)[numero - 1] < Object.values(b)[numero - 1]) { 
+                if (Object.values(a)[numero - 1] < Object.values(b)[numero - 1]) {
                     return -1;
                 }
                 if (Object.values(a)[numero - 1] > Object.values(b)[numero - 1]) {
@@ -663,11 +670,11 @@ th {
 
 /* fin spinner*/
 
-#exportar{
+#exportar {
     margin-top: 30px;
 }
-#exportar a{
+
+#exportar a {
     color: white;
     text-decoration: none;
-}
-</style>
+}</style>

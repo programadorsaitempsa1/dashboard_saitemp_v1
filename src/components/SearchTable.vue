@@ -13,7 +13,7 @@
         <!-- Modal -->
         <div class="modal fade show mask" id="exampleModal" :style="modal ? 'display: block' : 'display: none'"
             role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Seleccione registro</h1>
@@ -39,23 +39,52 @@
                         <table class="table table-striped ">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
                                     <th scope="col">Código</th>
-                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Descripción</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <!-- <tbody>
                                 <tr v-for="item, index in registros" :key="index">
-                                    <td>{{ index }}</td>
-                                    <td @click="registro = item.nombre, modal = false">{{ item.codigo }}</td>
-                                    <td @click="registro = item.nombre, modal = false">{{ item.nombre }}</td>
+                                    <td @click="registro = item.nombre, modal = false">{{ codigoItem(item) }}</td>
+                                    <td @click="registro = item.nombre, modal = false">{{ descripcionItem(item) }}</td>
+                                </tr>
+                            </tbody> -->
+                            <tbody>
+                                <tr v-for="(item, index) in items_tabla2" :key="item.id">
+                                    <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify">{{ item2 ==
+                                        'id' ? index +
+                                    1 : item[item2] ==
+                                        null ? 'Sin datos' : item2.includes('valor') ?
+                                        formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
+                                            item[item2] }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="content">
+                            <nav class="pagin" aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a :style="
+                                            item.active == true
+                                                ? 'background-color:#d06519'
+                                                : 'background-color:#21618C'
+                                        " class="page-link" v-for="(item, index) in links" :key="index"
+                                            @click="pagination(item.url), currentUrl = item.url">{{
+                                                index == 0
+                                                ? "Anterior"
+                                                : index == siguiente - 1
+                                                    ? "siguiente"
+                                                    : item.label
+                                            }}</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click="modal = !modal" class="btn btn-warning"
-                            data-bs-dismiss="modal">Cerrar ventana</button>
+                        <button type="button" @click="modal = !modal" class="btn btn-warning" data-bs-dismiss="modal">Cerrar
+                            ventana</button>
                         <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                     </div>
                 </div>
@@ -64,6 +93,7 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
     props: {
         registros: [],
@@ -72,29 +102,93 @@ export default {
         showmodal: {
             type: Boolean,
             default: false
-        }
+        },
+        nombreItem: [],
+        endpoint: {},
+
+        // *****************
+        // tabla: [],
+        // datos: [],
+        // campos: {},
+        // listas: []
     },
     data() {
         return {
             modal: this.showModal,
             registro: '',
-            search:''
+            search: '',
+            // ************
+            URL_API: process.env.VUE_APP_URL_API,
+            tabla2: [],
+            items_tabla2: [],
+            campos2: [],
+            siguiente: 0,
+            currentUrl: "",
+            links: [],
+            listaItem: [],
+            datos: []
         }
     },
 
     watch: {
-        // showModal: function () { // Valida que se haya llenado un campo de firma para limpiar el pad de firmas
-        //     // if(this.modal == true){
-        //     //     this.modal = true
-        //     // }
-        // }
+        registros: function () {
+            this.datos = this.registros
+            if (this.datos.data.length > 0) {
+                this.llenarTabla(this.datos)
+                this.sin_registros = false
+            }
+        },
     },
 
     created() {
-
     },
     methods: {
-
+        codigoItem(item) {
+            // console.log(this.nombreItem[0])
+            return item[this.nombreItem[0]];
+        },
+        descripcionItem(item) {
+            return item[this.nombreItem[1]];
+        },
+        pagination(pag) {
+            if (pag != null) {
+                let self = this;
+                let config = this.configHeader();
+                axios.get(pag, config).then(function (result) {
+                    self.links = result.data
+                    self.llenarTabla(result)
+                    console.log(result)
+                });
+            }
+        },
+        llenarTabla(datos) {
+            console.log('llenando tabla', datos)
+            let self = this
+            if (datos.data.length > 0) {
+                let claves = Object.keys(datos.data[0]); // Crea un array con los campos de los registros para ordenarlos posteriormente
+                console.log(claves)
+                self.campos2 = []
+                claves.forEach((element) => {
+                    self.campos2.push(element)
+                });
+                console.log(self.campos2)
+            } else {
+                this.sin_registros = true
+            }
+            // this.tabla2 = this.tabla; // Encabezados de la tabla
+            this.items_tabla2 = datos.data; // lista de registros
+            self.links = datos.links;
+            self.siguiente = this.links.length;
+           
+        },
+        configHeader() {
+            let config = {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token"),
+                },
+            };
+            return config;
+        },
     }
 };
 </script>
@@ -119,7 +213,24 @@ label {
     margin: 20px 0px 5px 0px;
 }
 
-.table td {
-text-align: left;
-} 
+.table td,
+.table th {
+    text-align: justify;
+}
+
+
+
+.pagin {
+    margin: auto;
+}
+
+.pagination .page-item {
+    display: flex;
+    cursor: pointer;
+}
+
+.content ul li a {
+    color: white;
+}
+
 </style>

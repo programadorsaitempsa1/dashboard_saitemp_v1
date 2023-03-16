@@ -6,7 +6,7 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Planilla eventual" placeholder="Planilla eventual" :showModal="showModal"
+                        <SearchTable nombreCampo="Planilla eventual" :nombreItem="nombreItem = ['codigo','nombre']" placeholder="Planilla eventual" :showModal="showModal"
                             :registros="empleados" />
                     </div>
                     <div class="col">
@@ -72,11 +72,11 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            placeholder="Departamento" />
+                        @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -146,11 +146,11 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            placeholder="Departamento" />
+                        @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -218,12 +218,12 @@
                         <SearchList nombreCampo="Régimen salarial" :registros="municipios" placeholder="Régimen salarial" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Forma de pago" :registros="municipios" placeholder="Forma de pago" />
+                        <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" :registros="formaspago" placeholder="Forma de pago" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Código del banco" :registros="municipios" placeholder="Código del banco" />
+                        <SearchList nombreCampo="Código del banco" nombreItem="nom_ban" :registros="bancos" placeholder="Código del banco" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
@@ -309,21 +309,21 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de contrato" :registros="municipios" placeholder="Tipo de contrato" />
+                        <SearchList nombreCampo="Tipo de contrato"  nombreItem="nom_con" :registros="tiposcontrato" placeholder="Tipo de contrato" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado Laboral del Empleado" :registros="municipios"
+                        <SearchList nombreCampo="Estado Laboral del Empleado" nombreItem="nom_est" :registros="estadoslaboralesempleados"
                             placeholder="Estado Laboral del Empleado" />
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de contrato</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            placeholder="Departamento" />
+                        @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -339,6 +339,17 @@
             </div>
             <h6 class="tituloseccion">Estructura de Costos</h6>
             <div id="seccion">
+                <div class="row">
+                    <div class="col">
+                        <SearchTable nombreCampo="Convenio" :registros="convenios" :nombreItem="nombreItem = ['cod_conv','nom_conv']" placeholder="Compañía" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Sucursal conevnio" :registros="municipios" placeholder="Sucursal" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Centro de costos convenio" :registros="municipios" placeholder="Centro de costos" />
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Compañía" :registros="municipios" placeholder="Compañía" />
@@ -421,11 +432,11 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de labor</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            placeholder="Departamento" />
+                        @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -589,6 +600,16 @@ export default {
             generos:[],
             estadoCivil:'',
             estadosCiviles:[],
+            formapago:'',
+            formaspago:[],
+            banco:'',
+            bancos:[],
+            tipocontrato:'',
+            tiposcontrato:[],
+            convenio:'',
+            convenios:[],
+            estadolaboralempleado:'',
+            estadoslaboralesempleados:[],
             showModal: true,
             numero_identificacion: '',
             codigo_alterno: '',
@@ -639,8 +660,7 @@ export default {
             reside_en_extranjero: false,
             pago_por_dias: false,
             es_variable: false,
-
-
+            nombreItem:[]
         };
     },
 
@@ -650,6 +670,11 @@ export default {
         this.getPaises()
         this.getGenero()
         this.getEstadoCivil()
+        this.getFormaPago()
+        this.getBanco()
+        this.getTipoContrato()
+        this.getEstadoLaboralEmpleado()
+        this. getConvenio()
     },
     mounted() {
         console.log(this.$refs.pais)
@@ -700,6 +725,17 @@ export default {
                 },
             ]
         },
+        // valoresSearchTable(val){
+        //     switch (val) {
+        //         case 'convenio':
+        //         this.nombreItem = ['cod_conv','nom_conv'];
+        //         return this.nombreItem
+        //             break;
+            
+        //         default:
+        //             break;
+        //     }
+        // },
         getPaises() {
             let config = this.configHeader();
             let self = this;
@@ -743,6 +779,41 @@ export default {
             let self = this;
             axios.get(self.URL_API + "api/v1/estadocivil", config).then(function (result) {
                 self.estadosCiviles = result.data;
+            });
+        },
+        getFormaPago() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/formapago", config).then(function (result) {
+                self.formaspago = result.data;
+            });
+        },
+        getBanco(){
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/banco", config).then(function (result) {
+                self.bancos = result.data;
+            });
+        },
+        getTipoContrato(){
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/tipocontrato", config).then(function (result) {
+                self.tiposcontrato = result.data;
+            });
+        },
+        getEstadoLaboralEmpleado(){
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/estadolaboralempleado", config).then(function (result) {
+                self.estadoslaboralesempleados = result.data;
+            });
+        },
+        getConvenio(){
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/convenio", config).then(function (result) {
+                self.convenios = result.data;
             });
         },
         configHeader() {
