@@ -6,12 +6,13 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Planilla eventual" :nombreItem="nombreItem = ['codigo','nombre']" placeholder="Planilla eventual" :showModal="showModal"
-                            :registros="empleados" />
+                        <SearchTable nombreCampo="Planilla eventual" :nombreItem="camposEmpleado"
+                            :endpoint="endpointEmpleados" placeholder="Planilla eventual" :showModal="showModal"
+                            :datos="empleados" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de identificación" nombreItem="des_tip" :registros="tiposIdentificacion"
-                            placeholder="Tipo de identificación" />
+                        <SearchList nombreCampo="Tipo de identificación" nombreItem="des_tip"
+                            :registros="tiposIdentificacion" placeholder="Tipo de identificación" />
                     </div>
                 </div>
                 <div class="row">
@@ -72,11 +73,12 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
+                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                        @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -88,7 +90,8 @@
                         <SearchList nombreCampo="Género" nombreItem="des_gen" :registros="generos" placeholder="Género" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado civil" nombreItem="des_est" :registros="estadosCiviles" placeholder="Estado civil" />
+                        <SearchList nombreCampo="Estado civil" nombreItem="des_est" :registros="estadosCiviles"
+                            placeholder="Estado civil" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento</label>
@@ -146,11 +149,12 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
+                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                        @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -218,12 +222,14 @@
                         <SearchList nombreCampo="Régimen salarial" :registros="municipios" placeholder="Régimen salarial" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" :registros="formaspago" placeholder="Forma de pago" />
+                        <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" :registros="formaspago"
+                            placeholder="Forma de pago" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Código del banco" nombreItem="nom_ban" :registros="bancos" placeholder="Código del banco" />
+                        <SearchList nombreCampo="Código del banco" nombreItem="nom_ban" :registros="bancos"
+                            placeholder="Código del banco" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
@@ -309,21 +315,23 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de contrato"  nombreItem="nom_con" :registros="tiposcontrato" placeholder="Tipo de contrato" />
+                        <SearchList nombreCampo="Tipo de contrato" nombreItem="nom_con" :registros="tiposcontrato"
+                            placeholder="Tipo de contrato" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado Laboral del Empleado" nombreItem="nom_est" :registros="estadoslaboralesempleados"
-                            placeholder="Estado Laboral del Empleado" />
+                        <SearchList nombreCampo="Estado Laboral del Empleado" nombreItem="nom_est"
+                            :registros="estadoslaboralesempleados" placeholder="Estado Laboral del Empleado" />
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de contrato</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
+                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                        @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -341,24 +349,49 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Convenio" :registros="convenios" :nombreItem="nombreItem = ['cod_conv','nom_conv']" placeholder="Compañía" />
+                        <SearchTable nombreCampo="Convenio" :datos="convenios" :endpoint="endpointConvenios"
+                            :nombreItem="camposConvenio" placeholder="Compañía" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Sucursal conevnio" :registros="municipios" placeholder="Sucursal" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Centro de costos convenio" :registros="municipios" placeholder="Centro de costos" />
+                        <SearchList nombreCampo="Centro de costos convenio" :registros="municipios"
+                            placeholder="Centro de costos" />
+                    </div>
+                </div>
+                <div class="row" v-for="item, index in numeroClasificadorConvenio" :key="index">
+                    <div class="col">
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1) + ' del Convenio'" :datos="convenios"
+                            :endpoint="endpointConvenios" :nombreItem="camposConvenio"
+                            placeholder="Clasificador del convenio" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Compañía" :registros="municipios" placeholder="Compañía" />
+                        <span v-if="numeroClasificadorConvenio < 8" id="clasificador"
+                            @click="numeroClasificadorConvenio < 8 ? numeroClasificadorConvenio++ : numeroClasificadorConvenio"
+                            style="cursor: pointer"><i class="bi bi-plus-circle-fill"></i>
+                            Agregar clasificador de convenio
+                        </span>
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Sucursal" :registros="municipios" placeholder="Sucursal" />
+                        <span v-if="numeroClasificadorConvenio > 1" id="clasificador"
+                            @click="numeroClasificadorConvenio > 1 ? numeroClasificadorConvenio-- : numeroClasificadorConvenio"
+                            style="cursor: pointer"><i class="bi bi-dash-circle-fill"></i>
+                            Eliminar clasificador de convenio
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="Compañía" :registros="companias" nombreItem="nom_cia" placeholder="Compañía" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Centro de costos" :registros="municipios" placeholder="Centro de costos" />
+                        <SearchList nombreCampo="Sucursal" :registros="sucursales" nombreItem="nom_suc" placeholder="Sucursal" />
+                    </div>
+                    <div class="col">
+                        <SearchTable nombreCampo="Centro de costos" :registros="centrosTrabajo" :endpoint="endpointConvenios" :nombreItem="camposCentroTrabajo" placeholder="Centro de costos" />
                     </div>
                 </div>
                 <div class="row">
@@ -377,6 +410,54 @@
                             <input class="form-check-input" v-model="distribucion_centro_costos_nif" type="checkbox"
                                 role="switch" id="flexSwitchCheckChecked">
                         </div>
+                    </div>
+                </div>
+                <div class="row" v-for="item, index in numeroClasificador" :key="index + 1">
+                    <div class="col">
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1)" :datos="convenios"
+                            :endpoint="endpointConvenios" :nombreItem="camposConvenio"
+                            placeholder="Clasificador del convenio" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span v-if="numeroClasificador < 7" id="clasificador"
+                            @click="numeroClasificador < 8 ? numeroClasificador++ : numeroClasificador"
+                            style="cursor: pointer"><i class="bi bi-plus-circle-fill"></i>
+                            Agregar clasificador
+                        </span>
+                    </div>
+                    <div class="col">
+                        <span v-if="numeroClasificador > 1" id="clasificador"
+                            @click="numeroClasificador > 1 ? numeroClasificador-- : numeroClasificador"
+                            style="cursor: pointer"><i class="bi bi-dash-circle-fill"></i>
+                            Eliminar clasificador
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="Área" :registros="areas"  nombreItem="des_area" 
+                             placeholder="Clasificador del convenio" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Sucursal seguridad social" :registros="sucursalesss"
+                             nombreItem="descripcion"
+                            placeholder="Clasificador del convenio" />
+                    </div>
+                    <div class="col">
+                        <SearchTable nombreCampo="Centro de trabajo" :datos="convenios" :endpoint="endpointConvenios"
+                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchTable nombreCampo="Cuenta de gastos local" :datos="convenios" :endpoint="endpointConvenios"
+                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
+                    </div>
+                    <div class="col">
+                        <SearchTable nombreCampo="Cuenta de gastos NIF" :datos="convenios" :endpoint="endpointConvenios"
+                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
                     </div>
                 </div>
                 <div class="row">
@@ -432,11 +513,12 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de labor</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
+                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                        @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
@@ -565,10 +647,6 @@
                 <div class="col">
                     <SearchList nombreCampo="Planilla eventual" :registros="municipios" placeholder="Planilla eventual" />
                 </div>
-                <!-- <div class="col">
-                    <SearchTable nombreCampo="Planilla eventual" placeholder="Planilla eventual"
-                        :showModal="showModal" :registros="empleados" />
-                </div> -->
             </div>
         </form>
     </div>
@@ -594,22 +672,39 @@ export default {
             municipios: [],
             tipoIdentificacion: '',
             tiposIdentificacion: [],
+            genero: '',
+            generos: [],
+            estadoCivil: '',
+            estadosCiviles: [],
+            sucursalsss: '',
+            sucursalesss: [],
+            formapago: '',
+            formaspago: [],
+            banco: '',
+            bancos: [],
+            tipocontrato: '',
+            tiposcontrato: [],
+            compania: '',
+            companias: [],
+            sucursal: '',
+            sucursales: [],
+            entroCosto: '',
+            CentrosCostos: [],
+            area: '',
+            areas: [],
+            convenio: '',
+            convenios: [],
+            camposConvenio: ['cod_conv', 'nom_conv'],
+            centroTrabajo: '',
+            centrosTrabajo: [],
+            camposCentroTrabajo: ['cod_CT', 'descripcion'],
+            endpointConvenios: '',
             empleado: '',
             empleados: [],
-            genero:'',
-            generos:[],
-            estadoCivil:'',
-            estadosCiviles:[],
-            formapago:'',
-            formaspago:[],
-            banco:'',
-            bancos:[],
-            tipocontrato:'',
-            tiposcontrato:[],
-            convenio:'',
-            convenios:[],
-            estadolaboralempleado:'',
-            estadoslaboralesempleados:[],
+            camposEmpleado: ['cod_emp', 'nom_emp'],
+            endpointEmpleados: '',
+            estadolaboralempleado: '',
+            estadoslaboralesempleados: [],
             showModal: true,
             numero_identificacion: '',
             codigo_alterno: '',
@@ -660,7 +755,9 @@ export default {
             reside_en_extranjero: false,
             pago_por_dias: false,
             es_variable: false,
-            nombreItem:[]
+            numeroClasificadorConvenio: 1,
+            numeroClasificador: 1,
+
         };
     },
 
@@ -674,68 +771,25 @@ export default {
         this.getBanco()
         this.getTipoContrato()
         this.getEstadoLaboralEmpleado()
-        this. getConvenio()
+        this.getConvenio()
+        this.getSucursalsSS()
+        this.getCompania()
+        this.getSucursales()
+        this.getCentroCosto()
+        this.getArea()
+        this.getCentroTrabajo()
     },
     mounted() {
-        console.log(this.$refs.pais)
     },
 
     methods: {
         getEmpleados() {
-            this.empleadosFilter = this.empleados = [
-                {
-                    "id": 1,
-                    "codigo": "7856834653",
-                    "nombre": "María Carmen",
-                },
-                {
-                    "id": 2,
-                    "codigo": "342345645",
-                    "nombre": "juan manuel",
-                },
-                {
-                    "id": 3,
-                    "codigo": "37654823456",
-                    "nombre": "maria camila",
-                },
-                {
-                    "id": 4,
-                    "codigo": "827356823465",
-                    "nombre": "mario alberto",
-                },
-                {
-                    "id": 4,
-                    "codigo": "827356823465",
-                    "nombre": "juan camilo",
-                },
-                {
-                    "id": 4,
-                    "codigo": "827356823465",
-                    "nombre": "jaime izasa",
-                },
-                {
-                    "id": 4,
-                    "codigo": "827356823465",
-                    "nombre": "carlos zuluaga",
-                },
-                {
-                    "id": 4,
-                    "codigo": "827356823465",
-                    "nombre": "alexander jimenes",
-                },
-            ]
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/empleado", config).then(function (result) {
+                self.empleados = result.data;
+            });
         },
-        // valoresSearchTable(val){
-        //     switch (val) {
-        //         case 'convenio':
-        //         this.nombreItem = ['cod_conv','nom_conv'];
-        //         return this.nombreItem
-        //             break;
-            
-        //         default:
-        //             break;
-        //     }
-        // },
         getPaises() {
             let config = this.configHeader();
             let self = this;
@@ -750,8 +804,6 @@ export default {
             axios.get(self.URL_API + "api/v1/departamentos/" + item, config).then(function (result) {
                 self.departamentos = result.data;
             });
-
-
         },
         getMunicipios(item) {
             let config = this.configHeader();
@@ -788,32 +840,74 @@ export default {
                 self.formaspago = result.data;
             });
         },
-        getBanco(){
+        getBanco() {
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/banco", config).then(function (result) {
                 self.bancos = result.data;
             });
         },
-        getTipoContrato(){
+        getTipoContrato() {
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/tipocontrato", config).then(function (result) {
                 self.tiposcontrato = result.data;
             });
         },
-        getEstadoLaboralEmpleado(){
+        getEstadoLaboralEmpleado() {
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/estadolaboralempleado", config).then(function (result) {
                 self.estadoslaboralesempleados = result.data;
             });
         },
-        getConvenio(){
+        getConvenio() {
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/convenio", config).then(function (result) {
                 self.convenios = result.data;
+            });
+        },
+        getSucursalsSS() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/sucursalss", config).then(function (result) {
+                self.sucursalesss = result.data;
+            });
+        },
+        getCompania() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/compania", config).then(function (result) {
+                self.companias = result.data;
+            });
+        },
+        getSucursales() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/sucursal", config).then(function (result) {
+                self.sucursales = result.data;
+            });
+        },
+        getCentroCosto() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/centrocostos", config).then(function (result) {
+                self.CentrosCostos = result.data;
+            });
+        },
+        getArea() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/area", config).then(function (result) {
+                self.areas = result.data;
+            });
+        },
+        getCentroTrabajo() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/centrotrabajo", config).then(function (result) {
+                self.centrosTrabajo = result.data;
             });
         },
         configHeader() {
@@ -834,6 +928,10 @@ h2 {
 
 h6 {
     font-weight: bold
+}
+
+#seccion:last-child {
+    margin-bottom: 50px;
 }
 
 label {
@@ -857,7 +955,7 @@ label {
 #select1,
 #select2 {
     padding: 5px;
-    border: solid #D5DBDB 0.5px;
+    border: solid #7c7e7e 0.5px;
     border-radius: 10px;
     text-align: left;
     max-height: 250px;
@@ -903,4 +1001,10 @@ span {
 }
 
 /* Fin select con filtro personalizado */
+
+#clasificador {
+    width: 100%;
+    text-align: left;
+    float: left;
+}
 </style>

@@ -26,7 +26,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                                     <input type="text" autocomplete="off" class="form-control" id="exampleInputEmail2"
-                                        placeholder="Buscar por código o nombre" aria-describedby="emailHelp"
+                                        placeholder="Buscar por código o descripción" aria-describedby="emailHelp"
                                         v-model="search" />
                                 </div>
                             </div>
@@ -34,52 +34,54 @@
                                 <button type="button" class="btn btn-success" data-bs-dismiss="modal">Buscar</button>
                             </div>
                         </div>
-
-
-                        <table class="table table-striped ">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Código</th>
-                                    <th scope="col">Descripción</th>
-                                </tr>
-                            </thead>
-                            <!-- <tbody>
-                                <tr v-for="item, index in registros" :key="index">
-                                    <td @click="registro = item.nombre, modal = false">{{ codigoItem(item) }}</td>
-                                    <td @click="registro = item.nombre, modal = false">{{ descripcionItem(item) }}</td>
-                                </tr>
-                            </tbody> -->
-                            <tbody>
-                                <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                                    <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify">{{ item2 ==
-                                        'id' ? index +
-                                    1 : item[item2] ==
-                                        null ? 'Sin datos' : item2.includes('valor') ?
-                                        formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
-                                            item[item2] }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="content">
-                            <nav class="pagin" aria-label="Page navigation example">
-                                <ul class="pagination">
-                                    <li class="page-item">
-                                        <a :style="
-                                            item.active == true
-                                                ? 'background-color:#d06519'
-                                                : 'background-color:#21618C'
-                                        " class="page-link" v-for="(item, index) in links" :key="index"
-                                            @click="pagination(item.url), currentUrl = item.url">{{
-                                                index == 0
-                                                ? "Anterior"
-                                                : index == siguiente - 1
-                                                    ? "siguiente"
-                                                    : item.label
-                                            }}</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                        <div v-if="!sin_registros" class="table-responsive">
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item) in items_tabla2" :key="item.id">
+                                        <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify"
+                                            @click="registro = item[item2], modal = !modal">{{ item[item2] }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="content">
+                                <nav class="pagin" aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        <li class="page-item">
+                                            <a :style="
+                                                item.active == true
+                                                    ? 'background-color:#d06519'
+                                                    : 'background-color:#006b3f'
+                                            " class="page-link" v-for="(item, index) in links" :key="index"
+                                                @click="pagination(item.url), currentUrl = item.url">{{
+                                                    index == 0
+                                                    ? "Anterior"
+                                                    : index == siguiente - 1
+                                                        ? "siguiente"
+                                                        : item.label
+                                                }}</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div v-if="spinner">
+                                <div class="lds-ring">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <h5>Cargando por favor espere un momento.</h5>
+                            </div>
+                            <h3 v-else>No hay resgistros guardados</h3>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -96,7 +98,7 @@
 import axios from 'axios'
 export default {
     props: {
-        registros: [],
+        datos: [],
         nombreCampo: {},
         placeholder: {},
         showmodal: {
@@ -117,7 +119,6 @@ export default {
             modal: this.showModal,
             registro: '',
             search: '',
-            // ************
             URL_API: process.env.VUE_APP_URL_API,
             tabla2: [],
             items_tabla2: [],
@@ -126,13 +127,14 @@ export default {
             currentUrl: "",
             links: [],
             listaItem: [],
-            datos: []
+            sin_registros: true,
+            spinner: true,
         }
     },
 
     watch: {
-        registros: function () {
-            this.datos = this.registros
+        datos: function () {
+            this.spinner = false
             if (this.datos.data.length > 0) {
                 this.llenarTabla(this.datos)
                 this.sin_registros = false
@@ -144,7 +146,6 @@ export default {
     },
     methods: {
         codigoItem(item) {
-            // console.log(this.nombreItem[0])
             return item[this.nombreItem[0]];
         },
         descripcionItem(item) {
@@ -155,31 +156,25 @@ export default {
                 let self = this;
                 let config = this.configHeader();
                 axios.get(pag, config).then(function (result) {
-                    self.links = result.data
-                    self.llenarTabla(result)
-                    console.log(result)
+                    self.links = result.data.links
+                    self.llenarTabla(result.data)
                 });
             }
         },
         llenarTabla(datos) {
-            console.log('llenando tabla', datos)
             let self = this
             if (datos.data.length > 0) {
                 let claves = Object.keys(datos.data[0]); // Crea un array con los campos de los registros para ordenarlos posteriormente
-                console.log(claves)
                 self.campos2 = []
                 claves.forEach((element) => {
                     self.campos2.push(element)
                 });
-                console.log(self.campos2)
             } else {
                 this.sin_registros = true
             }
-            // this.tabla2 = this.tabla; // Encabezados de la tabla
             this.items_tabla2 = datos.data; // lista de registros
             self.links = datos.links;
             self.siguiente = this.links.length;
-           
         },
         configHeader() {
             let config = {
@@ -218,9 +213,9 @@ label {
     text-align: justify;
 }
 
-
-
 .pagin {
+    margin: 0px;
+    padding: 0px;
     margin: auto;
 }
 
@@ -232,5 +227,51 @@ label {
 .content ul li a {
     color: white;
 }
+
+/*spiner*/
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-top: 50px;
+}
+
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid rgb(10, 10, 10);
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: rgb(199, 195, 195) transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* fin spinner*/
 
 </style>
