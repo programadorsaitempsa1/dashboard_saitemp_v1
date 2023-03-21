@@ -2,7 +2,7 @@
     <div class="container">
         <h2>Recontratación temporal</h2>
         <form>
-            <h6 class="tituloseccion">Datos del Documento del Empleado</h6>
+            <h6 class="tituloseccion">Datos Del Documento Del Empleado</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col">
@@ -18,13 +18,13 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de identificación</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_identificacion" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="numero_identificacion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Código alterno</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="codigo_alterno" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="codigo_alterno" />
                     </div>
                 </div>
                 <div class="row">
@@ -44,30 +44,30 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Datos del Empleado</h6>
+            <h6 class="tituloseccion">Datos Del Empleado</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Primer nombre</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="primer_nombre" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="primer_nombre" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Segundo nombre</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="segundo_nombre" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="segundo_nombre" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Primer apellido</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="primer_apellido" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="primer_apellido" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Segundo apellido</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="segundo_apellido" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="segundo_apellido" />
                     </div>
                 </div>
                 <div class="row">
@@ -95,52 +95,52 @@
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento</label>
-                        <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="fecha_nacimiento" />
+                        <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="fecha_nacimiento" />
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Datos Básicos del Empleado</h6>
+            <h6 class="tituloseccion">Datos Básicos Del Empleado</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Grupo sanguineo" :registros="municipios" placeholder="Grupo sanguineo" />
+                        <SearchList nombreCampo="Grupo sanguineo" nombreItem="nombre" :registros="gruposSanguineos" placeholder="Grupo sanguineo" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Factor RH" :registros="municipios" placeholder="Factor RH" />
+                        <SearchList nombreCampo="Factor RH" :registros="factoresRH" nombreItem="nombre" placeholder="Factor RH" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Clase Libreta Militar" :registros="municipios"
+                        <SearchList nombreCampo="Clase Libreta Militar" :registros="clasesLibretaMilitar" nombreItem="nombre"
                             placeholder="Clase Libreta Militar" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Nacionalidad" :registros="municipios" placeholder="Nacionalidad" />
+                        <SearchList nombreCampo="Nacionalidad" :registros="nacionalidades" nombreItem="nombre" placeholder="Nacionalidad" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de libreta militar</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_libreta_militar" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="numero_libreta_militar" />
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Distrito libreta militar</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="distrito_libreta_militar" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="distrito_libreta_militar" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Estatura</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="estatura" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="estatura" />
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Peso</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="peso" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="peso" />
                     </div>
                 </div>
             </div>
@@ -164,44 +164,44 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="direccion" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="direccion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Barrio</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="barrio" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="barrio" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="telefono" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="telefono" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Celular</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="celular" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="celular" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo electrónico:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="correo" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="correo" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo electrónico alternativo:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="correo_alternativo" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="correo_alternativo" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">En caso de emergencia avisar a:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="avisar_emergencia" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="avisar_emergencia" />
                     </div>
                 </div>
                 <div class="row">
@@ -219,7 +219,7 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Régimen salarial" :registros="municipios" placeholder="Régimen salarial" />
+                        <SearchList nombreCampo="Régimen salarial" :registros="regimenesSalariales" nombreItem="nombre" placeholder="Régimen salarial" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" :registros="formaspago"
@@ -233,36 +233,36 @@
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_cuenta" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="numero_cuenta" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Pago electrónico:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="pago_electronico" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="pago_electronico" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modalidad Retención" :registros="municipios"
+                        <SearchList nombreCampo="Modalidad Retención" :registros="modalidadesRetencion" nombreItem="nombre"
                             placeholder="Modalidad Retención" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Porcentaje de Retención:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="porcentaje_retencion" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="porcentaje_retencion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Valor Salud Año Anterior:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="salud_anio_anteior" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="salud_anio_anteior" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Cálculo IMAN" :registros="municipios" placeholder="Cálculo IMAN" />
+                        <SearchList nombreCampo="Cálculo IMAN" :registros="calculosIman" nombreItem="nombre" placeholder="Cálculo IMAN" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Estabilidad Laboral</label>
@@ -274,12 +274,12 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Vacaciones" :registros="municipios" placeholder="Vacaciones" />
+                        <SearchList nombreCampo="Vacaciones" :registros="vacaciones" nombreItem="nombre" placeholder="Vacaciones" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Días de vacaciones por año:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="dias_vacaciones" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="dias_vacaciones" />
                     </div>
                 </div>
                 <div class="row">
@@ -299,18 +299,18 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Datos del Contrato</h6>
+            <h6 class="tituloseccion">Datos Del Contrato</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de contrato:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="numero_contrato" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="numero_contrato" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha Celebración:</label>
-                        <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="fecha_celebracion" />
+                        <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="fecha_celebracion" />
                     </div>
                 </div>
                 <div class="row">
@@ -345,7 +345,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Estructura de Costos</h6>
+            <h6 class="tituloseccion">Estructura De Costos</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col">
@@ -385,13 +385,16 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Compañía" :registros="companias" nombreItem="nom_cia" placeholder="Compañía" />
+                        <SearchList nombreCampo="Compañía" :registros="companias" nombreItem="nom_cia"
+                            placeholder="Compañía" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Sucursal" :registros="sucursales" nombreItem="nom_suc" placeholder="Sucursal" />
+                        <SearchList nombreCampo="Sucursal" :registros="sucursales" nombreItem="nom_suc"
+                            placeholder="Sucursal" />
                     </div>
                     <div class="col">
-                        <SearchTable nombreCampo="Centro de costos" :registros="centrosTrabajo" :endpoint="endpointConvenios" :nombreItem="camposCentroTrabajo" placeholder="Centro de costos" />
+                        <SearchList nombreCampo="Centro de costos" :registros="CentrosCostos" nombreItem="nom_cco"
+                            placeholder="Centro de costos" />
                     </div>
                 </div>
                 <div class="row">
@@ -437,27 +440,26 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Área" :registros="areas"  nombreItem="des_area" 
-                             placeholder="Clasificador del convenio" />
-                    </div>
-                    <div class="col">
-                        <SearchList nombreCampo="Sucursal seguridad social" :registros="sucursalesss"
-                             nombreItem="descripcion"
+                        <SearchList nombreCampo="Área" :registros="areas" nombreItem="des_area"
                             placeholder="Clasificador del convenio" />
                     </div>
                     <div class="col">
-                        <SearchTable nombreCampo="Centro de trabajo" :datos="convenios" :endpoint="endpointConvenios"
-                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
+                        <SearchList nombreCampo="Sucursal seguridad social" :registros="sucursalesss"
+                            nombreItem="descripcion" placeholder="Clasificador del convenio" />
+                    </div>
+                    <div class="col">
+                        <SearchTable nombreCampo="Centro de trabajo" :datos="convenios" :nombreItem="camposConvenio"
+                            placeholder="Centro de trabajo" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Cuenta de gastos local" :datos="convenios" :endpoint="endpointConvenios"
-                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
+                        <SearchList nombreCampo="Cuenta de gastos local" :registros="cuentagastosl" nombreItem="descripcion"
+                            placeholder="Cuenta de gastos local" />
                     </div>
                     <div class="col">
-                        <SearchTable nombreCampo="Cuenta de gastos NIF" :datos="convenios" :endpoint="endpointConvenios"
-                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
+                        <SearchList nombreCampo="Cuenta de gastos NIF" :registros="cuentagastosl" nombreItem="descripcion"
+                            placeholder="Cuenta de gastos NIF" />
                     </div>
                 </div>
                 <div class="row">
@@ -472,13 +474,13 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Vivienda:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="vivienda" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="vivienda" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Salud / Medicina Prepagada:</label>
-                        <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="medicina_prepagada" />
+                        <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="medicina_prepagada" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Dependiente:</label>
@@ -489,7 +491,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Datos de la Contratación</h6>
+            <h6 class="tituloseccion">Datos De Contratación</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col">
@@ -500,7 +502,7 @@
                         </div>
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Cargo" :registros="municipios" placeholder="Cargo" />
+                        <SearchTable nombreCampo="Cargo" :datos="cargos" :nombreItem="camposCargos" placeholder="Cargo" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Lider?</label>
@@ -528,18 +530,18 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha ingreso:</label>
-                        <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="fecha_ingreso" />
+                        <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="fecha_ingreso" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha finalización:</label>
-                        <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="fecha_finalizacion" />
+                        <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="fecha_finalizacion" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">No. días periodo prueba:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="periodo_prueba" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="periodo_prueba" />
                     </div>
                 </div>
                 <div class="row">
@@ -549,49 +551,52 @@
                             v-model="finalizacion_periodo_prueba" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modo de liquidación" :registros="municipios"
+                        <SearchList nombreCampo="Modo de liquidación" nombreItem="des_mod" :registros="modosliquidacion"
                             placeholder="Modo de liquidación" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Horas contratadas al mes:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="horas_contratadas" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="horas_contratadas" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Valor hora:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="valor_hora" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="valor_hora" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Clase de salario" :registros="municipios" placeholder="Clase de salario" />
+                        <SearchList nombreCampo="Clase de salario" :registros="clasesSalario" nombreItem="Descripción"
+                            placeholder="Clase de salario" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de salud" :registros="municipios" placeholder="Fondo de salud" />
+                        <SearchTable nombreCampo="Fondo de salud" :datos="fondosSalud" :nombreItem="camposFondoSalud"
+                            placeholder="Fondo de salud" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de pensión" :registros="municipios" placeholder="Fondo de pensión" />
+                        <SearchList nombreCampo="Fondo de pensión" :registros="fondosPension" nombreItem="nom_fdo"
+                            placeholder="Fondo de pensión" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Caja de compensación" :registros="municipios"
+                        <SearchList nombreCampo="Caja de compensación" :registros="cajasCompensacion" nombreItem="nom_fdo"
                             placeholder="Caja de compensación" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Administradora de riesgos laborales" :registros="municipios"
-                            placeholder="Administradora de riesgos laborales" />
+                        <SearchList nombreCampo="Administradora de riesgos laborales" :registros="riesgosLaborales"
+                            nombreItem="nom_fdo" placeholder="Administradora de riesgos laborales" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Porcentaje ARL:</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="porcentaje_arl" />
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="porcentaje_arl" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Fonde de Cesantías" :registros="municipios"
+                        <SearchList nombreCampo="Fondo de Cesantías" :registros="fondosCesantias" nombreItem="nom_fdo"
                             placeholder="Fonde de Cesantías" />
                     </div>
                     <div class="col">
@@ -601,12 +606,12 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de cotizante" :registros="municipios"
+                        <SearchList nombreCampo="Tipo de cotizante" :registros="tiposCotizante" nombreItem="des_cot"
                             placeholder="Tipo de cotizante" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Subtipo de cotizante" :registros="municipios"
-                            placeholder="Subtipo de cotizante" />
+                        <SearchList nombreCampo="Subtipo de cotizante" :registros="subTiposCotizante"
+                            nombreItem="Des_SubTip" placeholder="Subtipo de cotizante" />
                     </div>
                 </div>
                 <div class="row">
@@ -642,7 +647,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Plantilla para Control de Liquidación</h6>
+            <h6 class="tituloseccion">Plantilla Para Control De Liquidación</h6>
             <div id="seccion">
                 <div class="col">
                     <SearchList nombreCampo="Planilla eventual" :registros="municipios" placeholder="Planilla eventual" />
@@ -702,9 +707,49 @@ export default {
             empleado: '',
             empleados: [],
             camposEmpleado: ['cod_emp', 'nom_emp'],
-            endpointEmpleados: '',
+            endpointEmpleados: 'empleado',
             estadolaboralempleado: '',
             estadoslaboralesempleados: [],
+            cuentagastol: '',
+            cuentagastosl: [],
+            cargo: '',
+            cargos: [],
+            camposCargos: ['cod_car', 'nom_car'],
+            modoliquidacion: '',
+            modosliquidacion: [],
+            claseSalario: '',
+            clasesSalario: [],
+            fondoSalud: '',
+            fondosSalud: [],
+            camposFondoSalud: ['cod_fdo', 'nom_fdo'],
+            fondoPension: '',
+            fondosPension: [],
+            cajaCompensacion: '',
+            cajasCompensacion: [],
+            riesgoLaboral: '',
+            riesgosLaborales: [],
+            fondoCesantias: '',
+            fondosCesantias: [],
+            tipoCotizante: '',
+            tiposCotizante: [],
+            subTipoCotizante: '',
+            subTiposCotizante: [],
+            grupoSanguineo: '',
+            gruposSanguineos: [],
+            factorRH: '',
+            factoresRH: [],
+            claseLibretaMilitar: '',
+            clasesLibretaMilitar: [],
+            nacionalidad: '',
+            nacionalidades: [],
+            regimenSalarial: '',
+            regimenesSalariales: [],
+            modalidadRetencion: '',
+            modalidadesRetencion: [],
+            calculoIman: '',
+            calculosIman: [],
+            vacacion: '',
+            vacaciones: [],
             showModal: true,
             numero_identificacion: '',
             codigo_alterno: '',
@@ -778,6 +823,25 @@ export default {
         this.getCentroCosto()
         this.getArea()
         this.getCentroTrabajo()
+        this.getCuentagastosl()
+        this.getCargo()
+        this.getModoLiquidacion()
+        this.getClaseSalario()
+        this.getFondoSalud()
+        this.getFondoPension()
+        this.getCajaCompensacion()
+        this.getRiesgoLaboral()
+        this.getFondoCesantias()
+        this.getTipoCotizante()
+        this.getSubTipoCotizante()
+        this.getGrupoSanguineo()
+        this.getFactorRH()
+        this.getClaseLibretaMilitar()
+        this.getNacionalidad()
+        this.getRegimenSalarial()
+        this.getModalidadRetencion()
+        this.getCalculoIman()
+        this.getVacaciones()
     },
     mounted() {
     },
@@ -909,6 +973,144 @@ export default {
             axios.get(self.URL_API + "api/v1/centrotrabajo", config).then(function (result) {
                 self.centrosTrabajo = result.data;
             });
+        },
+        getCuentagastosl() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/cuentagastosl", config).then(function (result) {
+                self.cuentagastosl = result.data;
+            });
+        },
+        getCargo() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/cargo", config).then(function (result) {
+                self.cargos = result.data;
+            });
+        },
+        getModoLiquidacion() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/modoliquidacion", config).then(function (result) {
+                self.modosliquidacion = result.data;
+            });
+        },
+        getClaseSalario() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/clasesalario", config).then(function (result) {
+                self.clasesSalario = result.data;
+            });
+        },
+        getFondoSalud() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/fondosalud", config).then(function (result) {
+                self.fondosSalud = result.data;
+            });
+        },
+        getFondoPension() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/fondopension", config).then(function (result) {
+                self.fondosPension = result.data;
+            });
+        },
+        getCajaCompensacion() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/fondopension", config).then(function (result) {
+                self.cajasCompensacion = result.data;
+            });
+        },
+        getRiesgoLaboral() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/riesgolaboral", config).then(function (result) {
+                self.riesgosLaborales = result.data;
+            });
+        },
+        getFondoCesantias() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/fondocesantias", config).then(function (result) {
+                self.fondosCesantias = result.data;
+            });
+        },
+        getTipoCotizante() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/tipocotizante", config).then(function (result) {
+                self.tiposCotizante = result.data;
+            });
+        },
+        getSubTipoCotizante() {
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/subtipocotizante", config).then(function (result) {
+                self.subTiposCotizante = result.data;
+            });
+        },
+        getGrupoSanguineo() {
+            this.gruposSanguineos = [
+                { codigo: '01', nombre: 'A' },
+                { codigo: '02', nombre: 'B' },
+                { codigo: '03', nombre: 'AB' },
+                { codigo: '04', nombre: 'O' },
+            ]
+        },
+        getFactorRH() {
+            this.factoresRH = [
+                { codigo: '01', nombre: '+' },
+                { codigo: '02', nombre: '-' },
+              
+            ]
+        },
+        getClaseLibretaMilitar() {
+            this.clasesLibretaMilitar = [
+                { codigo: '01', nombre: 'No aplica' },
+                { codigo: '02', nombre: 'Primera' },
+                { codigo: '02', nombre: 'Segunda' },
+              
+            ]
+        },
+        getNacionalidad() {
+            this.nacionalidades = [
+                { codigo: '01', nombre: 'Colombiano' },
+                { codigo: '02', nombre: 'Doble' },
+                { codigo: '03', nombre: 'Extrangero' },
+              
+            ]
+        },
+        getRegimenSalarial() {
+            this.regimenesSalariales = [
+                { codigo: '01', nombre: 'Anterior' },
+                { codigo: '02', nombre: 'Ley 50' },
+              
+            ]
+        },
+        getModalidadRetencion() {
+            this.modalidadesRetencion = [
+                { codigo: '01', nombre: 'Modalidad 1' },
+                { codigo: '02', nombre: 'Modalidad 2' },
+              
+            ]
+        },
+        getCalculoIman() {
+            this.calculosIman = [
+                { codigo: '01', nombre: 'No aplica' },
+                { codigo: '02', nombre: 'Aplica' },
+                { codigo: '03', nombre: 'Trabajador por cuenta propia' },
+              
+            ]
+        },
+        getVacaciones() {
+            this.vacaciones = [
+                { codigo: '01', nombre: 'Individuales' },
+                { codigo: '02', nombre: 'Colectivas' },
+               
+              
+            ]
         },
         configHeader() {
             let config = {

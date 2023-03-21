@@ -31,12 +31,12 @@ export default {
         return {
             hover: false,
             registro: '',
-            registrosFilter: [],//this.registros,
+            registrosFilter: this.registros,
         }
     },
 
     watch: {
-        registros: function () { // Valida que se haya llenado un campo de firma para limpiar el pad de firmas
+        registros: function () {
             this.registrosFilter = this.registros
         }
     },
