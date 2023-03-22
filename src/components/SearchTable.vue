@@ -4,8 +4,8 @@
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                <input type="text" @click="modal = true" autocomplete="off" class="form-control" id="exampleInputEmail2"
-                    :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
+                <input type="text" @focus="evento()" @click="modal = true" autocomplete="off" class="form-control"
+                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span>
             </div>
         </div>
@@ -45,7 +45,7 @@
                                 <tbody>
                                     <tr v-for="(item) in items_tabla2" :key="item.id">
                                         <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify"
-                                            @click="registro = item[item2], modal = !modal">{{ item[item2] }}
+                                            @click="registro = item[item2], evento2(item[item2]), modal = !modal">{{ item[item2] }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -107,6 +107,7 @@ export default {
         },
         nombreItem: [],
         endpoint: {},
+        eventoCampo: {}
 
         // *****************
         // tabla: [],
@@ -145,6 +146,14 @@ export default {
     created() {
     },
     methods: {
+        evento() {
+            this.$emit(this.eventoCampo)
+        },
+        evento2() {
+            if(this.registro != ''){
+                this.$emit(this.eventoCampo, this.registro)
+            }
+        },
         codigoItem(item) {
             return item[this.nombreItem[0]];
         },
@@ -273,5 +282,4 @@ label {
 }
 
 /* fin spinner*/
-
 </style>

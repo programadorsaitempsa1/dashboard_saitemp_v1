@@ -4,7 +4,7 @@ import VueRouter from "vue-router";
 import FormularioSig from "../components/FormularioSig.vue";
 import InicioSesion from "../components/InicioSesion.vue";
 import NavBar from "../components/NavBar.vue";
-import UsuariosSig from "../components/UsuariosSig.vue";
+import Usuarios from "../components/Usuarios.vue";
 import RolesUsuario from "../components/RolesUsuario.vue";
 import MenuRoles from "../components/MenuRoles.vue";
 import PermisoRoles from "../components/PermisoRoles.vue";
@@ -57,9 +57,9 @@ const routes = [
         component: IngresarUsuario,
       },
       {
-        path: "usuariosSig",
-        name: "usuariosSig",
-        component: UsuariosSig,
+        path: "usuarios",
+        name: "usuarios",
+        component: Usuarios,
       },
       {
         path: "rolesUsuario",

@@ -6,22 +6,22 @@
                 <form>
                     <div class="mb-3">
                         <label class="form-label">Nombres</label>
-                        <input type="text" class="form-control" v-model="nombres" />
+                        <input type="text" :autocomplete="false" class="form-control" v-model="nombres" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" v-model="apellidos" />
+                        <input type="text" :autocomplete="false" class="form-control" v-model="apellidos" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">N. Documento de identidad</label>
                         <input type="text" class="form-control" v-model="documento_identidad"
-                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                        autocomplete="off" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Correo electrónico</label>
                         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
                             v-model="email"
-                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                            :autocomplete="false" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Contraseña</label>
@@ -45,7 +45,7 @@
                             </option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label class="form-label">Contrato</label>
                         <select id="inputState3" class="form-select" v-model="contrato" @change="contratoId(contrato)"
                             :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
@@ -53,13 +53,11 @@
                                 {{ item.numero }}
                             </option>
                         </select>
-                    </div>
-                    <button v-if="contrato == undefined" type="button" class="btn btn-success" @click="register(false)">
+                    </div> -->
+                    <button  type="button" class="btn btn-success" @click="register()">
                         Guardar
                     </button>
-                    <button v-if="contrato != undefined" type="button" class="btn btn-success" @click="register(true)">
-                        Guardar
-                    </button>
+                    
                 </form>
             </div>
         </div>
@@ -83,10 +81,10 @@ export default {
             rolId_: "",
             estados: [],
             estado: "",
-            contratos: [],
-            contrato: '',
+            // contratos: [],
+            // contrato: '',
             estadoId_: "",
-            contratoId_: '',
+            // contratoId_: '',
             mensaje_error: "",
             URL_API: process.env.VUE_APP_URL_API,
             id_user: "",
@@ -101,17 +99,17 @@ export default {
         this.userLogued()
         this.getRoles()
         this.getEstados()
-        this.getContratos()
+        // this.getContratos()
     },
     methods: {
-        getContratos() {
-            let config = this.configHeader();
-            let self = this;
-            axios.get(self.URL_API + "api/v1/contratosactivos", config).then(function (result) {
-                self.contratos = result.data;
-            });
-        },
-        register(empleado) {
+        // getContratos() {
+        //     let config = this.configHeader();
+        //     let self = this;
+        //     axios.get(self.URL_API + "api/v1/contratosactivos", config).then(function (result) {
+        //         self.contratos = result.data;
+        //     });
+        // },
+        register() {
             let self = this;
             let config = this.configHeader();
             let accion = "register";
@@ -121,13 +119,8 @@ export default {
                 email: this.email,
                 password: this.password,
                 rol_id: this.rolId_,
-                contrato_id: this.contratoId_,
                 documento_identidad: this.documento_identidad,
             };
-            if (empleado) {
-                user.empleado = empleado
-              
-            }
             if (this.$route.params.id != undefined) {
                 user.estado_id = self.estadoId_;
                 user.id_user = this.$route.params.id
@@ -141,7 +134,7 @@ export default {
                     } else {
                         self.showAlert(result.data.message, result.data.status);
                         if (self.roluserlogued == 'S. Administrador' || self.roluserlogued == 'Administrador') {
-                            self.$router.push('/navbar/usuariossig')
+                            self.$router.push('/navbar/usuarios')
                         }
                     }
                 }).catch(function (error) {

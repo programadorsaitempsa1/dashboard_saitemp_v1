@@ -6,13 +6,14 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Planilla eventual" :nombreItem="camposEmpleado"
-                            :endpoint="endpointEmpleados" placeholder="Planilla eventual" :showModal="showModal"
-                            :datos="empleados" />
+                        <SearchTable nombreCampo="Planilla eventual" @getEmpleados="getEmpleados" eventoCampo="getEmpleados"
+                            :nombreItem="camposEmpleado" :endpoint="endpointEmpleados" placeholder="Planilla eventual"
+                            :showModal="showModal" :datos="empleados" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de identificación" nombreItem="des_tip"
-                            :registros="tiposIdentificacion" placeholder="Tipo de identificación" />
+                        <SearchList nombreCampo="Tipo de identificación" @getTiposIdentificacion="getTiposIdentificacion"
+                            eventoCampo="getTiposIdentificacion" nombreItem="des_tip" :registros="tiposIdentificacion"
+                            placeholder="Tipo de identificación" />
                     </div>
                 </div>
                 <div class="row">
@@ -31,7 +32,7 @@
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Expedición del documento de
                         identidad</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" ref="pais" nombreItem="nom_pai" :registros="paises"
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
                             @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
@@ -73,8 +74,8 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />date
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
@@ -87,11 +88,12 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Género" nombreItem="des_gen" :registros="generos" placeholder="Género" />
+                        <SearchList nombreCampo="Género" @getGenero="getGenero" eventoCampo="getGenero" nombreItem="des_gen"
+                            :registros="generos" placeholder="Género" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado civil" nombreItem="des_est" :registros="estadosCiviles"
-                            placeholder="Estado civil" />
+                        <SearchList nombreCampo="Estado civil" @getEstadoCivil="getEstadoCivil" eventoCampo="getEstadoCivil"
+                            nombreItem="des_est" :registros="estadosCiviles" placeholder="Estado civil" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento</label>
@@ -104,19 +106,25 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Grupo sanguineo" nombreItem="nombre" :registros="gruposSanguineos" placeholder="Grupo sanguineo" />
+                        <SearchList nombreCampo="Grupo sanguineo" @getGrupoSanguineo="getGrupoSanguineo"
+                            eventoCampo="getGrupoSanguineo" nombreItem="nombre" :registros="gruposSanguineos"
+                            placeholder="Grupo sanguineo" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Factor RH" :registros="factoresRH" nombreItem="nombre" placeholder="Factor RH" />
+                        <SearchList nombreCampo="Factor RH" @getFactorRH="getFactorRH" eventoCampo="getFactorRH"
+                            :registros="factoresRH" nombreItem="nombre" placeholder="Factor RH" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Clase Libreta Militar" :registros="clasesLibretaMilitar" nombreItem="nombre"
+                        <SearchList nombreCampo="Clase Libreta Militar" @getClaseLibretaMilitar="getClaseLibretaMilitar"
+                            eventoCampo="getClaseLibretaMilitar" :registros="clasesLibretaMilitar" nombreItem="nombre"
                             placeholder="Clase Libreta Militar" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Nacionalidad" :registros="nacionalidades" nombreItem="nombre" placeholder="Nacionalidad" />
+                        <SearchList nombreCampo="Nacionalidad" @getNacionalidad="getNacionalidad"
+                            eventoCampo="getNacionalidad" :registros="nacionalidades" nombreItem="nombre"
+                            placeholder="Nacionalidad" />
                     </div>
                 </div>
                 <div class="row">
@@ -149,8 +157,8 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
@@ -219,17 +227,19 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Régimen salarial" :registros="regimenesSalariales" nombreItem="nombre" placeholder="Régimen salarial" />
+                        <SearchList nombreCampo="Régimen salarial" @getRegimenSalarial="getRegimenSalarial"
+                            eventoCampo="getRegimenSalarial" :registros="regimenesSalariales" nombreItem="nombre"
+                            placeholder="Régimen salarial" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" :registros="formaspago"
-                            placeholder="Forma de pago" />
+                        <SearchList nombreCampo="Forma de pago" nombreItem="nom_pag" @getFormaPago="getFormaPago"
+                            eventoCampo="getFormaPago" :registros="formaspago" placeholder="Forma de pago" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Código del banco" nombreItem="nom_ban" :registros="bancos"
-                            placeholder="Código del banco" />
+                        <SearchList nombreCampo="Código del banco" @getBanco="getBanco" eventoCampo="getBanco"
+                            nombreItem="nom_ban" :registros="bancos" placeholder="Código del banco" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
@@ -244,7 +254,8 @@
                             aria-describedby="emailHelp" v-model="pago_electronico" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modalidad Retención" :registros="modalidadesRetencion" nombreItem="nombre"
+                        <SearchList nombreCampo="Modalidad Retención" @getModalidadRetencion="getModalidadRetencion"
+                            eventoCampo="getModalidadRetencion" :registros="modalidadesRetencion" nombreItem="nombre"
                             placeholder="Modalidad Retención" />
                     </div>
                 </div>
@@ -262,7 +273,8 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Cálculo IMAN" :registros="calculosIman" nombreItem="nombre" placeholder="Cálculo IMAN" />
+                        <SearchList nombreCampo="Cálculo IMAN" @getCalculoIman="getCalculoIman" eventoCampo="getCalculoIman"
+                            :registros="calculosIman" nombreItem="nombre" placeholder="Cálculo IMAN" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Estabilidad Laboral</label>
@@ -274,7 +286,8 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Vacaciones" :registros="vacaciones" nombreItem="nombre" placeholder="Vacaciones" />
+                        <SearchList nombreCampo="Vacaciones" @getVacaciones="getVacaciones" eventoCampo="getVacaciones"
+                            :registros="vacaciones" nombreItem="nombre" placeholder="Vacaciones" />
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Días de vacaciones por año:</label>
@@ -315,19 +328,22 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de contrato" nombreItem="nom_con" :registros="tiposcontrato"
+                        <SearchList nombreCampo="Tipo de contrato" @getTipoContrato="getTipoContrato"
+                            eventoCampo="getTipoContrato" nombreItem="nom_con" :registros="tiposcontrato"
                             placeholder="Tipo de contrato" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Estado Laboral del Empleado" nombreItem="nom_est"
-                            :registros="estadoslaboralesempleados" placeholder="Estado Laboral del Empleado" />
+                        <SearchList nombreCampo="Estado Laboral del Empleado"
+                            @getEstadoLaboralEmpleado="getEstadoLaboralEmpleado" eventoCampo="getEstadoLaboralEmpleado"
+                            nombreItem="nom_est" :registros="estadoslaboralesempleados"
+                            placeholder="Estado Laboral del Empleado" />
                     </div>
                 </div>
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de contrato</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
@@ -349,8 +365,9 @@
             <div id="seccion">
                 <div class="row">
                     <div class="col">
-                        <SearchTable nombreCampo="Convenio" :datos="convenios" :endpoint="endpointConvenios"
-                            :nombreItem="camposConvenio" placeholder="Compañía" />
+                        <SearchTable nombreCampo="Convenio" @getConvenio="getConvenio" eventoCampo="getConvenio"
+                            :datos="convenios" :endpoint="endpointConvenios" :nombreItem="camposConvenio"
+                            placeholder="Compañía" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Sucursal conevnio" :registros="municipios" placeholder="Sucursal" />
@@ -360,9 +377,9 @@
                             placeholder="Centro de costos" />
                     </div>
                 </div>
-                <div class="row" v-for="item, index in numeroClasificadorConvenio" :key="index">
+                <div class="row" v-for="item, index in numeroClasificadorConvenio" :key="index + 'b'">
                     <div class="col">
-                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1) + ' del Convenio'" :datos="convenios"
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1) + ' del Convenio'" @getConvenio="getConvenio" eventoCampo="getConvenio" :datos="convenios"
                             :endpoint="endpointConvenios" :nombreItem="camposConvenio"
                             placeholder="Clasificador del convenio" />
                     </div>
@@ -385,15 +402,16 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Compañía" :registros="companias" nombreItem="nom_cia"
-                            placeholder="Compañía" />
+                        <SearchList nombreCampo="Compañía" @getCompania="getCompania" eventoCampo="getCompania"
+                            :registros="companias" nombreItem="nom_cia" placeholder="Compañía" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Sucursal" :registros="sucursales" nombreItem="nom_suc"
-                            placeholder="Sucursal" />
+                        <SearchList nombreCampo="Sucursal" @getSucursales="getSucursales" eventoCampo="getSucursales"
+                            :registros="sucursales" nombreItem="nom_suc" placeholder="Sucursal" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Centro de costos" :registros="CentrosCostos" nombreItem="nom_cco"
+                        <SearchList nombreCampo="Centro de costos" @getCentroCosto="getCentroCosto"
+                            eventoCampo="getCentroCosto" :registros="centrosCostos" nombreItem="nom_cco"
                             placeholder="Centro de costos" />
                     </div>
                 </div>
@@ -415,9 +433,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-for="item, index in numeroClasificador" :key="index + 1">
+                <div class="row" v-for="item, index in numeroClasificador" :key="index + 'a'">
                     <div class="col">
-                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1)" :datos="convenios"
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1)" :datos="convenios" @getConvenio="getConvenio" eventoCampo="getConvenio"
                             :endpoint="endpointConvenios" :nombreItem="camposConvenio"
                             placeholder="Clasificador del convenio" />
                     </div>
@@ -440,25 +458,29 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Área" :registros="areas" nombreItem="des_area"
+                        <SearchList nombreCampo="Área" @getArea="getArea" eventoCampo="getArea" :registros="areas"
+                            nombreItem="des_area" placeholder="Clasificador del convenio" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Sucursal seguridad social" @getSucursalsSS="getSucursalsSS"
+                            eventoCampo="getSucursalsSS" :registros="sucursalesss" nombreItem="descripcion"
                             placeholder="Clasificador del convenio" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Sucursal seguridad social" :registros="sucursalesss"
-                            nombreItem="descripcion" placeholder="Clasificador del convenio" />
-                    </div>
-                    <div class="col">
-                        <SearchTable nombreCampo="Centro de trabajo" :datos="convenios" :nombreItem="camposConvenio"
+                        <SearchTable nombreCampo="Centro de trabajo" @getCentroTrabajo="getCentroTrabajo"
+                            eventoCampo="getCentroTrabajo" :datos="convenios" :nombreItem="camposCentroTrabajo"
                             placeholder="Centro de trabajo" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Cuenta de gastos local" :registros="cuentagastosl" nombreItem="descripcion"
+                        <SearchList nombreCampo="Cuenta de gastos local" @getCuentagastosl="getCuentagastosl"
+                            eventoCampo="getCuentagastosl" :registros="cuentagastosl" nombreItem="descripcion"
                             placeholder="Cuenta de gastos local" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Cuenta de gastos NIF" :registros="cuentagastosl" nombreItem="descripcion"
+                        <SearchList nombreCampo="Cuenta de gastos NIF" @getCuentaNIF="getCuentaNIF"
+                            eventoCampo="getCuentaNIF" :registros="cuentasNIF" nombreItem="descripcion"
                             placeholder="Cuenta de gastos NIF" />
                     </div>
                 </div>
@@ -502,7 +524,8 @@
                         </div>
                     </div>
                     <div class="col">
-                        <SearchTable nombreCampo="Cargo" :datos="cargos" :nombreItem="camposCargos" placeholder="Cargo" />
+                        <SearchTable nombreCampo="Cargo" @getCargo="getCargo" eventoCampo="getCargo" :datos="cargos"
+                            :nombreItem="camposCargos" placeholder="Cargo" />
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Lider?</label>
@@ -515,8 +538,8 @@
                 <div class="row">
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de labor</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                        <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
@@ -551,7 +574,8 @@
                             v-model="finalizacion_periodo_prueba" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Modo de liquidación" nombreItem="des_mod" :registros="modosliquidacion"
+                        <SearchList nombreCampo="Modo de liquidación" @getModoLiquidacion="getModoLiquidacion"
+                            eventoCampo="getModoLiquidacion" nombreItem="des_mod" :registros="modosliquidacion"
                             placeholder="Modo de liquidación" />
                     </div>
                     <div class="col mb-3">
@@ -567,26 +591,30 @@
                             aria-describedby="emailHelp" v-model="valor_hora" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Clase de salario" :registros="clasesSalario" nombreItem="Descripción"
+                        <SearchList nombreCampo="Clase de salario" @getClaseSalario="getClaseSalario"
+                            eventoCampo="getClaseSalario" :registros="clasesSalario" nombreItem="Descripción"
                             placeholder="Clase de salario" />
                     </div>
                     <div class="col">
-                        <SearchTable nombreCampo="Fondo de salud" :datos="fondosSalud" :nombreItem="camposFondoSalud"
-                            placeholder="Fondo de salud" />
+                        <SearchTable nombreCampo="Fondo de salud" @getFondoSalud="getFondoSalud" eventoCampo="getFondoSalud"
+                            :datos="fondosSalud" :nombreItem="camposFondoSalud" placeholder="Fondo de salud" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de pensión" :registros="fondosPension" nombreItem="nom_fdo"
+                        <SearchList nombreCampo="Fondo de pensión" @getFondoPension="getFondoPension"
+                            eventoCampo="getFondoPension" :registros="fondosPension" nombreItem="nom_fdo"
                             placeholder="Fondo de pensión" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Caja de compensación" :registros="cajasCompensacion" nombreItem="nom_fdo"
+                        <SearchList nombreCampo="Caja de compensación" @getCajaCompensacion="getCajaCompensacion"
+                            eventoCampo="getCajaCompensacion" :registros="cajasCompensacion" nombreItem="nom_fdo"
                             placeholder="Caja de compensación" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Administradora de riesgos laborales" :registros="riesgosLaborales"
-                            nombreItem="nom_fdo" placeholder="Administradora de riesgos laborales" />
+                        <SearchList nombreCampo="Administradora de riesgos laborales" @getRiesgoLaboral="getRiesgoLaboral"
+                            eventoCampo="getRiesgoLaboral" :registros="riesgosLaborales" nombreItem="nom_fdo"
+                            placeholder="Administradora de riesgos laborales" />
                     </div>
                 </div>
                 <div class="row">
@@ -596,22 +624,26 @@
                             aria-describedby="emailHelp" v-model="porcentaje_arl" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Fondo de Cesantías" :registros="fondosCesantias" nombreItem="nom_fdo"
+                        <SearchList nombreCampo="Fondo de Cesantías" @getFondoCesantias="getFondoCesantias"
+                            eventoCampo="getFondoCesantias" :registros="fondosCesantias" nombreItem="nom_fdo"
                             placeholder="Fonde de Cesantías" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Tipo medidas certificadas (DIAN)" :registros="municipios"
+                        <SearchList nombreCampo="Tipo medidas certificadas (DIAN)" @getTipoMedidaDian="getTipoMedidaDian"
+                            eventoCampo="getTipoMedidaDian" :registros="tiposMedidaDian" nombreItem="Descripcion"
                             placeholder="Tipo medidas certificadas (DIAN)" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <SearchList nombreCampo="Tipo de cotizante" :registros="tiposCotizante" nombreItem="des_cot"
+                        <SearchList nombreCampo="Tipo de cotizante" @getTipoCotizante="getTipoCotizante"
+                            eventoCampo="getTipoCotizante" :registros="tiposCotizante" nombreItem="des_cot"
                             placeholder="Tipo de cotizante" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Subtipo de cotizante" :registros="subTiposCotizante"
-                            nombreItem="Des_SubTip" placeholder="Subtipo de cotizante" />
+                        <SearchList nombreCampo="Subtipo de cotizante" @getSubTipoCotizante="getSubTipoCotizante"
+                            eventoCampo="getSubTipoCotizante" :registros="subTiposCotizante" nombreItem="Des_SubTip"
+                            placeholder="Subtipo de cotizante" />
                     </div>
                 </div>
                 <div class="row">
@@ -674,6 +706,7 @@ export default {
             departamento: '',
             departamentos: [],
             ciudad: '',
+            municipio:'',
             municipios: [],
             tipoIdentificacion: '',
             tiposIdentificacion: [],
@@ -693,8 +726,8 @@ export default {
             companias: [],
             sucursal: '',
             sucursales: [],
-            entroCosto: '',
-            CentrosCostos: [],
+            centroCosto: '',
+            centrosCostos: [],
             area: '',
             areas: [],
             convenio: '',
@@ -712,6 +745,8 @@ export default {
             estadoslaboralesempleados: [],
             cuentagastol: '',
             cuentagastosl: [],
+            cuentaNIF: '',
+            cuentasNIF: [],
             cargo: '',
             cargos: [],
             camposCargos: ['cod_car', 'nom_car'],
@@ -750,6 +785,8 @@ export default {
             calculosIman: [],
             vacacion: '',
             vacaciones: [],
+            tipoMedidaDian: '',
+            tiposMedidaDian: [],
             showModal: true,
             numero_identificacion: '',
             codigo_alterno: '',
@@ -769,7 +806,7 @@ export default {
             correo: '',
             correo_alternativo: '',
             avisar_emergencia: '',
-            manejo_datos: '',
+            manejo_datos: false,
             numero_cuenta: '',
             pago_electronico: '',
             porcentaje_retencion: '',
@@ -781,13 +818,13 @@ export default {
             numero_contrato: '',
             fecha_celebracion: '',
             nota_contrato: '',
-            distribucion_centro_costos: '',
-            distribucion_centro_costos_nif: '',
+            distribucion_centro_costos: false,
+            distribucion_centro_costos_nif: false,
             observaciones: '',
             vivienda: '',
             medicina_prepagada: '',
-            dependiente: '',
-            salario_basico: '',
+            dependiente: false,
+            salario_basico: false,
             lider: false,
             fecha_ingreso: '',
             fecha_finalizacion: '',
@@ -807,54 +844,57 @@ export default {
     },
 
     created() {
-        this.getEmpleados()
-        this.getTiposIdentificacion()
+        // this.getEmpleados()
+        // this.getTiposIdentificacion()
         this.getPaises()
-        this.getGenero()
-        this.getEstadoCivil()
-        this.getFormaPago()
-        this.getBanco()
-        this.getTipoContrato()
-        this.getEstadoLaboralEmpleado()
-        this.getConvenio()
-        this.getSucursalsSS()
-        this.getCompania()
-        this.getSucursales()
-        this.getCentroCosto()
-        this.getArea()
-        this.getCentroTrabajo()
-        this.getCuentagastosl()
-        this.getCargo()
-        this.getModoLiquidacion()
-        this.getClaseSalario()
-        this.getFondoSalud()
-        this.getFondoPension()
-        this.getCajaCompensacion()
-        this.getRiesgoLaboral()
-        this.getFondoCesantias()
-        this.getTipoCotizante()
-        this.getSubTipoCotizante()
-        this.getGrupoSanguineo()
-        this.getFactorRH()
-        this.getClaseLibretaMilitar()
-        this.getNacionalidad()
-        this.getRegimenSalarial()
-        this.getModalidadRetencion()
-        this.getCalculoIman()
-        this.getVacaciones()
+        // this.getGenero()
+        // this.getEstadoCivil()
+        // this.getFormaPago()
+        // this.getBanco()
+        // this.getTipoContrato()
+        // this.getEstadoLaboralEmpleado()
+        // this.getConvenio()
+        // this.getSucursalsSS()
+        // this.getCompania()
+        // this.getSucursales()
+        // this.getCentroCosto()
+        // this.getArea()
+        // this.getCentroTrabajo()
+        // this.getCuentagastosl()
+        // this.getCargo()
+        // this.getModoLiquidacion()
+        // this.getClaseSalario()
+        // this.getFondoSalud()
+        // this.getFondoPension()
+        // this.getCajaCompensacion()
+        // this.getRiesgoLaboral()
+        // this.getFondoCesantias()
+        // this.getTipoCotizante()
+        // this.getSubTipoCotizante()
+        // this.getGrupoSanguineo()
+        // this.getFactorRH()
+        // this.getClaseLibretaMilitar()
+        // this.getNacionalidad()
+        // this.getRegimenSalarial()
+        // this.getModalidadRetencion()
+        // this.getCalculoIman()
+        // this.getVacaciones()
     },
-    mounted() {
-    },
-
     methods: {
-        getEmpleados() {
+        getEmpleados(valor = null) {
+            if(valor != null){
+                this.empleado = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/empleado", config).then(function (result) {
                 self.empleados = result.data;
             });
         },
-        getPaises() {
+        getPaises(valor = null) {
+            if(valor != null){
+                this.pais = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/paises", config).then(function (result) {
@@ -862,7 +902,9 @@ export default {
             });
         },
         getDepartamentos(item) {
-            // console.log(this.$refs.pais)
+            if(!isNaN(item)){
+                this.departamento = item;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/departamentos/" + item, config).then(function (result) {
@@ -870,188 +912,289 @@ export default {
             });
         },
         getMunicipios(item) {
+            if(!isNaN(item)){
+                this.municipio = item;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/municipios/" + item, config).then(function (result) {
                 self.municipios = result.data;
             });
         },
-        getTiposIdentificacion() {
+        getTiposIdentificacion(valor = null) {
+            if(valor != null){
+                this.tipoIdentificacion = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/tipodocumentolista", config).then(function (result) {
                 self.tiposIdentificacion = result.data;
             });
         },
-        getGenero() {
+        getGenero(valor = null) {
+            if(valor != null){
+                this.genero = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/genero", config).then(function (result) {
                 self.generos = result.data;
             });
         },
-        getEstadoCivil() {
+        getEstadoCivil(valor = null) {
+            if(valor != null){
+                this.estadoCivil = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/estadocivil", config).then(function (result) {
                 self.estadosCiviles = result.data;
             });
         },
-        getFormaPago() {
+        getFormaPago(valor = null) {
+            if(valor != null){
+                this.formapago = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/formapago", config).then(function (result) {
                 self.formaspago = result.data;
             });
         },
-        getBanco() {
+        getBanco(valor = null) {
+            if(valor != null){
+                this.banco = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/banco", config).then(function (result) {
                 self.bancos = result.data;
             });
         },
-        getTipoContrato() {
+        getTipoContrato(valor = null) {
+            if(valor != null){
+                this.tipocontrato = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/tipocontrato", config).then(function (result) {
                 self.tiposcontrato = result.data;
             });
         },
-        getEstadoLaboralEmpleado() {
+        getEstadoLaboralEmpleado(valor = null) {
+            if(valor != null){
+                this.estadolaboralempleado = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/estadolaboralempleado", config).then(function (result) {
                 self.estadoslaboralesempleados = result.data;
             });
         },
-        getConvenio() {
+        getConvenio(valor = null) {
+            if(valor != null){
+                this.convenio = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/convenio", config).then(function (result) {
                 self.convenios = result.data;
             });
         },
-        getSucursalsSS() {
+        getSucursalsSS(valor = null) {
+            if(valor != null){
+                this.sucursalsss = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/sucursalss", config).then(function (result) {
                 self.sucursalesss = result.data;
             });
         },
-        getCompania() {
+        getCompania(valor = null) {
+            if(valor != null){
+                this.compania = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/compania", config).then(function (result) {
                 self.companias = result.data;
             });
         },
-        getSucursales() {
+        getSucursales(valor = null) {
+            if(valor != null){
+                this.sucursal = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/sucursal", config).then(function (result) {
                 self.sucursales = result.data;
             });
         },
-        getCentroCosto() {
+        getCentroCosto(valor = null) {
+            if(valor != null){
+                this.centroCosto = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/centrocostos", config).then(function (result) {
-                self.CentrosCostos = result.data;
+                self.centrosCostos = result.data;
             });
         },
-        getArea() {
+        getArea(valor = null) {
+            if(valor != null){
+                this.area = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/area", config).then(function (result) {
                 self.areas = result.data;
             });
         },
-        getCentroTrabajo() {
+        getCentroTrabajo(valor = null) {
+            if(valor != null){
+                this.centroTrabajo = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/centrotrabajo", config).then(function (result) {
                 self.centrosTrabajo = result.data;
             });
         },
-        getCuentagastosl() {
+        getCuentagastosl(valor = null) {
+            if(valor != null){
+                this.cuentagastol = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/cuentagastosl", config).then(function (result) {
                 self.cuentagastosl = result.data;
             });
         },
-        getCargo() {
+        getCuentaNIF(valor = null) {
+            if(valor != null){
+                this.cuentaNIF = valor;
+            }
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/cuentagastosl", config).then(function (result) {
+                self.cuentasNIF = result.data;
+            });
+        },
+        getCargo(valor = null) {
+            if(valor != null){
+                this.cargo = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/cargo", config).then(function (result) {
                 self.cargos = result.data;
             });
         },
-        getModoLiquidacion() {
+        getModoLiquidacion(valor = null) {
+            if(valor != null){
+                this.modoliquidacion = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/modoliquidacion", config).then(function (result) {
                 self.modosliquidacion = result.data;
             });
         },
-        getClaseSalario() {
+        getClaseSalario(valor = null) {
+            if(valor != null){
+                this.claseSalario = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/clasesalario", config).then(function (result) {
                 self.clasesSalario = result.data;
             });
         },
-        getFondoSalud() {
+        getFondoSalud(valor = null) {
+            if(valor != null){
+                this.fondoSalud = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/fondosalud", config).then(function (result) {
                 self.fondosSalud = result.data;
             });
         },
-        getFondoPension() {
+        getFondoPension(valor = null) {
+            if(valor != null){
+                this.fondoPension = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/fondopension", config).then(function (result) {
                 self.fondosPension = result.data;
             });
         },
-        getCajaCompensacion() {
+        getCajaCompensacion(valor = null) {
+            if(valor != null){
+                this.cajaCompensacion = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/fondopension", config).then(function (result) {
                 self.cajasCompensacion = result.data;
             });
         },
-        getRiesgoLaboral() {
+        getRiesgoLaboral(valor = null) {
+            if(valor != null){
+                this.riesgoLaboral = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/riesgolaboral", config).then(function (result) {
                 self.riesgosLaborales = result.data;
             });
         },
-        getFondoCesantias() {
+        getFondoCesantias(valor = null) {
+            if(valor != null){
+                this.fondoCesantias = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/fondocesantias", config).then(function (result) {
                 self.fondosCesantias = result.data;
             });
         },
-        getTipoCotizante() {
+        getTipoCotizante(valor = null) {
+            if(valor != null){
+                this.tipoCotizante = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/tipocotizante", config).then(function (result) {
                 self.tiposCotizante = result.data;
             });
         },
-        getSubTipoCotizante() {
+        getSubTipoCotizante(valor = null) {
+            if(valor != null){
+                this.subTipoCotizante = valor;
+            }
             let config = this.configHeader();
             let self = this;
             axios.get(self.URL_API + "api/v1/subtipocotizante", config).then(function (result) {
                 self.subTiposCotizante = result.data;
             });
         },
-        getGrupoSanguineo() {
+        getTipoMedidaDian(valor = null) {
+            if(valor != null){
+                this.tipoMedidaDian = valor;
+            }
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/tipomedidadian", config).then(function (result) {
+                self.tiposMedidaDian = result.data;
+            });
+        },
+        getGrupoSanguineo(valor = null) {
+            if(valor != null){
+                this.grupoSanguineo = valor;
+            }
             this.gruposSanguineos = [
                 { codigo: '01', nombre: 'A' },
                 { codigo: '02', nombre: 'B' },
@@ -1059,57 +1202,75 @@ export default {
                 { codigo: '04', nombre: 'O' },
             ]
         },
-        getFactorRH() {
+        getFactorRH(valor = null) {
+            if(valor != null){
+                this.factorRH = valor;
+            }
             this.factoresRH = [
                 { codigo: '01', nombre: '+' },
                 { codigo: '02', nombre: '-' },
-              
+
             ]
         },
-        getClaseLibretaMilitar() {
+        getClaseLibretaMilitar(valor = null) {
+            if(valor != null){
+                this.claseLibretaMilitar = valor;
+            }
             this.clasesLibretaMilitar = [
                 { codigo: '01', nombre: 'No aplica' },
                 { codigo: '02', nombre: 'Primera' },
                 { codigo: '02', nombre: 'Segunda' },
-              
+
             ]
         },
-        getNacionalidad() {
+        getNacionalidad(valor = null) {
+            if(valor != null){
+                this.nacionalidad = valor;
+            }
             this.nacionalidades = [
                 { codigo: '01', nombre: 'Colombiano' },
                 { codigo: '02', nombre: 'Doble' },
                 { codigo: '03', nombre: 'Extrangero' },
-              
+
             ]
         },
-        getRegimenSalarial() {
+        getRegimenSalarial(valor = null) {
+            if(valor != null){
+                this.regimenSalarial = valor;
+            }
             this.regimenesSalariales = [
                 { codigo: '01', nombre: 'Anterior' },
                 { codigo: '02', nombre: 'Ley 50' },
-              
+
             ]
         },
-        getModalidadRetencion() {
+        getModalidadRetencion(valor = null) {
+            if(valor != null){
+                this.modalidadRetencion = valor;
+            }
             this.modalidadesRetencion = [
                 { codigo: '01', nombre: 'Modalidad 1' },
                 { codigo: '02', nombre: 'Modalidad 2' },
-              
+
             ]
         },
-        getCalculoIman() {
+        getCalculoIman(valor = null) {
+            if(valor != null){
+                this.calculoIman = valor;
+            }
             this.calculosIman = [
                 { codigo: '01', nombre: 'No aplica' },
                 { codigo: '02', nombre: 'Aplica' },
                 { codigo: '03', nombre: 'Trabajador por cuenta propia' },
-              
             ]
         },
-        getVacaciones() {
+        getVacaciones(valor = null) {
+            if(valor != null){
+                this.vacacion = valor;
+            }
             this.vacaciones = [
                 { codigo: '01', nombre: 'Individuales' },
                 { codigo: '02', nombre: 'Colectivas' },
-               
-              
             ]
         },
         configHeader() {
@@ -1208,5 +1369,4 @@ span {
     width: 100%;
     text-align: left;
     float: left;
-}
-</style>
+}</style>

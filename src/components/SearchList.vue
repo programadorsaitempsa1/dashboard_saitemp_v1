@@ -4,7 +4,7 @@
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                <input type="text" @click="hover = !hover" autocomplete="off"
+                <input type="text" @focus="evento()" @click="hover = !hover" @keyup="hover = true" autocomplete="off"
                     @input="filterResults(registro, registros, 'registros')" class="form-control" id="exampleInputEmail2"
                     :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span>
@@ -12,7 +12,7 @@
         </div>
         <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">
             <div id="lista1" v-for="(item, index) in registrosFilter" :key="index"
-                @click="registro = nombreItems(item), hover = !hover, filterResults('', registros, 'registros'), listaEnCadena(item)">
+                @click="registro = nombreItems(item), evento2(), hover = !hover, filterResults('', registros, 'registros'), listaEnCadena(item)">
                 {{ nombreItems(item) }}
                 <!-- {{ item.nom_pai != null ? item.nom_pai: item.nom_dep != null? item.nom_dep: item.nom_ciu != null ? item.nom_ciu: '' }} -->
             </div>
@@ -25,7 +25,8 @@ export default {
         nombreCampo: {},
         placeholder: {},
         registros: [],
-        nombreItem: {}
+        nombreItem: {},
+        eventoCampo:{}
     },
     data() {
         return {
@@ -44,6 +45,17 @@ export default {
 
     },
     methods: {
+        evento() {
+            if(this.eventoCampo != undefined){
+                this.$emit(this.eventoCampo)
+            }
+            
+        },
+        evento2() {
+            if(this.registro != ''){
+                this.$emit(this.eventoCampo, this.registro)
+            }
+        },
         nombreItems(item) {
             return item[this.nombreItem];
         },
