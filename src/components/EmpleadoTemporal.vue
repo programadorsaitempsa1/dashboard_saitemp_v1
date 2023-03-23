@@ -32,16 +32,16 @@
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Expedición del documento de
                         identidad</label>
                     <div class="col">
-                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises"
+                        <SearchList nombreCampo="Pais" nombreItem="nom_pai" :registros="paises" ubicacion="pais expedicion"
                             @getDepartamentos="getDepartamentos" placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            ubicacion="departamento expedicion" @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
-                            placeholder="Ciudad" />
+                            @setMunicipios="setMunicipios" ubicacion="ciudad expedicion" placeholder="Ciudad" />
                     </div>
                 </div>
             </div>
@@ -75,15 +75,16 @@
                     <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
                     <div class="col">
                         <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
-                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />date
+                            ubicacion="pais nacimiento" :registros="paises" @getDepartamentos="getDepartamentos"
+                            placeholder="Pais" />date
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            ubicacion="departamento nacimiento" @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
-                            placeholder="Ciudad" />
+                            @setMunicipios="setMunicipios" ubicacion="ciudad nacimiento" placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
@@ -127,7 +128,7 @@
                             placeholder="Nacionalidad" />
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" v-if="claseLibretaMilitar != 'No aplica'">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de libreta militar</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
@@ -155,18 +156,19 @@
             <h6 class="tituloseccion">Datos Residencia</h6>
             <div id="seccion">
                 <div class="row">
-                    <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de nacimiento</label>
+                    <label for="" style="text-align: left; margin:20px 0px 0px 0px">Ciudad de residencia</label>
                     <div class="col">
                         <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
-                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                            ubicacion="pais residencia" :registros="paises" @getDepartamentos="getDepartamentos"
+                            placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            ubicacion="departamento residencia" @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
-                            placeholder="Ciudad" />
+                            @setMunicipios="setMunicipios" ubicacion="ciudad residencia" placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
@@ -343,15 +345,16 @@
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de contrato</label>
                     <div class="col">
                         <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
-                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                            ubicacion="pais contrato" :registros="paises" @getDepartamentos="getDepartamentos"
+                            placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            ubicacion="departamento contrato" @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
-                            placeholder="Ciudad" />
+                            @setMunicipios="setMunicipios" ubicacion="ciudad contrato" placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
@@ -379,7 +382,8 @@
                 </div>
                 <div class="row" v-for="item, index in numeroClasificadorConvenio" :key="index + 'b'">
                     <div class="col">
-                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1) + ' del Convenio'" @getConvenio="getConvenio" eventoCampo="getConvenio" :datos="convenios"
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1) + ' del Convenio'"
+                            @getConvenio="getConvenio" eventoCampo="getConvenio" :datos="convenios"
                             :endpoint="endpointConvenios" :nombreItem="camposConvenio"
                             placeholder="Clasificador del convenio" />
                     </div>
@@ -435,9 +439,9 @@
                 </div>
                 <div class="row" v-for="item, index in numeroClasificador" :key="index + 'a'">
                     <div class="col">
-                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1)" :datos="convenios" @getConvenio="getConvenio" eventoCampo="getConvenio"
-                            :endpoint="endpointConvenios" :nombreItem="camposConvenio"
-                            placeholder="Clasificador del convenio" />
+                        <SearchTable :nombreCampo="'Clasificador ' + (index + 1)" :datos="convenios"
+                            @getConvenio="getConvenio" eventoCampo="getConvenio" :endpoint="endpointConvenios"
+                            :nombreItem="camposConvenio" placeholder="Clasificador del convenio" />
                     </div>
                 </div>
                 <div class="row">
@@ -539,15 +543,16 @@
                     <label for="" style="text-align: left; margin:20px 0px 20px 0px">Ciudad de labor</label>
                     <div class="col">
                         <SearchList nombreCampo="Pais" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nom_pai"
-                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Pais" />
+                            ubicacion="pais labor" :registros="paises" @getDepartamentos="getDepartamentos"
+                            placeholder="Pais" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento" nombreItem="nom_dep" :registros="departamentos"
-                            @getMunicipios="getMunicipios" placeholder="Departamento" />
+                            ubicacion="departamento labor" @getMunicipios="getMunicipios" placeholder="Departamento" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad" nombreItem="nom_ciu" :registros="municipios"
-                            placeholder="Ciudad" />
+                            @setMunicipios="setMunicipios" ubicacion="ciudad labor" placeholder="Ciudad" />
                     </div>
                 </div>
                 <div class="row">
@@ -685,6 +690,8 @@
                     <SearchList nombreCampo="Planilla eventual" :registros="municipios" placeholder="Planilla eventual" />
                 </div>
             </div>
+            <button class="btn btn-success"
+                @click="confirmationMessage('Está seguro de guardar la información del formulario?', 'Si', 'Cancelar', 'Información guardada con exito')">Guardar</button>
         </form>
     </div>
 </template>
@@ -698,6 +705,9 @@ export default {
         SearchList,
         SearchTable
     },
+    props: {
+        menu: []
+    },
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -706,7 +716,7 @@ export default {
             departamento: '',
             departamentos: [],
             ciudad: '',
-            municipio:'',
+            municipio: '',
             municipios: [],
             tipoIdentificacion: '',
             tiposIdentificacion: [],
@@ -839,7 +849,22 @@ export default {
             es_variable: false,
             numeroClasificadorConvenio: 1,
             numeroClasificador: 1,
-
+            paisExpedicion: '',
+            departamentoExpedicion: '',
+            ciudadExpedicion: '',
+            paisNacimiento: '',
+            departamentoNacimiento: '',
+            ciudadNacimiento: '',
+            paisResidencia: '',
+            departamentoResidencia: '',
+            ciudadResidencia: '',
+            paisContrato: '',
+            departamentoContrato: '',
+            ciudadContrato: '',
+            paisLabor: '',
+            departamentoLabor: '',
+            ciudadLabor: '',
+            autorizacionModulo: false
         };
     },
 
@@ -880,9 +905,22 @@ export default {
         // this.getCalculoIman()
         // this.getVacaciones()
     },
+    updated() {
+        this.autorizado(this.menu)
+    },
+
     methods: {
+        autorizado(menu) {
+            let self = this
+            menu.forEach(function (item) {
+                if (item.url == self.$route.path.substring(1, self.$route.path.length)) {
+                    self.$router.go(-1);
+                }
+            })
+
+        },
         getEmpleados(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.empleado = valor;
             }
             let config = this.configHeader();
@@ -892,7 +930,7 @@ export default {
             });
         },
         getPaises(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.pais = valor;
             }
             let config = this.configHeader();
@@ -901,8 +939,9 @@ export default {
                 self.paises = result.data;
             });
         },
-        getDepartamentos(item) {
-            if(!isNaN(item)){
+        getDepartamentos(item, campo, valor) {
+            this.asignarUbicacion(campo, valor)
+            if (!isNaN(item)) {
                 this.departamento = item;
             }
             let config = this.configHeader();
@@ -911,8 +950,9 @@ export default {
                 self.departamentos = result.data;
             });
         },
-        getMunicipios(item) {
-            if(!isNaN(item)){
+        getMunicipios(item, campo, valor) {
+            this.asignarUbicacion(campo, valor)
+            if (!isNaN(item)) {
                 this.municipio = item;
             }
             let config = this.configHeader();
@@ -921,8 +961,60 @@ export default {
                 self.municipios = result.data;
             });
         },
+        setMunicipios(item, campo, valor) {
+            this.asignarUbicacion(campo, valor)
+        },
+        asignarUbicacion(campo, valor) {
+            switch (campo) {
+                case 'pais expedicion':
+                    this.paisExpedicion = valor;
+                    break;
+                case 'departamento expedicion':
+                    this.departamentoExpedicion = valor;
+                    break;
+                case 'ciudad expedicion':
+                    this.ciudadExpedicion = valor
+                    break;
+                case 'pais nacimiento':
+                    this.paisNacimiento = valor;
+                    break;
+                case 'departamento nacimiento':
+                    this.departamentoNacimiento = valor;
+                    break;
+                case 'ciudad nacimiento':
+                    this.ciudadNacimiento = valor;
+                    break;
+                case 'pais residencia':
+                    this.paisResidencia = valor;
+                    break;
+                case 'departamento residencia':
+                    this.departamentoResidencia = valor;
+                    break;
+                case 'ciudad residencia':
+                    this.ciudadResidencia = valor;
+                    break;
+                case 'pais contrato':
+                    this.paisContrato = valor;
+                    break;
+                case 'departamento contrato':
+                    this.departamentoContrato = valor;
+                    break;
+                case 'ciudad contrato':
+                    this.ciudadContrato = valor;
+                    break;
+                case 'pais labor':
+                    this.paisLabor = valor;
+                    break;
+                case 'departamento labor':
+                    this.departamentoLabor = valor;
+                    break;
+                case 'ciudad labor':
+                    this.ciudadLabor = valor;
+                    break;
+            }
+        },
         getTiposIdentificacion(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.tipoIdentificacion = valor;
             }
             let config = this.configHeader();
@@ -932,7 +1024,7 @@ export default {
             });
         },
         getGenero(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.genero = valor;
             }
             let config = this.configHeader();
@@ -942,7 +1034,7 @@ export default {
             });
         },
         getEstadoCivil(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.estadoCivil = valor;
             }
             let config = this.configHeader();
@@ -952,7 +1044,7 @@ export default {
             });
         },
         getFormaPago(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.formapago = valor;
             }
             let config = this.configHeader();
@@ -962,7 +1054,7 @@ export default {
             });
         },
         getBanco(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.banco = valor;
             }
             let config = this.configHeader();
@@ -972,7 +1064,7 @@ export default {
             });
         },
         getTipoContrato(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.tipocontrato = valor;
             }
             let config = this.configHeader();
@@ -982,7 +1074,7 @@ export default {
             });
         },
         getEstadoLaboralEmpleado(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.estadolaboralempleado = valor;
             }
             let config = this.configHeader();
@@ -992,7 +1084,7 @@ export default {
             });
         },
         getConvenio(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.convenio = valor;
             }
             let config = this.configHeader();
@@ -1002,7 +1094,7 @@ export default {
             });
         },
         getSucursalsSS(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.sucursalsss = valor;
             }
             let config = this.configHeader();
@@ -1012,7 +1104,7 @@ export default {
             });
         },
         getCompania(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.compania = valor;
             }
             let config = this.configHeader();
@@ -1022,7 +1114,7 @@ export default {
             });
         },
         getSucursales(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.sucursal = valor;
             }
             let config = this.configHeader();
@@ -1032,7 +1124,7 @@ export default {
             });
         },
         getCentroCosto(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.centroCosto = valor;
             }
             let config = this.configHeader();
@@ -1042,7 +1134,7 @@ export default {
             });
         },
         getArea(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.area = valor;
             }
             let config = this.configHeader();
@@ -1052,7 +1144,7 @@ export default {
             });
         },
         getCentroTrabajo(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.centroTrabajo = valor;
             }
             let config = this.configHeader();
@@ -1062,7 +1154,7 @@ export default {
             });
         },
         getCuentagastosl(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.cuentagastol = valor;
             }
             let config = this.configHeader();
@@ -1072,7 +1164,7 @@ export default {
             });
         },
         getCuentaNIF(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.cuentaNIF = valor;
             }
             let config = this.configHeader();
@@ -1082,7 +1174,7 @@ export default {
             });
         },
         getCargo(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.cargo = valor;
             }
             let config = this.configHeader();
@@ -1092,7 +1184,7 @@ export default {
             });
         },
         getModoLiquidacion(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.modoliquidacion = valor;
             }
             let config = this.configHeader();
@@ -1102,7 +1194,7 @@ export default {
             });
         },
         getClaseSalario(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.claseSalario = valor;
             }
             let config = this.configHeader();
@@ -1112,7 +1204,7 @@ export default {
             });
         },
         getFondoSalud(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.fondoSalud = valor;
             }
             let config = this.configHeader();
@@ -1122,7 +1214,7 @@ export default {
             });
         },
         getFondoPension(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.fondoPension = valor;
             }
             let config = this.configHeader();
@@ -1132,7 +1224,7 @@ export default {
             });
         },
         getCajaCompensacion(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.cajaCompensacion = valor;
             }
             let config = this.configHeader();
@@ -1142,7 +1234,7 @@ export default {
             });
         },
         getRiesgoLaboral(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.riesgoLaboral = valor;
             }
             let config = this.configHeader();
@@ -1152,7 +1244,7 @@ export default {
             });
         },
         getFondoCesantias(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.fondoCesantias = valor;
             }
             let config = this.configHeader();
@@ -1162,7 +1254,7 @@ export default {
             });
         },
         getTipoCotizante(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.tipoCotizante = valor;
             }
             let config = this.configHeader();
@@ -1172,7 +1264,7 @@ export default {
             });
         },
         getSubTipoCotizante(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.subTipoCotizante = valor;
             }
             let config = this.configHeader();
@@ -1182,7 +1274,7 @@ export default {
             });
         },
         getTipoMedidaDian(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.tipoMedidaDian = valor;
             }
             let config = this.configHeader();
@@ -1192,7 +1284,7 @@ export default {
             });
         },
         getGrupoSanguineo(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.grupoSanguineo = valor;
             }
             this.gruposSanguineos = [
@@ -1203,7 +1295,7 @@ export default {
             ]
         },
         getFactorRH(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.factorRH = valor;
             }
             this.factoresRH = [
@@ -1213,7 +1305,7 @@ export default {
             ]
         },
         getClaseLibretaMilitar(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.claseLibretaMilitar = valor;
             }
             this.clasesLibretaMilitar = [
@@ -1224,7 +1316,7 @@ export default {
             ]
         },
         getNacionalidad(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.nacionalidad = valor;
             }
             this.nacionalidades = [
@@ -1235,7 +1327,7 @@ export default {
             ]
         },
         getRegimenSalarial(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.regimenSalarial = valor;
             }
             this.regimenesSalariales = [
@@ -1245,7 +1337,7 @@ export default {
             ]
         },
         getModalidadRetencion(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.modalidadRetencion = valor;
             }
             this.modalidadesRetencion = [
@@ -1255,7 +1347,7 @@ export default {
             ]
         },
         getCalculoIman(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.calculoIman = valor;
             }
             this.calculosIman = [
@@ -1265,13 +1357,38 @@ export default {
             ]
         },
         getVacaciones(valor = null) {
-            if(valor != null){
+            if (valor != null) {
                 this.vacacion = valor;
             }
             this.vacaciones = [
                 { codigo: '01', nombre: 'Individuales' },
                 { codigo: '02', nombre: 'Colectivas' },
             ]
+        },
+        confirmationMessage(title, btnConfirm, btnDenied, messageConfirm) {
+            this.$swal({
+                icon: 'warning',
+                title: title,
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: btnConfirm,
+                denyButtonText: btnDenied,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.showAlert(messageConfirm, 'success')
+                } else if (result.isDenied) {
+                    this.showAlert('Accion cancelada', 'info')
+                }
+            })
+        },
+        showAlert(mensaje, icono) {
+            this.$swal({
+                position: 'top',
+                icon: icono,
+                title: mensaje,
+                showConfirmButton: false,
+                timer: 1500,
+            })
         },
         configHeader() {
             let config = {
@@ -1369,4 +1486,9 @@ span {
     width: 100%;
     text-align: left;
     float: left;
-}</style>
+}
+
+button {
+    margin: 30px;
+}
+</style>

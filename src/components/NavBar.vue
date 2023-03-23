@@ -61,7 +61,7 @@
       </div>
     </div>
     <!-- <FormularioSig/> -->
-    <router-view :userlogued="userlogued"/>
+    <router-view :userlogued="userlogued" :menu="menu"/>
   </div>
 </template>
 <script>
