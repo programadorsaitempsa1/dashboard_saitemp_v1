@@ -2,7 +2,7 @@
     <div>
         <div class="container">
             <h3>{{ titulo }}</h3>
-            <div class="card col-xs-12 col-md-6" style="height: 770px;">
+            <div class="card col-xs-12 col-md-6" style="height: 680px;">
                 <form>
                     <div class="mb-3">
                         <label class="form-label">Nombres</label>
@@ -45,15 +45,6 @@
                             </option>
                         </select>
                     </div>
-                    <!-- <div class="mb-3">
-                        <label class="form-label">Contrato</label>
-                        <select id="inputState3" class="form-select" v-model="contrato" @change="contratoId(contrato)"
-                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
-                            <option v-for="(item, index) in contratos" :key="index">
-                                {{ item.numero }}
-                            </option>
-                        </select>
-                    </div> -->
                     <button  type="button" class="btn btn-success" @click="register()">
                         Guardar
                     </button>
@@ -81,10 +72,7 @@ export default {
             rolId_: "",
             estados: [],
             estado: "",
-            // contratos: [],
-            // contrato: '',
             estadoId_: "",
-            // contratoId_: '',
             mensaje_error: "",
             URL_API: process.env.VUE_APP_URL_API,
             id_user: "",
@@ -99,16 +87,8 @@ export default {
         this.userLogued()
         this.getRoles()
         this.getEstados()
-        // this.getContratos()
     },
     methods: {
-        // getContratos() {
-        //     let config = this.configHeader();
-        //     let self = this;
-        //     axios.get(self.URL_API + "api/v1/contratosactivos", config).then(function (result) {
-        //         self.contratos = result.data;
-        //     });
-        // },
         register() {
             let self = this;
             let config = this.configHeader();

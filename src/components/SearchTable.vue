@@ -22,7 +22,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="row" style="margin-bottom: 20px;">
-                            <div class="col-8">
+                            <div class="col-6">
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                                     <input type="text" autocomplete="off" class="form-control" id="exampleInputEmail2"
@@ -30,8 +30,11 @@
                                         v-model="search" />
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Buscar</button>
+                            <div class="col">
+                                <button type="button" @click="buscarRegistro()" class="btn btn-success" data-bs-dismiss="modal">Buscar</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" @click="consultaEndPoint(), search = ''" class="btn btn-success" data-bs-dismiss="modal">Borrar búsqueda</button>
                             </div>
                         </div>
                         <div v-if="!sin_registros" class="table-responsive">
@@ -147,6 +150,16 @@ export default {
     created() {
     },
     methods: {
+        buscarRegistro(){
+            let self = this;
+            let config = this.configHeader();
+            axios.get(self.URL_API + "api/v1/"+this.endpoint+'/'+this.search, config)
+                .then(function (result) {
+                  self.llenarTabla(result.data)
+                }).catch(function (error) {
+                    console.log(error);
+                });
+        },
         consultaEndPoint() {
             this.$emit(this.eventoCampo)
         },

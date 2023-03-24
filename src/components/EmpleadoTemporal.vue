@@ -18,7 +18,7 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Número de identificación</label>
+                        <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">Número de identificación</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="numero_identificacion" />
                     </div>
@@ -369,7 +369,7 @@
                 <div class="row">
                     <div class="col">
                         <SearchTable nombreCampo="Convenio" @getConvenio="getConvenio" eventoCampo="getConvenio"
-                            :datos="convenios" :endpoint="endpointConvenios" :nombreItem="camposConvenio"
+                            :datos="convenios" :endpoint="centrotrabajo" :nombreItem="camposConvenio" 
                             placeholder="Compañía" />
                     </div>
                     <div class="col">
@@ -472,7 +472,7 @@
                     </div>
                     <div class="col">
                         <SearchTable nombreCampo="Centro de trabajo" @getCentroTrabajo="getCentroTrabajo"
-                            eventoCampo="getCentroTrabajo" :datos="convenios" :nombreItem="camposCentroTrabajo"
+                            eventoCampo="getCentroTrabajo" :datos="convenios" :nombreItem="camposCentroTrabajo" endpoint="centrotrabajo"
                             placeholder="Centro de trabajo" />
                     </div>
                 </div>
@@ -907,13 +907,21 @@ export default {
     },
     updated() {
         this.autorizado(this.menu)
+        // let self = this
+        //     this.menu.forEach(function (item) {
+        //         console.log(item.url,'***********')
+        //         console.log(self.$route.path.substring(1, self.$route.path.length),'###########')
+        //         if (item.url == self.$route.path.substring(1, self.$route.path.length)) {
+        //             self.$router.go(-1);
+        //         }
+        //     })
     },
 
     methods: {
         autorizado(menu) {
             let self = this
             menu.forEach(function (item) {
-                if (item.url == self.$route.path.substring(1, self.$route.path.length)) {
+                if (!item.url == self.$route.path.substring(1, self.$route.path.length)) {
                     self.$router.go(-1);
                 }
             })
