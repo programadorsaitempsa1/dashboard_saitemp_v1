@@ -6,11 +6,11 @@
                 <form>
                     <div class="mb-3">
                         <label class="form-label">Nombres</label>
-                        <input type="text" :autocomplete="false" class="form-control" v-model="nombres" />
+                        <input type="text" autocomplete="off" class="form-control" v-model="nombres" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Apellidos</label>
-                        <input type="text" :autocomplete="false" class="form-control" v-model="apellidos" />
+                        <input type="text" autocomplete="off" class="form-control" v-model="apellidos" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">N. Documento de identidad</label>
@@ -21,11 +21,11 @@
                         <label class="form-label">Correo electrónico</label>
                         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
                             v-model="email"
-                            :autocomplete="false" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                            autocomplete="off" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" v-model="password" />
+                        <input type="password" required class="form-control" id="exampleInputPassword1" v-model="password" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Rol</label>

@@ -8,7 +8,7 @@
       <form>
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba" v-model="email" />
+          <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="prueba" v-model="email" />
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Contraseña</label>

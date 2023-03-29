@@ -62,7 +62,6 @@
     </div>
       <PiePagina @response="response" :actualiced="actualiced" :cantidad="cantidad" :result="result" />
     </div>
-
   </div>
 </template>
 <script>

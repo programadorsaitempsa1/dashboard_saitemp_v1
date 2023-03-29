@@ -26,6 +26,7 @@ import CodigoCostos from "../components/CodigoCostos.vue";
 import UnidadMedida from "../components/UnidadMedida.vue";
 import ReporteItems from "../components/ReporteItems.vue";
 import EmpleadoTemporal from "../components/EmpleadoTemporal.vue";
+import UsuariosDA from "../components/UsuariosDA.vue";
 
 
 Vue.use(VueRouter);
@@ -155,6 +156,11 @@ const routes = [
         path: "empleadoTemporal",
         name: "EmpleadoTemporal",
         component: EmpleadoTemporal,
+      },
+      {
+        path: "usuariosDA",
+        name: "UsuariosDA",
+        component: UsuariosDA,
       },
     ],
   },
