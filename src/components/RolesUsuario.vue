@@ -7,8 +7,8 @@
                 <form>
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" :disabled="checks.length > 1" id="exampleInputEmail1" aria-describedby="emailHelp"
-                            v-model="nombre" />
+                        <input type="text" class="form-control" :disabled="checks.length > 1" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="nombre" />
                     </div>
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Descripción</label>
@@ -41,6 +41,9 @@ export default {
     components: {
         Tabla
     },
+    props: {
+        menu: []
+    },
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -56,19 +59,35 @@ export default {
             endpoint: 'roles',
             tabla: [
                 { nombre: "#", orden: "DESC" },
-                { nombre: "Nombre rol", orden: "DESC",tipo:"texto",calculado:'false' },
-                { nombre: "Descripcion", orden: "DESC",tipo:"texto",calculado:'false' },
+                { nombre: "Nombre rol", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Descripcion", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
             // Fin info enviada al componente tabla por props
             checks: [],
             massiveUpdate: false,
             campos: {},
+            ruta: '',
         };
+    },
+    mounted() {
+        this.ruta = this.$route.path.substring(1)
+    },
+    watch: {
+        ruta() {
+            this.autorizado(this.menu)
+        }
     },
     created() {
         this.getItems();
     },
     methods: {
+        autorizado(menu) {
+            let autoriced = ''
+            autoriced = menu.filter(menus => menus.url === this.ruta);
+            if (autoriced.length == 0) {
+                this.$router.go(-1);
+            }
+        },
         getItems() {
             let self = this;
             let urlEndPoint = ''

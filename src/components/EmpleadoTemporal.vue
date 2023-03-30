@@ -369,7 +369,7 @@
                 <div class="row">
                     <div class="col">
                         <SearchTable nombreCampo="Convenio" @getConvenio="getConvenio" eventoCampo="getConvenio"
-                            :datos="convenios" :endpoint="centrotrabajo" :nombreItem="camposConvenio" 
+                            :datos="convenios" endpoint="centrotrabajo" :nombreItem="camposConvenio"
                             placeholder="Compañía" />
                     </div>
                     <div class="col">
@@ -472,8 +472,8 @@
                     </div>
                     <div class="col">
                         <SearchTable nombreCampo="Centro de trabajo" @getCentroTrabajo="getCentroTrabajo"
-                            eventoCampo="getCentroTrabajo" :datos="convenios" :nombreItem="camposCentroTrabajo" endpoint="centrotrabajo"
-                            placeholder="Centro de trabajo" />
+                            eventoCampo="getCentroTrabajo" :datos="convenios" :nombreItem="camposCentroTrabajo"
+                            endpoint="centrotrabajo" placeholder="Centro de trabajo" />
                     </div>
                 </div>
                 <div class="row">
@@ -864,7 +864,8 @@ export default {
             paisLabor: '',
             departamentoLabor: '',
             ciudadLabor: '',
-            autorizacionModulo: false
+            autorizacionModulo: false,
+            ruta:''
         };
     },
 
@@ -905,27 +906,21 @@ export default {
         // this.getCalculoIman()
         // this.getVacaciones()
     },
-    updated() {
-        this.autorizado(this.menu)
-        // let self = this
-        //     this.menu.forEach(function (item) {
-        //         console.log(item.url,'***********')
-        //         console.log(self.$route.path.substring(1, self.$route.path.length),'###########')
-        //         if (item.url == self.$route.path.substring(1, self.$route.path.length)) {
-        //             self.$router.go(-1);
-        //         }
-        //     })
+    mounted() {
+        this.ruta = this.$route.path.substring(1)
     },
-
+    watch: {
+        ruta() {
+            this.autorizado(this.menu)
+        }
+    },
     methods: {
         autorizado(menu) {
-            let self = this
-            menu.forEach(function (item) {
-                if (!item.url == self.$route.path.substring(1, self.$route.path.length)) {
-                    self.$router.go(-1);
-                }
-            })
-
+            let autoriced = ''
+            autoriced = menu.filter(menus => menus.url === this.ruta);
+            if (autoriced.length == 0) {
+                this.$router.go(-1);
+            }
         },
         getEmpleados(valor = null) {
             if (valor != null) {

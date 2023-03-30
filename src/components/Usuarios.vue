@@ -2,64 +2,66 @@
   <div>
     <div class="container">
       <h2>Administrar Usuarios</h2>
-      <button type="button" id="newUser" class="col-xs-12 col-md-2 btn btn-success" @click="nuevoUsuario()">
-        <i class="bi bi-file-earmark-plus"></i> Insertar usuario
-      </button>
+      <div class="row">
+        <button type="button" id="newUser" class="col-xs-12 col-md-2 btn btn-success" @click="nuevoUsuario()">
+          <i class="bi bi-file-earmark-plus"></i> Insertar usuario
+        </button>
+      </div>
       <div v-if="users.length > 0" class="row" style="clear: both; margin-bottom: 20px">
         <div class="col-xs-3 col-md-4">
-            <label for="exampleFormControlInput1" class="form-label">Cantidad de registros a listar</label>
-            <select class="form-select form-select-sm" @change="getUsers()" v-model="cantidad"
-                aria-label="Default select example">
-                <option>5</option>
-                <option>10</option>
-                <option>20</option>
-                <option>30</option>
-            </select>
+          <label for="exampleFormControlInput1" class="form-label">Cantidad de registros a listar</label>
+          <select class="form-select form-select-sm" @change="getUsers()" v-model="cantidad"
+            aria-label="Default select example">
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>30</option>
+          </select>
         </div>
-    </div>
-    <div class="table-responsive">
-      <table class="table align-middle table-bordered table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Correo electrónico</th>
-            <th scope="col">estado</th>
-            <th scope="col">Rol</th>
-            <th colspan="2" scope="col">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in users" :key="item.id">
-            <th scope="row">{{ index + 1 }}</th>
-            <td>{{ item.nombres }} {{ item.apellidos }}</td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.estado }}</td>
-            <td>{{ item.rol }}</td>
-            <td>
-              <button type="button" v-if="item.rol != 'S. Administrador'" class="btn btn-warning btn-sm"
-                @click="actualizar(item.id_user)">
-                <i class="bi bi-pencil-square"></i>
-              </button>
-              <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
-                class="btn btn-warning btn-sm" @click="actualizar(item.id_user)">
-                <i class="bi bi-pencil-square"></i>
-              </button>
-            </td>
-            <td>
-              <button v-if="item.rol != 'S. Administrador'" type="button" class="btn btn-danger btn-sm"
-                @click="messageDelete(item.id_user)">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
-                class="btn btn-danger btn-sm" @click="messageDelete(item.id_user)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle table-bordered table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo electrónico</th>
+              <th scope="col">estado</th>
+              <th scope="col">Rol</th>
+              <th colspan="2" scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in users" :key="item.id">
+              <th scope="row">{{ index + 1 }}</th>
+              <td>{{ item.nombres }} {{ item.apellidos }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.estado }}</td>
+              <td>{{ item.rol }}</td>
+              <td>
+                <button type="button" v-if="item.rol != 'S. Administrador'" class="btn btn-warning btn-sm"
+                  @click="actualizar(item.id_user)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
+                  class="btn btn-warning btn-sm" @click="actualizar(item.id_user)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              </td>
+              <td>
+                <button v-if="item.rol != 'S. Administrador'" type="button" class="btn btn-danger btn-sm"
+                  @click="messageDelete(item.id_user)">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
+                  class="btn btn-danger btn-sm" @click="messageDelete(item.id_user)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <PiePagina @response="response" :actualiced="actualiced" :cantidad="cantidad" :result="result" />
     </div>
   </div>
@@ -69,6 +71,9 @@
 import axios from "axios";
 import PiePagina from "./PiePagina.vue";
 export default {
+  props: {
+    menu: []
+  },
   components: {
     PiePagina
   },
@@ -76,18 +81,34 @@ export default {
     return {
       users: [],
       roles: [],
-      result:[],
+      result: [],
       URL_API: process.env.VUE_APP_URL_API,
       roluserlogued: "",
       actualiced: false,
       cantidad: 10,
+      ruta: ''
     };
+  },
+  mounted() {
+    this.ruta = this.$route.path.substring(1)
+  },
+  watch: {
+    ruta() {
+      this.autorizado(this.menu)
+    }
   },
   created() {
     this.getUsers();
     this.userLogued();
   },
   methods: {
+    autorizado(menu) {
+      let autoriced = ''
+      autoriced = menu.filter(menus => menus.url === this.ruta);
+      if (autoriced.length == 0) {
+        this.$router.go(-1);
+      }
+    },
     response(response) {
       this.users = response.data.data;
       this.links = response.data;
@@ -109,7 +130,7 @@ export default {
       let self = this;
       let config = this.configHeader();
       axios
-        .get(self.URL_API + "api/v1/users/"+self.cantidad, config)
+        .get(self.URL_API + "api/v1/users/" + self.cantidad, config)
         .then(function (result) {
           self.users = result.data.data;
           self.result = result;

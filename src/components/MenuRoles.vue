@@ -49,6 +49,9 @@ import axios from "axios";
 import Tabla from "./Tabla.vue";
 // import PiePagina from "./PiePagina.vue";
 export default {
+    props: {
+        menu: []
+    },
     components: {
         Tabla
         // PiePagina
@@ -84,14 +87,23 @@ export default {
             endpoint: 'rolmenu',
             tabla: [
                 { nombre: "#", orden: "DESC" },
-                { nombre: "Nombre rol", orden: "DESC",tipo:"texto",calculado:'false' },
-                { nombre: "Menu", orden: "DESC",tipo:"texto",calculado:'false' },
+                { nombre: "Nombre rol", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Menu", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
             // Fin info enviada al componente tabla por props
             checks: [],
             massiveUpdate: false,
             campos: {},
+            ruta: '',
         };
+    },
+    mounted() {
+        this.ruta = this.$route.path.substring(1)
+    },
+    watch: {
+        ruta() {
+            this.autorizado(this.menu)
+        }
     },
     created() {
         this.getItems();
@@ -100,6 +112,13 @@ export default {
         this.getRolesMenu()
     },
     methods: {
+        autorizado(menu) {
+            let autoriced = ''
+            autoriced = menu.filter(menus => menus.url === this.ruta);
+            if (autoriced.length == 0) {
+                this.$router.go(-1);
+            }
+        },
         getItems() {
             let self = this;
             let urlEndPoint = ''
