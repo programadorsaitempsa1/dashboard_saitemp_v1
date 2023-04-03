@@ -19,7 +19,16 @@
           </select>
         </div>
       </div>
-      <div class="table-responsive">
+      <div v-if="spinner">
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <h5>Cargando por favor espere un momento.</h5>
+      </div>
+      <div v-else class="table-responsive">
         <table class="table align-middle table-bordered table-striped table-hover">
           <thead>
             <tr>
@@ -70,12 +79,13 @@
 
 import axios from "axios";
 import PiePagina from "./PiePagina.vue";
+
 export default {
   props: {
     menu: []
   },
   components: {
-    PiePagina
+    PiePagina,
   },
   data() {
     return {
@@ -86,7 +96,11 @@ export default {
       roluserlogued: "",
       actualiced: false,
       cantidad: 10,
-      ruta: ''
+      ruta: '',
+      spinner:true,
+      percentaje1: 80, // Valor inicial del porcentaje
+      percentaje2: 30, // Valor inicial del porcentaje
+      percentaje3: 45, // Valor inicial del porcentaje
     };
   },
   mounted() {
@@ -134,6 +148,7 @@ export default {
         .then(function (result) {
           self.users = result.data.data;
           self.result = result;
+          self.spinner = false
         });
     },
     nuevoUsuario() {
@@ -223,4 +238,51 @@ h2 {
 label {
   float: left;
 }
+
+/*spiner*/
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-top: 50px;
+}
+
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid rgb(10, 10, 10);
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: rgb(199, 195, 195) transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* fin spinner*/
+
 </style>

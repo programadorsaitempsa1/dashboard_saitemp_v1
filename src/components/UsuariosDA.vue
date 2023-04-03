@@ -13,7 +13,7 @@
       <div v-if="users.length > 0 || listaCantidad.length > 0" class="row" style="clear: both; margin-bottom: 20px">
         <div class="col-xs-3 col-md-4">
           <label for="exampleFormControlInput1" class="form-label">Cantidad de registros a listar</label>
-          <select class="form-select form-select-sm" @change="getUsers()" v-model="cantidad"
+          <select class="form-select form-select-sm" @change="getUsersDA()" v-model="cantidad"
             aria-label="Default select example">
             <option>20</option>
             <option v-if="result.data.total > 50">50</option>
@@ -36,7 +36,7 @@
           </button>
         </div>
         <div class="col-xs-4 col-md-3">
-          <button v-if="usuario != ''" type="button" style="margin-top: 35px;" @click="getUsers(), usuario = ''"
+          <button v-if="usuario != ''" type="button" style="margin-top: 35px;" @click="getUsersDA(), usuario = ''"
             class="btn btn-success btn-sm">
             Borrar búsqueda
           </button>
@@ -62,7 +62,16 @@
           </button>
         </div>
       </div>
-      <div class="table-responsive">
+      <div v-if="spinner">
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <h5>Cargando por favor espere un momento.</h5>
+      </div>
+      <div v-else class="table-responsive">
         <table class="table align-middle table-bordered table-striped table-hover">
           <thead>
             <tr>
@@ -70,11 +79,11 @@
               <th scope="col">Seleccionar</th>
               <th scope="col">Nombre</th>
               <th scope="col">Usuario</th>
-              <!-- <th scope="col">Acciones</th> -->
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in users" :key="index">
+            <tr v-for="(item, index) in users" :key="index" ref="elements">
               <th scope="row">{{ index }}</th>
               <td>
                 <div class="form-check form-check-inline">
@@ -83,16 +92,18 @@
               </td>
               <td>{{ item.nombre }}</td>
               <td>{{ item.usuario }}</td>
-              <!-- <td>
-                <button v-if="item.rol != 'S. Administrador'" type="button" class="btn btn-success btn-sm"
-                  @click="messageDelete(item.id_user)">
-                  <i class="bi bi-person-plus"></i> Guardar usuario
+              <td>
+                <button v-if="item.rol != 'S. Administrador'" type="button"
+                  :class="item.registrado == true ? 'btn btn-warning btn-sm' : 'btn btn-success btn-sm'">
+                  <i :class="item.registrado == false ? 'bi bi-person-plus' : 'bi bi-person'"></i> {{ item.registrado ==
+                    false ? 'Usuario sin registrar' : 'Usuario registrado' }}
                 </button>
-                <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
-                  class="btn btn-success btn-sm" @click="messageDelete(item.id_user)">
-                  <i class="bi bi-person-plus"></i> Guardar usuario
-                </button>
-              </td> -->
+                <!-- <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'" type="button"
+                  :class="item.registrado == true ? 'btn btn-warning btn-sm' : 'btn btn-success btn-sm'">
+                  <i :class="item.registrado == true ? 'bi bi-person-plus' : 'bi bi-person'"></i> {{ boton(item.usuario,
+                    index) == true ? 'Usuario registrado' : 'Usuario sin registrar' }}
+                </button> -->
+              </td>
             </tr>
           </tbody>
         </table>
@@ -109,7 +120,7 @@ export default {
     PiePagina
   },
   props: {
-    menu:[]
+    menu: []
   },
   data() {
     return {
@@ -127,7 +138,11 @@ export default {
       paginaActual: '',
       listaCantidad: '',
       usuario: '',
-      ruta:'',
+      ruta: '',
+      mensajeBoton: '',
+      usersSystem: [],
+      exist: false,
+      spinner: true,
     }
   },
   mounted() {
@@ -140,26 +155,50 @@ export default {
   },
   created() {
     this.getUsers()
+    this.getUsersDA()
     this.getRoles()
   },
   methods: {
     autorizado(menu) {
       let autoriced = ''
+      this.ruta = this.$route.path.substring(1)
       autoriced = menu.filter(menus => menus.url === this.ruta);
       if (autoriced.length == 0) {
         this.$router.go(-1);
       }
     },
-    getUsers() {
+    boton(item) {
+      let self = this
+      self.spinner = false
+      self.totalRegistros = item.data.total
+      self.paginaActual = item.data.current_page
+      Object.values(item.data.data).forEach(function (item) {
+        item.registrado = false
+        self.usersSystem.forEach(function (item2) {
+          if (item.usuario == item2.email) {
+            item.registrado = true
+          }
+        })
+      })
+      this.users = Object.values(item.data.data);
+      self.result = item;
+    },
+    getUsersDA() {
       let self = this;
       let config = this.configHeader();
       axios
         .get(self.URL_API + "api/v1/ldapusers/" + self.cantidad, config)
         .then(function (result) {
-          self.users = result.data.data;
-          self.result = result;
-          self.totalRegistros = result.data.total
-          self.paginaActual = result.data.current_page
+          self.boton(result)
+        });
+    },
+    getUsers() {
+      let self = this;
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + "api/v1/userslist", config)
+        .then(function (result) {
+          self.usersSystem = result.data
         });
     },
     getRoles() {
@@ -170,10 +209,8 @@ export default {
       });
     },
     response(response) {
-      this.listaCantidad = Object.values(this.users);
-      this.users = response.data.data;
-      this.totalRegistros = response.data.total
-      this.paginaActual = response.data.current_page
+      this.users = []
+      this.boton(response)
       this.checks = []
     },
     save() {
@@ -238,10 +275,11 @@ export default {
       let self = this;
       let config = this.configHeader();
       axios.get(self.URL_API + "api/v1/ldapuserfilter/" + user, config).then(function (result) {
-        self.users = result.data.data;
-        self.result = result;
-        self.totalRegistros = result.data.total
-        self.paginaActual = result.data.current_page
+        // self.users = result.data.data;
+        // self.result = result;
+        // self.totalRegistros = result.data.total
+        // self.paginaActual = result.data.current_page
+        self.boton(result)
       });
     },
     configHeader() {
@@ -284,4 +322,50 @@ button {
   background: #e67e22;
   font-size: 1.3rem;
 }
+
+/*spiner*/
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-top: 50px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid rgb(10, 10, 10);
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: rgb(199, 195, 195) transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* fin spinner*/
 </style>

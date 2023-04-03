@@ -27,6 +27,7 @@ import UnidadMedida from "../components/UnidadMedida.vue";
 import ReporteItems from "../components/ReporteItems.vue";
 import EmpleadoTemporal from "../components/EmpleadoTemporal.vue";
 import UsuariosDA from "../components/UsuariosDA.vue";
+import Estadistica from "../components/Estadistica.vue";
 
 
 Vue.use(VueRouter);
@@ -161,6 +162,11 @@ const routes = [
         path: "usuariosDA",
         name: "UsuariosDA",
         component: UsuariosDA,
+      },
+      {
+        path: "estadistica",
+        name: "Estadistica",
+        component: Estadistica,
       },
     ],
   },
