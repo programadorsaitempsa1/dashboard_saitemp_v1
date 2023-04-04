@@ -126,17 +126,17 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleado'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems'" colspan="2">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'" colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -148,13 +148,13 @@
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -197,7 +197,7 @@
                 </div>
                 <h5>Cargando por favor espere un momento.</h5>
             </div>
-            <h3 v-else>No hay resgistros guardados</h3>
+            <h3 v-else>{{ sinregistros }}</h3>
         </div>
     </div>
 </template>
@@ -238,7 +238,8 @@ export default {
             calculado: '',
             listaItem: [],
             ruta: this.$route.path,
-            base64consulta: ''
+            base64consulta: '',
+            sinregistros: 'No hay resgistros guardados'
         };
     },
 
@@ -254,7 +255,12 @@ export default {
             this.massiveUpdateMessage()
         },
     },
-
+    created(){
+        if(this.ruta == '/navbar/empleado'){
+                 this.spinner = false
+                 this.sinregistros = 'Realiza una búsqueda para ver los registros'
+            }
+    },
     methods: {
         filtroComponente() {
 

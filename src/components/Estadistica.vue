@@ -1,9 +1,20 @@
 <template>
     <div>
-        <h2>Dashboard</h2>
-        <div v-for="(row, index) in rows" :key="index" class="row">
-            <GraficoCircular v-for="item in row" :item="item" :key="item.id" :maxPercentage="item.percentaje"
-                :label="item.label" class="col" />
+        <div v-if="items.length < 1">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <h5>Cargando por favor espere un momento.</h5>
+        </div>
+        <div v-else>
+            <h2>Dashboard</h2>
+            <div v-for="(row, index) in rows" :key="index" class="row">
+                <GraficoCircular v-for="item in row" :item="item" :key="item.id" :maxPercentage="item.percentaje"
+                    :label="item.label" class="col" />
+            </div>
         </div>
     </div>
 </template>
@@ -22,12 +33,12 @@ export default {
         return {
             URL_API: process.env.VUE_APP_URL_API,
             items: [
-                // { percentaje: 8442, label: 'Empleados Activos' },
-                // { percentaje: 50, label: 'Empleados Planta' },
-                // { percentaje: 45, label: 'Ingresos mes en curso' },
-                // { percentaje: 80, label: 'Retiros mes en curso' },
-                // { percentaje: 20, label: 'Ingresos mes Anterior' },
-                // { percentaje: 65, label: 'Retiros mes anterior' },
+                // { percentaje: 0, label: 'Empleados Activos' },
+                // { percentaje: 0, label: 'Empleados Planta' },
+                // { percentaje: 0, label: 'Ingresos mes en curso' },
+                // { percentaje: 0, label: 'Retiros mes en curso' },
+                // { percentaje: 0, label: 'Ingresos mes Anterior' },
+                // { percentaje: 0, label: 'Retiros mes anterior' },
             ],
         }
     },
@@ -47,6 +58,8 @@ export default {
         this.empleadosPlanta()
         this.ingresosMesCurso()
         this.retirosMesCurso()
+        this.ingresoMesAnterior()
+        this.retiroMesAnterior()
     },
     methods: {
         chunk(array, size) {
@@ -82,7 +95,6 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/ingresosmescurso", config)
                 .then(function (result) {
-                    console.log(result.data)
                     self.items.push({ percentaje: result.data, label: 'Ingresos mes en curso' })
                 });
         },
@@ -101,7 +113,7 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/ingresosmesanterior", config)
                 .then(function (result) {
-                    console.log(result)
+                    self.items.push({ percentaje: result.data, label: 'Ingresos mes Anterior' })
                 });
         },
         retiroMesAnterior() {
@@ -110,7 +122,7 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/retirosmesantrior", config)
                 .then(function (result) {
-                    console.log(result)
+                    self.items.push({ percentaje: result.data, label: 'Retiros mes anterior' })
                 });
         },
         configHeader() {
@@ -132,4 +144,52 @@ h2 {
 .row {
     margin-bottom: 30px;
 }
+
+/*spiner*/
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-top: 50px;
+    color: red;
+}
+
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid rgb(10, 10, 10);
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: rgb(199, 195, 195) transparent transparent transparent;
+
+}
+
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* fin spinner*/
 </style>

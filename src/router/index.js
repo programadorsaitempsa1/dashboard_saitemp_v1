@@ -28,6 +28,7 @@ import ReporteItems from "../components/ReporteItems.vue";
 import EmpleadoTemporal from "../components/EmpleadoTemporal.vue";
 import UsuariosDA from "../components/UsuariosDA.vue";
 import Estadistica from "../components/Estadistica.vue";
+import Empleado from "../components/Empleado.vue";
 
 
 Vue.use(VueRouter);
@@ -167,6 +168,11 @@ const routes = [
         path: "estadistica",
         name: "Estadistica",
         component: Estadistica,
+      },
+      {
+        path: "empleado",
+        name: "empleado",
+        component: Empleado,
       },
     ],
   },
