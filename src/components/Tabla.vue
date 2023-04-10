@@ -104,7 +104,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,17 +126,17 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleado'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'" colspan="2">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems'" colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -144,20 +144,26 @@
                         </td>
                         <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify">{{ item2 == 'id' ? index +
                             1 : item[item2] ==
-                                null ? 'Sin datos' : item2.includes('valor') ?
+                                null ? 'Sin datos' : item2.includes('sal_bas') ?
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleado'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/empleados'">
+                            <button type="button" class="btn btn-success btn-sm " @click="VerRegistro(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> Ver registro
                             </button>
                         </td>
                     </tr>
@@ -211,7 +217,11 @@ export default {
         heigth_container: {},
         massiveUpdate: {},
         campos: {},
-        listas: []
+        listas: [],
+        search:{
+            default:'',
+            type:String
+        }
     },
     data() {
         return {
@@ -256,7 +266,7 @@ export default {
         },
     },
     created(){
-        if(this.ruta == '/navbar/empleado'){
+        if(this.ruta == '/navbar/empleados'){
                  this.spinner = false
                  this.sinregistros = 'Realiza una búsqueda para ver los registros'
             }
@@ -273,9 +283,9 @@ export default {
             else if (this.ruta.includes('sigcontratos')) {
                 return true
             }
-            else if (this.ruta.includes('empleados')) {
-                return true
-            }
+            // else if (this.ruta.includes('empleados')) {
+            //     return true
+            // }
             else if (this.ruta.includes('zonas')) {
                 return true
             }
@@ -586,6 +596,13 @@ export default {
                 },
             };
             return config;
+        },
+        VerRegistro(item){
+            if(!isNaN(this.search)){
+                this.$router.push({ name: 'empleado', params: { id: this.search.trim() }})
+            }else{
+                this.$emit('getUser', item.ter_nit.trim())
+            }
         },
     },
 };

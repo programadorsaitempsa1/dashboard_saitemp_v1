@@ -9,7 +9,7 @@ import RolesUsuario from "../components/RolesUsuario.vue";
 import MenuRoles from "../components/MenuRoles.vue";
 import PermisoRoles from "../components/PermisoRoles.vue";
 import Zonas from "../components/Zonas.vue";
-import Empleados from "../components/Empleados.vue";
+import Empleadoss from "../components/Empleadoss.vue";
 import SigContratos from "../components/SigContratos.vue";
 import EstadoContrato from "../components/EstadoContrato.vue";
 import EstadoEmpleados from "../components/EstadoEmpleados.vue";
@@ -28,6 +28,7 @@ import ReporteItems from "../components/ReporteItems.vue";
 import EmpleadoTemporal from "../components/EmpleadoTemporal.vue";
 import UsuariosDA from "../components/UsuariosDA.vue";
 import Estadistica from "../components/Estadistica.vue";
+import Empleados from "../components/Empleados.vue";
 import Empleado from "../components/Empleado.vue";
 
 
@@ -80,9 +81,9 @@ const routes = [
         component: PermisoRoles,
       },
       {
-        path: "empleados",
-        name: "empleados",
-        component: Empleados,
+        path: "empleadoss",
+        name: "empleadoss",
+        component: Empleadoss,
       },
       {
         path: "zonas",
@@ -170,7 +171,12 @@ const routes = [
         component: Estadistica,
       },
       {
-        path: "empleado",
+        path: "empleados",
+        name: "empleados",
+        component: Empleados,
+      },
+      {
+        path: "empleado/:id",
         name: "empleado",
         component: Empleado,
       },
