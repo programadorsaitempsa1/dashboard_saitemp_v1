@@ -141,9 +141,12 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
     data() {
         return {
+            URL_API: process.env.VUE_APP_URL_API,
             tipo_identificacion: '',
             salario: '',
             numero_identificacion: '',
@@ -160,6 +163,7 @@ export default {
             fondo_salud: '',
             numero_contacto: '',
             celular_contacto: '',
+            parametro_ruta: this.$route.params.id
         }
     },
     computed: {
@@ -171,9 +175,46 @@ export default {
     mounted() {
 
     },
+    created() {
+        this.getUser()
+    },
     methods: {
-
-    }
+        getUser() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/datosempleado/" + this.parametro_ruta, config)
+                .then(function (result) {
+                    self.llenarFormulario(result.data) ;
+                });
+        },
+        llenarFormulario(result){
+            this.tipo_identificacion = result.des_tip
+            this.salario = result.sal_bas
+            this.numero_identificacion = result.num_ide
+            this.departamento_residencia = result.nom_dep
+            this.fecha_expedicion = result.fec_expdoc
+            this.ciudad_residencia = result.nom_ciu
+            this.fecha_nacimiento = result.fec_nac
+            this.barrio = result.barrio
+            this.nombres = result.nombre
+            this.direccion = result.dir_res
+            this.genero = result.sexo
+            this.contacto_emergencia = result.avi_emp
+            this.correo = result.e_mail
+            this.fondo_salud = result.salud
+            this.numero_contacto = result.tel_cel
+            this.celular_contacto = result.tel_res
+        },
+        configHeader() {
+            let config = {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token"),
+                },
+            };
+            return config;
+        },
+    },
 };
 </script>
 <style scoped>
