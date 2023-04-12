@@ -11,25 +11,19 @@
             <div class="col">
                 <button class="btn btn-success" @click="getUser()">Buscar</button>
             </div>
-            <div class="col">
-                <button class="btn btn-success"><a :href="url" target="_blank">Reporte</a></button>
-
-            </div>
         </div>
         <Tabla :datos="datos" :search="search" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate"
             :campos="campos" @response="response" @clear="clear" @check="check" @getUser="getUser" />
-        <!-- <iframe :src="url" width="100%" height="500"></iframe> -->
-        <ReporteWeb :reportPath="'/report/Saitemp_V3/ReportesWeb/NOM/NOMU1599.rdl'" :reportServerUrl="'http://srv-saitemp03:81/Reports/Pages/ReportViewer.aspx'" />
     </div>
 </template>
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue';
-import ReporteWeb from './ReporteWeb.vue';
+// import ReporteWeb from './ReporteWeb.vue';
 export default {
     components: {
         Tabla,
-        ReporteWeb
+        // ReporteWeb
     },
     mixins: [],
     props: {
@@ -53,7 +47,6 @@ export default {
                 { nombre: "Contrato", orden: "DESC", tipo: "texto", calculado: 'false' },
                 { nombre: "Nota", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
-            url: 'http://srv-saitemp03:81/ReportServer/Pages/ReportViewer.aspx?%2fSaitemp_V3/ReportesWeb/NOM/NOMU1599&rs:Command=Render',
         }
     },
     computed: {
@@ -74,7 +67,7 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/historicoempleado/" + this.search, config)
+                .get(self.URL_API + "api/v1/historicoempleado/" + this.search+'/'+ 10, config)
                 .then(function (result) {
                     self.datos = result;
                 });

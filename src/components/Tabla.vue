@@ -104,7 +104,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'  && ruta != '/navbar/reportes'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,7 +126,7 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
@@ -136,7 +136,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -148,13 +148,13 @@
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -164,6 +164,12 @@
                             <button type="button" class="btn btn-success btn-sm " @click="VerRegistro(item)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-eye"></i> Ver registro
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/reportes'">
+                            <button type="button" class="btn btn-success btn-sm "
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> <a :href="'http://srv-saitemp03:81/ReportServer/Pages/ReportViewer.aspx?%2fSaitemp_V3/ReportesWeb/'+item.cod_rep.substring(0, 3)+'/'+item.cod_rep+'&rs:Command=Render'" target="_blank">Ver reporte</a>
                             </button>
                         </td>
                     </tr>
@@ -249,7 +255,8 @@ export default {
             listaItem: [],
             ruta: this.$route.path,
             base64consulta: '',
-            sinregistros: 'No hay resgistros guardados'
+            sinregistros: 'No hay resgistros guardados',
+            url:''
         };
     },
 
@@ -272,6 +279,9 @@ export default {
             }
     },
     methods: {
+        validaColumnasTabla(){
+
+        },
         filtroComponente() {
 
             if (this.ruta.includes('costos')) {
@@ -512,8 +522,14 @@ export default {
         getRegistros() {
             let self = this;
             let config = this.configHeader();
+            let url = ''
+            if(this.search != ''){
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +'/'+self.cantidad, config
+            }else{
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad, config
+            }
             axios
-                .get(self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad, config)
+                .get(url)
                 .then(function (result) {
                     // self.datos = result
                     self.llenarTabla(result)
@@ -700,4 +716,10 @@ th {
 #exportar a {
     color: white;
     text-decoration: none;
-}</style>
+}
+
+a{
+    color: white;
+    text-decoration: none;
+}
+</style>
