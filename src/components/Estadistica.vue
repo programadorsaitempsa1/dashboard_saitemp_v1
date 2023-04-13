@@ -138,7 +138,8 @@ export default {
 </script>
 <style  scoped>
 h2 {
-    margin: 30px;
+  font-family: "Montserrat", sans-serif;
+  margin: 20px 0px 20px 0px;
 }
 
 .row {

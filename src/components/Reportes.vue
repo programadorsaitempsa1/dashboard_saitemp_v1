@@ -1,21 +1,26 @@
 <template>
     <div class="container">
-        <h1>Reportes</h1>
+        <h2>Reportes</h2>
         <div class="row">
             <div class="col-6">
                 <SearchList nombreCampo="Seleccione la categoria del reporte" @getCategoryReportsId="getCategoryReportsId"
                     eventoCampo="getCategoryReportsId" nombreItem="nom_mod" :registros="categorias"
                     placeholder="Seleccione un categoría" />
             </div>
+            <div class="col">
+                <button v-if="subcategory_reports_apl != ''" class="btn btn-success"
+                    @click="getReports(subcategory_reports_apl = '', subcategory_reports_cod = '')">Listar todo</button>
+            </div>
         </div>
         <div class="row">
             <div class="col-6">
                 <SearchList nombreCampo="Seleccione la subcategoria del reporte"
                     @getSubCategoryReportsId="getSubCategoryReportsId" eventoCampo="getSubCategoryReportsId"
-                    nombreItem="des_cat" :registros="subcategorias" placeholder="Seleccione un categoría" />
+                    nombreItem="des_cat" :registros="subcategorias" :clearInput="clearInput"
+                    placeholder="Seleccione un categoría" />
             </div>
         </div>
-        <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" />
+        <Tabla :datos="datos" :tabla="tabla" :search="subcategory_reports_apl" :search2="subcategory_reports_cod" :endpoint="endpoint" />
     </div>
 </template>
 <script>
@@ -47,7 +52,8 @@ export default {
                 { nombre: "Código", orden: "DESC" },
                 { nombre: "Nombre", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
-            cantidad: 10
+            cantidad: 10,
+            clearInput: false
         }
     },
     computed: {
@@ -75,6 +81,7 @@ export default {
         },
         getSubCategoryReports(value = null) {
             if (value != null) {
+                this.clearInput = true
                 let self = this;
                 let config = this.configHeader();
                 axios
@@ -83,15 +90,18 @@ export default {
                         self.subcategorias = result.data;
                     });
             }
+            setTimeout(() => {
+                this.clearInput = false
+            }, 2000);
         },
         getReports() {
             let self = this;
             let config = this.configHeader();
             let url = ''
-            if(this.subcategory_reports_apl == '' && this.subcategory_reports_cod == ''){
+            if (this.subcategory_reports_apl == '' && this.subcategory_reports_cod == '') {
                 url = self.URL_API + "api/v1/reportes/" + this.cantidad, config
-            }else{
-                url = self.URL_API + "api/v1/reportes/"+this.subcategory_reports_apl+'/'+this.subcategory_reports_cod+'/'+this.cantidad, config
+            } else {
+                url = self.URL_API + "api/v1/reportes/" + this.subcategory_reports_apl + '/' + this.subcategory_reports_cod + '/' + this.cantidad, config
             }
             axios
                 .get(url)
@@ -144,4 +154,12 @@ export default {
     }
 };
 </script>
-<style scoped></style>
+<style scoped>
+button {
+    margin-top: 40px;
+}
+h2 {
+  font-family: "Montserrat", sans-serif;
+  margin: 20px 0px 20px 0px;
+}
+</style>

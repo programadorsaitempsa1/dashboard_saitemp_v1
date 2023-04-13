@@ -31,6 +31,8 @@ import Estadistica from "../components/Estadistica.vue";
 import Empleados from "../components/Empleados.vue";
 import Empleado from "../components/Empleado.vue";
 import Reportes from "../components/Reportes.vue";
+import Trump from "../components/Trump.vue";
+import ProcesosEspeciales from "../components/ProcesosEspeciales.vue";
 
 
 Vue.use(VueRouter);
@@ -185,6 +187,16 @@ const routes = [
         path: "reportes",
         name: "reportes",
         component: Reportes,
+      },
+      {
+        path: "trump",
+        name: "trump",
+        component: Trump,
+      },
+      {
+        path: "procesosEspeciales",
+        name: "procesosEspeciales",
+        component: ProcesosEspeciales,
       },
     ],
   },

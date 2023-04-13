@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h1>Empleados</h1>
+        <h2>Empleados</h2>
         <div class="row">
             <div class="col mb-3">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">Buscar por nombre o número de
@@ -112,6 +112,11 @@ export default {
 };
 </script>
 <style  scoped>
+h2 {
+  font-family: "Montserrat", sans-serif;
+  margin: 20px 0px 20px 0px;
+}
+
 label {
     float: left;
 }

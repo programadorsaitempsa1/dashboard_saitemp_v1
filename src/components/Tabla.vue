@@ -126,17 +126,17 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems'" colspan="2">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump'" colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -148,13 +148,13 @@
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -227,6 +227,10 @@ export default {
         search:{
             default:'',
             type:String
+        },
+        search2:{
+            default:'',
+            type:String
         }
     },
     data() {
@@ -273,7 +277,7 @@ export default {
         },
     },
     created(){
-        if(this.ruta == '/navbar/empleados'){
+        if(this.ruta == '/navbar/empleados' || this.ruta == '/navbar/trump'){
                  this.spinner = false
                  this.sinregistros = 'Realiza una búsqueda para ver los registros'
             }
@@ -523,8 +527,10 @@ export default {
             let self = this;
             let config = this.configHeader();
             let url = ''
-            if(this.search != ''){
+            if(this.search != '' && this.search2 == ''){
                 url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +'/'+self.cantidad, config
+            } else if(this.search2 != ''){
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +"/" + self.search2 +"/"+ self.cantidad, config
             }else{
                 url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad, config
             }

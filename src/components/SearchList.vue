@@ -27,7 +27,11 @@ export default {
         registros: [],
         nombreItem: {},
         eventoCampo:{},
-        ubicacion:{}
+        ubicacion:{},
+        clearInput:{
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -40,6 +44,11 @@ export default {
     watch: {
         registros: function () {
             this.registrosFilter = this.registros
+        },
+        clearInput: function () {
+            if(this.clearInput == true){
+                this.registro = ''
+            }
         }
     },
     created() {
