@@ -110,6 +110,18 @@ export default {
         },
         nombreItem: [],
         endpoint: {},
+        item:{
+            type: String,
+            default:''
+        },
+        item1:{
+            type: String,
+            default:''
+        },
+        item2:{
+            type: String,
+            default:''
+        },
         eventoCampo: {},
         ubicacion:{}
 
@@ -153,7 +165,13 @@ export default {
         buscarRegistro(){
             let self = this;
             let config = this.configHeader();
-            axios.get(self.URL_API + "api/v1/"+this.endpoint+'/'+this.search, config)
+            let url = ''
+            if(this.item){
+                url = self.URL_API + "api/v1/"+ this.endpoint +'/'+ this.item+'/'+ this.search+'/'+this.item1+'/'+this.item2, config
+            }else{
+                url = self.URL_API + "api/v1/"+this.endpoint+'/'+this.search, config
+            }
+            axios.get(url)
                 .then(function (result) {
                   self.llenarTabla(result.data)
                 }).catch(function (error) {
