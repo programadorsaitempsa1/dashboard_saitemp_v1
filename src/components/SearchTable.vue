@@ -48,7 +48,7 @@
                                 <tbody>
                                     <tr v-for="(item) in items_tabla2" :key="item.id">
                                         <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify"
-                                            @click="registro = item[item2], retornoValorCampo(item[item2]), modal = !modal">{{ item[item2] }}
+                                            @click="registro = item[campos2[0]]+' '+item[campos2[1]], retornoValorCampo(item[campos2[0]]), modal = !modal">{{ item[item2] }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -123,7 +123,8 @@ export default {
             default:''
         },
         eventoCampo: {},
-        ubicacion:{}
+        ubicacion:{},
+        posicion:{},
 
         // *****************
         // tabla: [],
@@ -181,9 +182,10 @@ export default {
         consultaEndPoint() {
             this.$emit(this.eventoCampo)
         },
-        retornoValorCampo() {
+        retornoValorCampo(item) {
             if(this.registro != ''){
                 this.$emit(this.eventoCampo, this.registro)
+                this.$emit('getValue',  item+'posicion'+this.posicion)
             }
         },
         codigoItem(item) {

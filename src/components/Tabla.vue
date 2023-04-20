@@ -91,7 +91,7 @@
             </div>
         </div>
         <div v-if="!sin_registros && items_tabla2.length > 1" class="row" style="clear: both;">
-            <div class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
                 <label for="exampleFormControlInput1" class="form-label" style="float:left">Cantidad de registros a
                     listar</label>
                 <select class="form-select form-select-sm" @change="getRegistros()" v-model="cantidad"
@@ -104,7 +104,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'  && ruta != '/navbar/reportes'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,17 +126,17 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump'" colspan="2">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -148,13 +148,13 @@
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -360,7 +360,7 @@ export default {
                 this.sin_registros = true
             }
             this.tabla2 = this.tabla; // Encabezados de la tabla
-            this.items_tabla2 = datos.data.data; // lista de registros
+            this.items_tabla2 = Object.values(datos.data.data); // lista de registros
             self.links = datos.data;
             self.siguiente = datos.data.links.length;
             this.items_tabla2.forEach(function (item) {
@@ -537,7 +537,6 @@ export default {
             axios
                 .get(url)
                 .then(function (result) {
-                    // self.datos = result
                     self.llenarTabla(result)
                 });
         },
@@ -566,7 +565,10 @@ export default {
                 let config = this.configHeader();
                 axios.get(pag, config).then(function (result) {
                     self.links = result.data
-                    self.llenarTabla(result)
+                    console.log('paginando',result)
+                    // self.llenarTabla(result)
+                    self.items_tabla2 = Object.values(result.data.data); // se está llenando la tabla con los datos cuando se pagina
+                    // desde acá porque en la función llenartabla() está dando error al llenar la tabla
                 });
             }
         },
