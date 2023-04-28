@@ -148,25 +148,25 @@ export default {
   mounted() {
     this.ruta = this.$route.path.substring(1)
   },
-  watch: {
-    ruta() {
-      this.autorizado(this.menu)
-    }
-  },
+  // watch: {
+  //   ruta() {
+  //     this.autorizado(this.menu)
+  //   }
+  // },
   created() {
     this.getUsers()
     this.getUsersDA()
     this.getRoles()
   },
   methods: {
-    autorizado(menu) {
-      let autoriced = ''
-      this.ruta = this.$route.path.substring(1)
-      autoriced = menu.filter(menus => menus.url === this.ruta);
-      if (autoriced.length == 0) {
-        this.$router.go(-1);
-      }
-    },
+    // autorizado(menu) {
+    //   let autoriced = ''
+    //   this.ruta = this.$route.path.substring(1)
+    //   autoriced = menu.filter(menus => menus.url === this.ruta);
+    //   if (autoriced.length == 0) {
+    //     this.$router.go(-1);
+    //   }
+    // },
     boton(item) {
       let self = this
       self.spinner = false

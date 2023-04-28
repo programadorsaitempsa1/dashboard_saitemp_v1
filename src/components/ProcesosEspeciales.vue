@@ -23,6 +23,15 @@
                     :item2="item.des_hlp" :posicion="item.ord_cmp" placeholder="Seleccione una opcion"
                     :showModal="showModal" :datos="registros" />
             </div>
+            <div class="col-6" v-if="item.tip_obj.trim() == 'L'">
+                <div>
+                    <label for="exampleFormControlInput1" :class="form-label">{{item.des_param}}</label>
+                    <select class="form-select" v-model="text_field[item.ord_cmp - 1]"
+                        aria-label="Default select example">
+                        <option v-for="(item, index) in item.des_hlp.split(',')" :key="index">{{ item }}</option>
+                    </select>
+                </div>
+            </div>
             <div class="col-6 mb-3" v-if="item.tip_obj.trim() == 'F'">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">{{ item.des_param }}</label>
                 <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
@@ -40,7 +49,9 @@
                     @click="excecuteProcedure(), show_table = true">Procesar</button>
             </div>
             <div v-if="btnexport" class="col">
-                <button id="exportar" @click="showAlert('Por favor espere un momento mientras el archivo se procesa y se descarga','success')" type="button" class="btn btn-success">
+                <button id="exportar"
+                    @click="showAlert('Por favor espere un momento mientras el archivo se procesa y se descarga.', 'success')"
+                    type="button" class="btn btn-success">
                     <a :href="URL_API + 'api/v1/procesosespecialesexport/' + base64consulta"
                         rel="noopener noreferrer">Exportar
                         excel</a>
@@ -89,7 +100,7 @@ export default {
             show_button_process: false,
             show_table: false,
             base64consulta: '',
-            btnexport:false
+            btnexport: false
         }
     },
     computed: {
@@ -191,7 +202,7 @@ export default {
                         self.tabla.push({ nombre: item, orden: "DESC", tipo: "texto", calculado: 'false' },)
                     })
                     self.datos = result;
-                    if(self.datos.data.data.length > 0){
+                    if (self.datos.data.data.length > 0) {
                         self.btnexport = true
                     }
                 });

@@ -40,7 +40,7 @@
                 </button>
             </div>
             <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos"
-                @response="response" @clear="clear" @check="check" />
+                @response="response" @clear="clear" @check="check" @getMenuNavbar="getMenuNavbar" />
         </div>
     </div>
 </template>
@@ -100,11 +100,11 @@ export default {
     mounted() {
         this.ruta = this.$route.path.substring(1)
     },
-    watch: {
-        ruta() {
-            this.autorizado(this.menu)
-        }
-    },
+    // watch: {
+    //     ruta() {
+    //         this.autorizado(this.menu)
+    //     }
+    // },
     created() {
         this.getItems();
         this.getMenu();
@@ -112,12 +112,20 @@ export default {
         this.getRolesMenu()
     },
     methods: {
-        autorizado(menu) {
-            let autoriced = ''
-            autoriced = menu.filter(menus => menus.url === this.ruta);
-            if (autoriced.length == 0) {
-                this.$router.go(-1);
-            }
+        // autorizado(menu) {
+        //     console.log(this.ruta)
+        //     console.log(menu)
+        //     let self = this
+        //     let autoriced = ''
+        //     menu.forEach(function(item){      
+        //         autoriced = item.opciones.filter(menus => menus.url === self.ruta);
+        //     })
+        //     if (autoriced.length == 0) {
+        //         self.$router.go(-1);
+        //     }
+        // },
+        getMenuNavbar() {
+            this.$emit('getMenu');
         },
         getItems() {
             let self = this;
@@ -146,7 +154,7 @@ export default {
         getMenu() {
             let self = this;
             let config = this.configHeader();
-            axios.get(self.URL_API + "api/v1/menus", config).then(function (result) {
+            axios.get(self.URL_API + "api/v1/menuslista", config).then(function (result) {
                 try {
                     self.menus = result.data;
                 } catch (error) {
@@ -221,6 +229,7 @@ export default {
                         self.showAlert(result.data.message, result.data.status);
                         self.getItems();
                         self.clear()
+                        self.$emit('getMenu');
                     });
             }
         },

@@ -33,6 +33,7 @@ import Empleado from "../components/Empleado.vue";
 import Reportes from "../components/Reportes.vue";
 import Trump from "../components/Trump.vue";
 import ProcesosEspeciales from "../components/ProcesosEspeciales.vue";
+import PowerBi from "../components/PowerBi.vue";
 
 
 Vue.use(VueRouter);
@@ -197,6 +198,11 @@ const routes = [
         path: "procesosEspeciales",
         name: "procesosEspeciales",
         component: ProcesosEspeciales,
+      },
+      {
+        path: "powerBi/:id",
+        name: "powerBi",
+        component: PowerBi,
       },
     ],
   },

@@ -13,15 +13,13 @@
           <!-- Acá va el nombre-->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-          @click="collapese">
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" @click="collapese">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div :class="
-          collapse
+        <div :class="collapse
             ? 'collapse navbar-collapse show'
             : 'collapse navbar-collapse'
-        " id="navbarNav">
+          " id="navbarNav">
           <ul class="navbar-nav">
             <!-- <li id="menucolapsed" class="nav-item" @click="collapese">
               <router-link class="nav-link active" to="/noticias">Noticias</router-link>
@@ -50,28 +48,49 @@
     </nav>
     <!-- <div v-bind:class="!expand ? 'aside' : 'aside2'"> -->
     <div class="aside">
-      <div v-for="(item,index) in menu" :key="index">
-        <!-- <div v-if="item.urlExterna == '1'">Hola</div> -->
-        <router-link v-if="item.urlExterna == '0'" class="nav-link active" :to="item.url != '' ? '/'+item.url:'/navbar'">
+      <!-- <div id="item-menu" v-for="(item, index) in menu" :key="index">
+        <router-link v-if="item.urlExterna == '0'" class="nav-link active"
+          :to="item.url != '' ? '/' + item.url : '/navbar'">
           <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
         </router-link>
-        <a v-else :href="item.url" target="_blank" rel="noopener noreferrer"
-          style="color:white; text-decoration:none"><i :class="item.icon"></i> <span>{{ item.nombre }}</span></a>
+        <a v-else :href="item.url" target="_blank" rel="noopener noreferrer" style="color:white; text-decoration:none"><i
+            :class="item.icon"></i> <span>{{ item.nombre }}</span></a>
+        <hr>
+      </div> -->
+      <div class="accordion-item" v-for="(item, index) in menu" :key="index">
+        <h2 class="accordion-header" :id="'flush-heading' + option[index]">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            :data-bs-target="'#flush-collapse' + option[index]" aria-expanded="false"
+            :aria-controls="'flush-collapse' + option[index]">
+            <i :class="item.icon"></i><span>{{ item.categoria }}</span>
+          </button>
+        </h2>
+        <div :id="'flush-collapse' + option[index]" class="accordion-collapse collapse"
+          :aria-labelledby="'flush-heading' + option[index]" data-bs-parent="#accordionFlushExample">
+          <div v-for="(item, index) in menu[index].opciones" :key="index" class="accordion-body">
+            <router-link v-if="item.urlExterna == '0'" class="nav-link active"
+              :to="item.powerbi != '' ? '/' + item.url+'/'+item.nombre : item.url != '' ? '/' + item.url : '/navbar'"
+              :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
+              <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
+            </router-link>
+            <a v-else :href="item.url" target="_blank" rel="noopener noreferrer" style="color:white; text-decoration:none"
+              :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
+              <i :class="item.icon"></i> <span>{{ item.nombre }}</span>
+            </a>
+          </div>
+        </div>
         <hr>
       </div>
     </div>
-    <!-- <FormularioSig/> -->
-    <router-view :userlogued="userlogued" :menu="menu"/>
+    <router-view :userlogued="userlogued" :menu="menu" @getMenu="getMenu" />
   </div>
 </template>
 <script>
 /* eslint-disable */
 import axios from "axios";
-// import FormularioSig from '../components/FormularioSig.vue'
 export default {
   components: {
     name: 'Navbar',
-    // FormularioSig
   },
   data() {
     return {
@@ -81,11 +100,24 @@ export default {
       saludo: 'Bienvenido',
       ruta: '',
       menu: [],
-      userlogued: {nombres:'',rol:''},
+      userlogued: { nombres: '', rol: '' },
       logo: [],
       user_id: '',
       URL_API: process.env.VUE_APP_URL_API,
-      autoriced:false
+      autoriced: false,
+      option: ['One', 'Two', 'Tree', 'Four', 'Five', 'six', 'Seven'],
+      categoria_menu: [],
+      // menu: [
+      //   { categoria: 'Menú', icon: 'bi bi-speedometer2', opciones: [] },
+      //   {
+      //     categoria: 'Novasoft', icon: 'bi bi-text-indent-left', opciones: [
+      //       { nombre: 'Dashboard', rol: '1', url: 'navbar/Estadistica', urlExterna: '0', oculto: '0', icon: 'bi bi-graph-up' },
+      //       { nombre: 'Ejecución procesos E.', rol: '1', url: 'navbar/procesosespeciales', urlExterna: '0', oculto: '0', icon: 'bi bi-person-plus' },
+      //       { nombre: 'Lista trump', rol: '1', url: 'navbar/trump', urlExterna: '0', oculto: '0', icon: 'bi bi-person-dash' },
+      //     ]
+      //   },
+      //   { categoria: 'Parámetros', icon: 'bi bi-text-indent-left', opciones: [{ nombre: 'opcion1' }] },
+      // ]
     };
   },
   created() {
@@ -150,37 +182,38 @@ export default {
       axios
         .get(self.URL_API + 'api/v1/userlogued', config)
         .then(function (result) {
-          if(result.data[0] != undefined){
+          if (result.data[0] != undefined) {
             self.userlogued = result.data[0];
             self.user_id = result.data[0].usuario_id;
-            self.autoriced=true
-            self. getMenu(self.userlogued.id)
-          }else{
+            self.autoriced = true
+            self.getMenu()
+          } else {
             self.$router.push("/");
           }
         }).catch(function () {
-          self.$router.push("/");          
+          self.$router.push("/");
         });
     },
-      getMenu(rol) {
-        let self = this
-         let config = this.configHeader();
-        //  console.log(rol)
-          axios
-            .get(self.URL_API+'api/v1/menus/'+rol,config)
-            .then(function (result) {
-              self.menu = result.data  
-              // console.log(result.data )          
-            // }).catch(function (error) {
-            // if(error.name == 'AxiosError')
-            // self.getMenu(id)
-          }).catch(function () {
-            // if (error.response.data == "Unauthorized."){
-            //   self.$router.push("/");
-            //   self.localStorage.removeItem("access_token");
-            // }
-          });
-      },
+    getMenu() {
+      let self = this
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + 'api/v1/categoriaMenu', config)
+        .then(function (result) {
+          self.menu = result.data
+        }).catch(function () {
+        });
+    },
+    // getCategoriaMenu() {
+    //   let self = this
+    //   let config = this.configHeader();
+    //   axios
+    //     .get(self.URL_API + 'api/v1/categoriaMenu', config)
+    //     .then(function (result) {
+    //       self.categoria_menu = result.data
+    //     }).catch(function () {
+    //     });
+    // },
     //   getLogoPagina() {
     //     var self = this;
     //     axios
@@ -221,17 +254,23 @@ export default {
   height: 100vh;
   background-color: #006b3f;
   position: fixed;
+  top: 0;
   bottom: 0;
   left: 0;
   z-index: 300;
   color: white;
   transition: width 1s;
   overflow-x: hidden;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: 10px;
   text-align: left;
   border-bottom-right-radius: 5px;
   box-shadow: 3px 3px 4px 2px rgba(26, 25, 25, 0.338);
+  pointer-events: auto;
+}
+
+.aside i{
+  font-size: 1.2rem;
 }
 
 .aside:hover::-webkit-scrollbar-thumb {
@@ -267,8 +306,39 @@ export default {
 
 .aside i {
   position: absolute;
+  left: 7px;
+}
+
+
+.aside .accordion-collapse i {
+  position: absolute;
   left: 15px;
 }
+
+.aside .accordion-collapse {
+  margin-top: 10px;
+}
+
+.aside .accordion-collapse .nav-link {
+  padding: 10px;
+}
+
+.aside .accordion-body:hover {
+  color: #000000;
+  background-color: rgba(255, 255, 255, 0.808);
+  border-radius: 5px;
+  padding: 5px;
+  transition: background-color 1s ease;
+}
+
+.accordion-item button.accordion-button {
+  pointer-events: none;
+}
+
+.accordion-item:hover button.accordion-button {
+  pointer-events: auto;
+}
+
 
 .aside span {
   position: relative;
@@ -295,6 +365,7 @@ export default {
 .aside h1 i {
   cursor: pointer;
 }
+
 
 .aside #icon {
   margin-left: 10px;
@@ -338,5 +409,38 @@ export default {
   .navbar #menucolapsed {
     display: none;
   }
+}
+
+/* #item-menu:hover{
+  background-color: rgb(0, 0, 0);
+  border-radius: 15px;
+  color: #7be4b8;
+  padding: 0;
+} */
+
+.accordion {
+  background-color: #006b3f;
+  outline: none;
+}
+
+.accordion-button {
+  background-color: #006b3f;
+  color: rgb(255, 255, 255);
+  outline: none;
+}
+
+.accordion-item {
+  background-color: #006b3f;
+  color: rgb(255, 255, 255);
+  outline: none;
+}
+
+/* .accordion-button:not(.collapsed) {
+    background-color: transparent !important;
+} */
+
+.accordion-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 </style>

@@ -7,7 +7,7 @@
     <div class="card">
       <form>
         <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
+          <label for="exampleInputEmail1" class="form-label">Usuario</label>
           <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="prueba" v-model="email" />
         </div>
         <div class="mb-3">
@@ -52,7 +52,7 @@ export default ({
         .then(function (result) {
           if (result.data.access_token != undefined) {
             localStorage.setItem("access_token", result.data.access_token);
-            self.$router.push("/navbar");
+            self.$router.push("/navbar/Estadistica");
           }
            else if (result.data.status == "error") {
             self.showAlert(result.data.message,result.data.status);

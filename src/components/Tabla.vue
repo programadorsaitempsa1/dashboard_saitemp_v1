@@ -260,7 +260,7 @@ export default {
             ruta: this.$route.path,
             base64consulta: '',
             sinregistros: 'No hay resgistros guardados',
-            url:''
+            url:'',
         };
     },
 
@@ -270,6 +270,11 @@ export default {
             if (this.datos.data.data.length > 0) {
                 this.llenarTabla(this.datos)
                 this.sin_registros = false
+            }else{
+                this.sin_registros = true
+                // if(this.ruta == '/navbar/empleados' || this.ruta == '/navbar/trump'){
+                 this.sinregistros = 'No se encontraron registros'
+            // }
             }
         },
         massiveUpdate: function () {
@@ -528,15 +533,18 @@ export default {
             let config = this.configHeader();
             let url = ''
             if(this.search != '' && this.search2 == ''){
-                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +'/'+self.cantidad, config
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +'/'+self.cantidad
             } else if(this.search2 != ''){
-                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +"/" + self.search2 +"/"+ self.cantidad, config
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +"/" + self.search2 +"/"+ self.cantidad
             }else{
-                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad, config
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad
             }
             axios
-                .get(url)
+                .get(url,config)
                 .then(function (result) {
+                    if(self.$route.fullPath.includes('menuroles')){
+                        self.$emit('getMenuNavbar');
+                    }
                     self.llenarTabla(result)
                 });
         },

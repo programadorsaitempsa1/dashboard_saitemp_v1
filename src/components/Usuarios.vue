@@ -106,23 +106,23 @@ export default {
   mounted() {
     this.ruta = this.$route.path.substring(1)
   },
-  watch: {
-    ruta() {
-      this.autorizado(this.menu)
-    }
-  },
+  // watch: {
+  //   ruta() {
+  //     this.autorizado(this.menu)
+  //   }
+  // },
   created() {
     this.getUsers();
     this.userLogued();
   },
   methods: {
-    autorizado(menu) {
-      let autoriced = ''
-      autoriced = menu.filter(menus => menus.url === this.ruta);
-      if (autoriced.length == 0) {
-        this.$router.go(-1);
-      }
-    },
+    // autorizado(menu) {
+    //   let autoriced = ''
+    //   autoriced = menu.filter(menus => menus.url === this.ruta);
+    //   if (autoriced.length == 0) {
+    //     this.$router.go(-1);
+    //   }
+    // },
     response(response) {
       this.users = response.data.data;
       this.links = response.data;

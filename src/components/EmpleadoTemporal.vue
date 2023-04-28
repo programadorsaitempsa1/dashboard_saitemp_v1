@@ -909,19 +909,19 @@ export default {
     mounted() {
         this.ruta = this.$route.path.substring(1)
     },
-    watch: {
-        ruta() {
-            this.autorizado(this.menu)
-        }
-    },
+    // watch: {
+    //     ruta() {
+    //         this.autorizado(this.menu)
+    //     }
+    // },
     methods: {
-        autorizado(menu) {
-            let autoriced = ''
-            autoriced = menu.filter(menus => menus.url === this.ruta);
-            if (autoriced.length == 0) {
-                this.$router.go(-1);
-            }
-        },
+        // autorizado(menu) {
+        //     let autoriced = ''
+        //     autoriced = menu.filter(menus => menus.url === this.ruta);
+        //     if (autoriced.length == 0) {
+        //         this.$router.go(-1);
+        //     }
+        // },
         getEmpleados(valor = null) {
             if (valor != null) {
                 this.empleado = valor;

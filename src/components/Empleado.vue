@@ -7,14 +7,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Tipo de identificación</label>
+                                <label for="exampleInputEmail1" class="form-label">Tipo de identificación:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="tipo_identificacion" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Número de identificación</label>
+                                <label for="exampleInputEmail1" class="form-label">Número de identificación:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail3" aria-describedby="emailHelp"
                                     v-model="numero_identificacion" />
                             </div>
@@ -23,14 +23,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Fecha de expedición documento</label>
+                                <label for="exampleInputEmail1" class="form-label">Fecha de expedición documento:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="fecha_expedicion" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Salario</label>
+                                <label for="exampleInputEmail1" class="form-label">Salario:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="salario" />
                             </div>
@@ -39,14 +39,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Nombres</label>
+                                <label for="exampleInputEmail1" class="form-label">Nombres:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="nombres" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento</label>
+                                <label for="exampleInputEmail1" class="form-label">Fecha de nacimiento:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="fecha_nacimiento" />
                             </div>
@@ -55,14 +55,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Departamento de residencia</label>
+                                <label for="exampleInputEmail1" class="form-label">Departamento de residencia:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail3" aria-describedby="emailHelp"
                                     v-model="departamento_residencia" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Ciudad de residencia</label>
+                                <label for="exampleInputEmail1" class="form-label">Ciudad de residencia:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="ciudad_residencia" />
                             </div>
@@ -71,14 +71,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Barrio</label>
+                                <label for="exampleInputEmail1" class="form-label">Barrio:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="barrio" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Dirección</label>
+                                <label for="exampleInputEmail1" class="form-label">Dirección:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="direccion" />
                             </div>
@@ -87,14 +87,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Género</label>
+                                <label for="exampleInputEmail1" class="form-label">Género:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="genero" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Fondo de salud (actual)</label>
+                                <label for="exampleInputEmail1" class="form-label">Fondo de salud (actual):</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="fondo_salud" />
                             </div>
@@ -103,14 +103,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Corrreo electrónico</label>
+                                <label for="exampleInputEmail1" class="form-label">Corrreo electrónico:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="correo" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Número de contacto</label>
+                                <label for="exampleInputEmail1" class="form-label">Número de contacto:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                     v-model="numero_contacto" />
                             </div>
@@ -119,16 +119,32 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Contacto de emergencia</label>
+                                <label for="exampleInputEmail1" class="form-label">Contacto de emergencia:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="contacto_emergencia" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Celular de contacto</label>
+                                <label for="exampleInputEmail1" class="form-label">Celular de contacto:</label>
                                 <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
                                     v-model="celular_contacto" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Fondo Pension (Actual):</label>
+                                <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
+                                    v-model="fondo_pension_actual" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">CCF (Actual):</label>
+                                <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
+                                    v-model="ccf_actual" />
                             </div>
                         </div>
                     </div>
@@ -163,6 +179,8 @@ export default {
             fondo_salud: '',
             numero_contacto: '',
             celular_contacto: '',
+            fondo_pension_actual:'',
+            ccf_actual:'',
             parametro_ruta: this.$route.params.id
         }
     },
@@ -205,6 +223,8 @@ export default {
             this.fondo_salud = result.salud
             this.numero_contacto = result.tel_cel
             this.celular_contacto = result.tel_res
+            this.fondo_pension_actual = result.pension
+            this.ccf_actual = result.caja
         },
         configHeader() {
             let config = {
