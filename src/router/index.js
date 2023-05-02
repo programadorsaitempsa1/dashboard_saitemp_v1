@@ -34,6 +34,9 @@ import Reportes from "../components/Reportes.vue";
 import Trump from "../components/Trump.vue";
 import ProcesosEspeciales from "../components/ProcesosEspeciales.vue";
 import PowerBi from "../components/PowerBi.vue";
+import Ddashboard from "../components/Ddashboard.vue";
+import DdClientes from "../components/DdClientes.vue";
+import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 
 
 Vue.use(VueRouter);
@@ -203,6 +206,21 @@ const routes = [
         path: "powerBi/:id",
         name: "powerBi",
         component: PowerBi,
+      },
+      {
+        path: "debida-diligencia/dashboard",
+        name: "debida-diligencia/dashboard",
+        component: Ddashboard,
+      },
+      {
+        path: "debida-diligencia/clientes",
+        name: "debida-diligencia/clientes",
+        component: DdClientes,
+      },
+      {
+        path: "debida-diligencia/formulario-clientes",
+        name: "debida-diligencia/formulario-clientes",
+        component: DdFormularioCliente,
       },
     ],
   },
