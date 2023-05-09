@@ -1,13 +1,14 @@
 <template>
     <div id="contenedor-select">
         <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
+            <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                 <input type="text" @focus="consultaEndPoint()" @click="hover = !hover" @keyup="hover = true" autocomplete="off"
                     @input="filterResults(registro, registros, 'registros')" class="form-control" id="exampleInputEmail2"
                     :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
-                <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span>
+                <span class="input-group-text" style="cursor:pointer" @click="registro = '',retornoValorCampo()" id="basic-addon3"><i class="bi bi-x"></i></span>
+                <!-- <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span> -->
             </div>
         </div>
         <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">

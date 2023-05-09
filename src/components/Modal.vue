@@ -1,15 +1,15 @@
 <template>
     <div>
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                 <input type="text" @focus="consultaEndPoint()" @click="modal = true" autocomplete="off" class="form-control"
                     id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
                     <span class="input-group-text" style="cursor:pointer" @click="registro = '',retornoValorCampo()" id="basic-addon3"><i class="bi bi-x"></i></span>
-                <!-- <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span> -->
             </div>
-        </div>
+        </div> -->
+        <p @click="modal = true, consultaEndPoint()">{{texto}}</p>
 
         <!-- Modal -->
         <div class="modal fade show mask" id="exampleModal" :style="modal ? 'display: block' : 'display: none'"
@@ -17,12 +17,12 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Seleccione registro</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">{{titulo}}</h1>
                         <button type="button" @click="modal = !modal" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row" style="margin-bottom: 20px;">
+                        <!-- <div class="row" style="margin-bottom: 20px;">
                             <div class="col-6">
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
@@ -37,43 +37,25 @@
                             <div class="col">
                                 <button type="button" @click="consultaEndPoint(), search = ''" class="btn btn-success" data-bs-dismiss="modal">Borrar búsqueda</button>
                             </div>
-                        </div>
+                        </div> -->
                         <div v-if="!sin_registros" class="table-responsive">
                             <table class="table table-striped ">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Código</th>
-                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Teléfono</th>
+                                        <th scope="col">Correo</th>
+                                        <th scope="col">Ext</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(item) in items_tabla2" :key="item.id">
                                         <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify"
-                                            @click="registro = item[campos2[0]]+' '+item[campos2[1]], retornoValorCampo(item[campos2[0]]), modal = !modal">{{ item[item2] }}
+                                            @click="registro = item[campos2[0]]+' '+item[campos2[1]], modal = !modal">{{ item[item2] }}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="content">
-                                <nav class="pagin" aria-label="Page navigation example">
-                                    <ul class="pagination">
-                                        <li class="page-item">
-                                            <a :style="
-                                                item.active == true
-                                                    ? 'background-color:#d06519'
-                                                    : 'background-color:#006b3f'
-                                            " class="page-link" v-for="(item, index) in links" :key="index"
-                                                @click="pagination(item.url), currentUrl = item.url">{{
-                                                    index == 0
-                                                    ? "Anterior"
-                                                    : index == siguiente - 1
-                                                        ? "siguiente"
-                                                        : item.label
-                                                }}</a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
                         </div>
                         <div v-else>
                             <div v-if="spinner">
@@ -91,7 +73,6 @@
                     <div class="modal-footer">
                         <button type="button" @click="modal = !modal" class="btn btn-warning" data-bs-dismiss="modal">Cerrar
                             ventana</button>
-                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                     </div>
                 </div>
             </div>
@@ -111,27 +92,11 @@ export default {
         },
         nombreItem: [],
         endpoint: {},
-        item:{
-            type: String,
-            default:''
-        },
-        item1:{
-            type: String,
-            default:''
-        },
-        item2:{
-            type: String,
-            default:''
-        },
         eventoCampo: {},
         ubicacion:{},
         posicion:{},
-
-        // *****************
-        // tabla: [],
-        // datos: [],
-        // campos: {},
-        // listas: []
+        texto:{},
+        titulo:{}
     },
     data() {
         return {
@@ -183,28 +148,28 @@ export default {
         consultaEndPoint() {
             this.$emit(this.eventoCampo)
         },
-        retornoValorCampo(item) {
-            if(this.registro != undefined){
-                this.$emit(this.eventoCampo, this.registro)
-                this.$emit('getValue',  item+'posicion'+this.posicion)
-            }
-        },
-        codigoItem(item) {
-            return item[this.nombreItem[0]];
-        },
-        descripcionItem(item) {
-            return item[this.nombreItem[1]];
-        },
-        pagination(pag) {
-            if (pag != null) {
-                let self = this;
-                let config = this.configHeader();
-                axios.get(pag, config).then(function (result) {
-                    self.links = result.data.links
-                    self.llenarTabla(result.data)
-                });
-            }
-        },
+        // retornoValorCampo(item) {
+        //     if(this.registro != undefined){
+        //         this.$emit(this.eventoCampo, this.registro)
+        //         this.$emit('getValue',  item+'posicion'+this.posicion)
+        //     }
+        // },
+        // codigoItem(item) {
+        //     return item[this.nombreItem[0]];
+        // },
+        // descripcionItem(item) {
+        //     return item[this.nombreItem[1]];
+        // },
+        // pagination(pag) {
+        //     if (pag != null) {
+        //         let self = this;
+        //         let config = this.configHeader();
+        //         axios.get(pag, config).then(function (result) {
+        //             self.links = result.data.links
+        //             self.llenarTabla(result.data)
+        //         });
+        //     }
+        // },
         llenarTabla(datos) {
             let self = this
             if (datos.data.length > 0) {

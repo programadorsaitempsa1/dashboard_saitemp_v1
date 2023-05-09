@@ -148,6 +148,9 @@
                             formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
                                 item[item2] }}
                         </td>
+                        <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
+                       <td v-if="ruta == '/navbar/empleados' && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
+
                         <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
@@ -215,7 +218,11 @@
 </template>
 <script>
 import axios from 'axios'
+import Modal from './Modal.vue'
 export default {
+    components:{
+        Modal
+    },
     props: {
         tabla: [],
         datos: [],
@@ -261,6 +268,7 @@ export default {
             base64consulta: '',
             sinregistros: 'No hay resgistros guardados',
             url:'',
+            analista:[]
         };
     },
 
@@ -288,6 +296,15 @@ export default {
             }
     },
     methods: {
+        getAnalista(id){
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/analista/" + id, config)
+                .then(function (result) {
+                    self.analista = result.data
+                });
+        },
         validaColumnasTabla(){
 
         },
@@ -302,9 +319,6 @@ export default {
             else if (this.ruta.includes('sigcontratos')) {
                 return true
             }
-            // else if (this.ruta.includes('empleados')) {
-            //     return true
-            // }
             else if (this.ruta.includes('zonas')) {
                 return true
             }
@@ -361,6 +375,9 @@ export default {
                 claves.forEach((element) => {
                     self.campos2.push(element)
                 });
+                if(this.ruta == '/navbar/empleados' && !isNaN(this.search)){
+                    self.campos2.pop()
+                }
             } else {
                 this.sin_registros = true
             }
@@ -573,7 +590,6 @@ export default {
                 let config = this.configHeader();
                 axios.get(pag, config).then(function (result) {
                     self.links = result.data
-                    console.log('paginando',result)
                     // self.llenarTabla(result)
                     self.items_tabla2 = Object.values(result.data.data); // se está llenando la tabla con los datos cuando se pagina
                     // desde acá porque en la función llenartabla() está dando error al llenar la tabla

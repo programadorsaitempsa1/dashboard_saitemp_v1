@@ -25,9 +25,8 @@
             </div>
             <div class="col-6" v-if="item.tip_obj.trim() == 'L'">
                 <div>
-                    <label for="exampleFormControlInput1" :class="form-label">{{item.des_param}}</label>
-                    <select class="form-select" v-model="text_field[item.ord_cmp - 1]"
-                        aria-label="Default select example">
+                    <label for="exampleFormControlInput1" :class="form - label">{{ item.des_param }}</label>
+                    <select class="form-select" v-model="text_field[item.ord_cmp - 1]" aria-label="Default select example">
                         <option v-for="(item, index) in item.des_hlp.split(',')" :key="index">{{ item }}</option>
                     </select>
                 </div>
@@ -52,8 +51,7 @@
                 <button id="exportar"
                     @click="showAlert('Por favor espere un momento mientras el archivo se procesa y se descarga.', 'success')"
                     type="button" class="btn btn-success">
-                    <a :href="URL_API + 'api/v1/procesosespecialesexport/' + base64consulta"
-                        rel="noopener noreferrer">Exportar
+                    <a :href="URL_API + 'api/v1/procesosespecialesexport/' + base64consulta" rel="noopener noreferrer">Exportar
                         excel</a>
                 </button>
             </div>
@@ -154,9 +152,21 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/formprocesosespeciales/" + item, config)
                 .then(function (result) {
-                    self.form_procedures = result.data;
+                    self.form_procedures = self.ordenCampos(result.data);
                     self.text_field = new Array(self.form_procedures.length);
                 });
+        },
+        ordenCampos(items) {
+            items.sort(function (a, b) {
+                if (a.ord_cmp > b.ord_cmp) {
+                    return 1;
+                }
+                if (a.ord_cmp < b.ord_cmp) {
+                    return -1;
+                }
+                return 0;
+            });
+            return items
         },
         getValue(value) {
             value = value.split('posicion')
@@ -177,7 +187,7 @@ export default {
             for (let i = 0; i < self.text_field.length; i++) {
                 this.form_procedures.forEach(function (item) {
                     if (item.ord_cmp == (i + 1)) {
-                        if (self.text_field[i] == undefined) {
+                        if (self.text_field[i] == undefined || self.text_field[i] == 'undefined') {
                             self.text_field[i] = item.val_def
                         }
                     }
@@ -198,12 +208,17 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/ejecutaprocesosespeciales", { params: { parametros } }, config)
                 .then(function (result) {
-                    Object.keys(result.data.data[0]).forEach(function (item) {
-                        self.tabla.push({ nombre: item, orden: "DESC", tipo: "texto", calculado: 'false' },)
-                    })
-                    self.datos = result;
-                    if (self.datos.data.data.length > 0) {
-                        self.btnexport = true
+                    if (result.data.data.length > 0) {
+                        Object.keys(result.data.data[0]).forEach(function (item) {
+                            self.tabla.push({ nombre: item, orden: "DESC", tipo: "texto", calculado: 'false' },)
+                        })
+                        self.datos = result;
+                        if (self.datos.data.data.length > 0) {
+                            self.btnexport = true
+                        }
+                    } else {
+                        self.datos = result;
+                        self.btnexport = false
                     }
                 });
         },
