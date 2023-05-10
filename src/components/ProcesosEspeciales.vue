@@ -51,8 +51,14 @@
                 <button id="exportar"
                     @click="showAlert('Por favor espere un momento mientras el archivo se procesa y se descarga.', 'success')"
                     type="button" class="btn btn-success">
-                    <a :href="URL_API + 'api/v1/procesosespecialesexport/' + base64consulta" rel="noopener noreferrer">Exportar
+                    <a :href="URL_API + 'api/v1/procesosespecialesexport/' + base64consulta"
+                        rel="noopener noreferrer">Exportar
                         excel</a>
+                    <export-json-excel :data="data" :fields="fields" worksheet="My Worksheet" name="filename"
+                        :beforeExport="startDownload" :afterExport="finishDownload">
+                        Descargar excel (tu puedes cambiar este código por el que quieras)
+
+                    </export-json-excel>
                 </button>
             </div>
         </div>
@@ -98,7 +104,54 @@ export default {
             show_button_process: false,
             show_table: false,
             base64consulta: '',
-            btnexport: false
+            btnexport: false,
+            fields: [
+            {
+              'title': '#',
+              'name': 'id', 
+            },
+            {
+              'title': 'Nombre',
+              'name': 'name', 
+            },
+            {
+              'title': 'Ciudad',
+              'name': 'city', 
+            },
+            {
+              'title': 'País',
+              'name': 'country', 
+            },
+            {
+              'title': 'birthdate',
+              'name': 'F. Nacimiento',
+              'type': 'Date',
+              'format': 'DD/MM/YYYY'
+            }
+        ],
+        data: [
+            {
+                'id': 1,
+                'name': 'Tony Peña',
+                'city': 'New York',
+                'country': 'United States',
+                'birthdate': '1978-03-15'
+            },
+            {
+                'id': 2,
+                'name': 'Thessaloniki',
+                'city': 'Athens',
+                'country': 'Greece',
+                'birthdate': '1987-11-23'
+            },
+            {
+                'id': 3,
+                'name': 'Jhon Doe',
+                'city': 'Mexico',
+                'country': 'Mexico',
+                'birthdate': '1987-11-23'
+            }
+        ]
         }
     },
     computed: {
@@ -114,6 +167,12 @@ export default {
         this.getProcedures()
     },
     methods: {
+        startDownload(){
+          console.log('show loading');
+      },
+      finishDownload(){
+          console.log('hide loading');
+      },
         getProcedures(value = null) {
             if (value != null) {
                 this.search = value;
