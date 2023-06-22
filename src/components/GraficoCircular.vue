@@ -72,7 +72,10 @@ export default {
         clearInterval(this.intervalId);
       }
     }, 20);
-    setTimeout(this.loadComplete, 3000); // Llamamos el método loadComplete después de 4 segundos
+    setTimeout(this.loadComplete, 1500); // Llamamos el método loadComplete después de 4 segundos
+  },
+  created(){
+    
   },
   methods: {
     getRandomColor() {
@@ -90,7 +93,5 @@ export default {
   },
 };
 </script>
-<style>
-
-</style>
+<style></style>
   

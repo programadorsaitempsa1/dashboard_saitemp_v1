@@ -128,22 +128,29 @@ export default {
                 });
         },
         getProcedureId(item) {
-            if (item != undefined) {
-                let self = this;
-                var cont = 0;
-                this.procedures.forEach(function (element) {
-                    if (item.trim() == element.nom_proc.trim()) {
-                        self.name_procedure = element.nom_sp.trim();
-                        self.code_procedure = element.cod_proc.trim();
-                        self.getFieldsForm(self.code_procedure);
-                        cont++;
-                        self.show_button_process = true
-                    }
-                });
-                if (cont <= 0) {
-                    self.name_procedure = ''
-                    self.code_procedure = ''
-                }
+            if (item != null) {
+                this.name_procedure = item.nom_sp.trim();
+                this.code_procedure = item.cod_proc.trim();
+                this.getFieldsForm(this.code_procedure);
+                this.show_button_process = true
+                // cont++;
+                // var cont = 0;
+                // console.log(item)
+                // let self = this;
+                // var cont = 0;
+                // this.procedures.forEach(function (element) {
+                //     if (item.trim() == element.nom_proc.trim()) {
+                //         self.name_procedure = element.nom_sp.trim();
+                //         self.code_procedure = element.cod_proc.trim();
+                //         self.getFieldsForm(self.code_procedure);
+                //         cont++;
+                //         self.show_button_process = true
+                //     }
+                // });
+                // if (cont <= 0) {
+                //     self.name_procedure = ''
+                //     self.code_procedure = ''
+                // }
             }
         },
         getFieldsForm(item) {

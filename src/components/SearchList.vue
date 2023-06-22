@@ -4,16 +4,17 @@
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
-                <input type="text" @focus="consultaEndPoint()" @click="hover = !hover" @keyup="hover = true" autocomplete="off"
-                    @input="filterResults(registro, registros, 'registros')" class="form-control" id="exampleInputEmail2"
-                    :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
-                <span class="input-group-text" style="cursor:pointer" @click="registro = '',retornoValorCampo()" id="basic-addon3"><i class="bi bi-x"></i></span>
+                <input type="text" @focus="consultaEndPoint()" @click="hover = !hover" @keyup="hover = true"
+                    autocomplete="off" @input="filterResults(registro, registros, 'registros')" class="form-control"
+                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" :disabled="disabled"/>
+                <span class="input-group-text" style="cursor:pointer" @click="listaEnCadena(registro),registro= ''"
+                    id="basic-addon3"><i class="bi bi-x"></i></span>
                 <!-- <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span> -->
             </div>
         </div>
         <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">
             <div id="lista1" v-for="(item, index) in registrosFilter" :key="index"
-                @click="registro = nombreItems(item), retornoValorCampo(), hover = !hover, filterResults('', registros, 'registros'), listaEnCadena(item)">
+                @click="registro = nombreItems(item), retornoValorCampo(item), hover = !hover, filterResults('', registros, 'registros'), listaEnCadena(item)">
                 {{ nombreItems(item) }}
                 <!-- {{ item.nom_pai != null ? item.nom_pai: item.nom_dep != null? item.nom_dep: item.nom_ciu != null ? item.nom_ciu: '' }} -->
             </div>
@@ -27,12 +28,32 @@ export default {
         placeholder: {},
         registros: [],
         nombreItem: {},
-        eventoCampo:{},
-        ubicacion:{},
-        clearInput:{
+        eventoCampo: {},
+        ubicacion: {},
+        clearInput: {
             type: Boolean,
             default: false
-        }
+        },
+        index: {
+            type: Number,
+            default: null
+        },
+        ordenCampo: {
+            type: Number,
+            default: null
+        },
+        archivos: {
+            type: Boolean,
+            default: false
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+        consulta: {
+            type: String,
+            default: ''
+        },
     },
     data() {
         return {
@@ -43,50 +64,88 @@ export default {
     },
 
     watch: {
+        consulta: function () {
+            this.registro = this.consulta
+        },
         registros: function () {
             this.registrosFilter = this.registros
         },
         clearInput: function () {
-            if(this.clearInput == true){
+            if (this.clearInput == true) {
                 this.registro = ''
             }
         }
     },
     created() {
-
+        this.registro = this.consulta
     },
     methods: {
         consultaEndPoint() {
-            if(this.eventoCampo != undefined){
+            if (this.eventoCampo != undefined) {
                 this.$emit(this.eventoCampo)
             }
-            
+
         },
-        retornoValorCampo() {
-            if(this.registro != '' && this.nombreCampo != 'Pais' && this.nombreCampo != 'Departamento' && this.nombreCampo != 'Ciudad'){
-                this.$emit(this.eventoCampo, this.registro)
+        retornoValorCampo(item) {
+            if (this.registro != '' && this.nombreCampo != 'Pais' && this.nombreCampo != 'Departamento' && this.nombreCampo != 'Ciudad' && this.index == null) {
+                this.$emit(this.eventoCampo, item)
+            } else if (this.index != null) {
+                this.$emit(this.eventoCampo, item, this.index)
             }
         },
         nombreItems(item) {
             return item[this.nombreItem];
         },
         filterResults(value, array, nombrearray) {
-            const search = array.filter(item => this.nombreItems(item).toLowerCase().match(value.toLowerCase()));
-
-            if (nombrearray == 'registros') {
-                this.registrosFilter = search
+            var search = null
+            if (this.archivos) {
+                let self = this
+                search = array.forEach(function (element) {
+                        if (self.nombreItems(element) != undefined) {
+                            return element;
+                        }
+                    });
+            } else {
+                search = array.filter(item => this.nombreItems(item).toLowerCase().match(value.toLowerCase()));
+                if (nombrearray == 'registros') {
+                    this.registrosFilter = search
+                }
             }
         },
         listaEnCadena(item) {
-            switch (this.nombreItem) {
-                case 'nom_pai':
-                    this.$emit('getDepartamentos', item.cod_pai, this.ubicacion, this.registro)
+            switch (this.eventoCampo) {
+                case 'getPaises':
+                    this.$emit('getDepartamentos', item)
                     break;
-                    case 'nom_dep':
-                    this.$emit('getMunicipios', item.cod_dep, this.ubicacion, this.registro)
+                case 'getDepartamentos':
+                    this.$emit('getMunicipios', item)
                     break;
-                    case 'nom_ciu':
-                    this.$emit('setMunicipios', item.cod_ciu, this.ubicacion, this.registro)
+                case 'setMunicipios':
+                    this.$emit('setMunicipios', item, this.ordenCampo, this.index)
+                    break;
+                case 'getCodigosCiiu':
+                    this.$emit('getActividadesCiiu', item)
+                    break;
+                case 'getSubCategoryReports':
+                    this.$emit('getSubCategoryReports', item)
+                    break;
+                case 'getTipoIdentificacion':
+                    this.$emit('setTipoIdentificacion', item, this.ordenCampo, this.index)
+                    break;
+                case 'getAfirmacionNegacion':
+                    this.$emit('setAfirmacionNegacion', item, this.ordenCampo, this.index)
+                    break;
+                case 'getBancos':
+                    this.$emit('setBanco', item, this.ordenCampo, this.index)
+                    break;
+                case 'getTipoCuentaBancos':
+                    this.$emit('setTipoCuentaBancos', item, this.ordenCampo, this.index)
+                    break;
+                case 'getTipoOrigenMedios':
+                    this.$emit('setTipoOrigenMedios', item, this.ordenCampo)
+                    break;
+                case 'getTipoArhivo':
+                    this.$emit('setTipoArchivo', item,this.index)
                     break;
             }
         }

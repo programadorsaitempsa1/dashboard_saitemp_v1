@@ -32,14 +32,7 @@ export default {
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
-            items: [
-                // { percentaje: 0, label: 'Empleados Activos' },
-                // { percentaje: 0, label: 'Empleados Planta' },
-                // { percentaje: 0, label: 'Ingresos mes en curso' },
-                // { percentaje: 0, label: 'Retiros mes en curso' },
-                // { percentaje: 0, label: 'Ingresos mes Anterior' },
-                // { percentaje: 0, label: 'Retiros mes anterior' },
-            ],
+            items: [],
         }
     },
     computed: {

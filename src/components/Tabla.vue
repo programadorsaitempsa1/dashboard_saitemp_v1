@@ -104,7 +104,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados'  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,7 +126,7 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
@@ -136,7 +136,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -149,25 +149,34 @@
                                 item[item2] }}
                         </td>
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
-                       <td v-if="ruta == '/navbar/empleados' && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
+                       <td v-if="empleados() && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
 
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && ruta != '/navbar/empleados' && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
-                        <td v-if="ruta == '/navbar/empleados'">
+                        <td v-if="empleados()">
                             <button type="button" class="btn btn-success btn-sm " @click="VerRegistro(item)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-eye"></i> Ver registro
                             </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
+                            <button type="button" class="btn btn-success btn-sm " @click="verContrato(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> Ver registro
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
+                            <ConsultaContrato :item="item"/>
                         </td>
                         <td v-if="ruta == '/navbar/reportes'">
                             <button type="button" class="btn btn-success btn-sm "
@@ -219,9 +228,11 @@
 <script>
 import axios from 'axios'
 import Modal from './Modal.vue'
+import ConsultaContrato from './ConsultaContrato.vue'
 export default {
     components:{
-        Modal
+        Modal,
+        ConsultaContrato
     },
     props: {
         tabla: [],
@@ -268,7 +279,7 @@ export default {
             base64consulta: '',
             sinregistros: 'No hay resgistros guardados',
             url:'',
-            analista:[]
+            analista:[],
         };
     },
 
@@ -290,12 +301,20 @@ export default {
         },
     },
     created(){
-        if(this.ruta == '/navbar/empleados' || this.ruta == '/navbar/trump'){
+        console.log(this.ruta.split("/")[2])
+        this.empleados()
+        if(this.empleados() || this.ruta == '/navbar/trump'){
                  this.spinner = false
                  this.sinregistros = 'Realiza una búsqueda para ver los registros'
             }
     },
     methods: {
+         empleados() {
+          if(this.ruta.split("/")[2] == 'empleados'){
+                return true;
+            }
+        },
+
         getAnalista(id){
             let self = this;
             let config = this.configHeader();
@@ -375,7 +394,7 @@ export default {
                 claves.forEach((element) => {
                     self.campos2.push(element)
                 });
-                if(this.ruta == '/navbar/empleados' && !isNaN(this.search)){
+                if(this.empleados() && !isNaN(this.search)){
                     self.campos2.pop()
                 }
             } else {
@@ -651,6 +670,9 @@ export default {
             }else{
                 this.$emit('getUser', item.ter_nit.trim())
             }
+        },
+        verContrato(item) {
+            this.$router.push({ name: 'debida-diligencia/formulario-clientes', params: { id: item.id } })
         },
     },
 };

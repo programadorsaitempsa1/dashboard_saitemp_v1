@@ -178,7 +178,7 @@ const routes = [
         component: Estadistica,
       },
       {
-        path: "empleados",
+        path: "empleados/:id?",
         name: "empleados",
         component: Empleados,
       },
@@ -218,7 +218,7 @@ const routes = [
         component: DdClientes,
       },
       {
-        path: "debida-diligencia/formulario-clientes",
+        path: "debida-diligencia/formulario-clientes/:id?",
         name: "debida-diligencia/formulario-clientes",
         component: DdFormularioCliente,
       },

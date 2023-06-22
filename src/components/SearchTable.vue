@@ -126,6 +126,10 @@ export default {
         eventoCampo: {},
         ubicacion:{},
         posicion:{},
+        consulta: {
+            type: String,
+            default: ''
+        },
 
         // *****************
         // tabla: [],
@@ -152,6 +156,9 @@ export default {
     },
 
     watch: {
+        consulta: function () {
+            this.registro = this.consulta
+        },
         datos: function () {
             this.spinner = false
             if (this.datos.data.length > 0) {

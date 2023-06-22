@@ -3,8 +3,8 @@
         <h2>Reportes</h2>
         <div class="row">
             <div class="col-6">
-                <SearchList nombreCampo="Seleccione la categoria del reporte" @getCategoryReportsId="getCategoryReportsId"
-                    eventoCampo="getCategoryReportsId" nombreItem="nom_mod" :registros="categorias"
+                <SearchList nombreCampo="Seleccione la categoria del reporte" eventoCampo="getSubCategoryReports"
+                    @getSubCategoryReports="getSubCategoryReports" nombreItem="nom_mod" :registros="categorias"
                     placeholder="Seleccione un categoría" />
             </div>
             <div class="col">
@@ -20,7 +20,8 @@
                     placeholder="Seleccione un categoría" />
             </div>
         </div>
-        <Tabla :datos="datos" :tabla="tabla" :search="subcategory_reports_apl" :search2="subcategory_reports_cod" :endpoint="endpoint" />
+        <Tabla :datos="datos" :tabla="tabla" :search="subcategory_reports_apl" :search2="subcategory_reports_cod"
+            :endpoint="endpoint" />
     </div>
 </template>
 <script>
@@ -85,7 +86,7 @@ export default {
                 let self = this;
                 let config = this.configHeader();
                 axios
-                    .get(self.URL_API + "api/v1/subcategoriasreporte/" + value, config)
+                    .get(self.URL_API + "api/v1/subcategoriasreporte/" + value.cod_apl, config)
                     .then(function (result) {
                         self.subcategorias = result.data;
                     });
@@ -109,38 +110,11 @@ export default {
                     self.datos = result;
                 });
         },
-        getCategoryReportsId(item) {
-            if (item != undefined) {
-                let self = this;
-                var cont = 0;
-                this.categorias.forEach(function (element) {
-                    if (item.trim() == element.nom_mod.trim()) {
-                        self.category_reports_id = element.cod_apl.trim();
-                        self.getSubCategoryReports(self.category_reports_id);
-                        cont++;
-                    }
-                });
-                if (cont <= 0) {
-                    self.CategoryReportsId = "";
-                }
-            }
-        },
         getSubCategoryReportsId(item) {
-            if (item != undefined) {
-                let self = this;
-                var cont = 0;
-                this.subcategorias.forEach(function (element) {
-                    if (item.trim() == element.des_cat.trim()) {
-                        self.subcategory_reports_apl = element.cod_apl.trim();
-                        self.subcategory_reports_cod = element.cod_cat.trim();
-                        self.getReports();
-                        cont++;
-                    }
-                });
-                if (cont <= 0) {
-                    self.subcategory_reports_apl = ''
-                    self.subcategory_reports_cod = ''
-                }
+            if(item != null){
+                this.subcategory_reports_apl = item.cod_apl.trim();
+                this.subcategory_reports_cod = item.cod_cat.trim();
+                this.getReports();
             }
         },
         configHeader() {
@@ -158,8 +132,9 @@ export default {
 button {
     margin-top: 40px;
 }
+
 h2 {
-  font-family: "Montserrat", sans-serif;
-  margin: 20px 0px 20px 0px;
+    font-family: "Montserrat", sans-serif;
+    margin: 20px 0px 20px 0px;
 }
 </style>

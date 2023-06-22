@@ -68,7 +68,8 @@ export default {
 
     },
     mounted() {
-
+        this.search = this.$route.params.id
+        this.getUser(this.search)
     },
     methods: {
         getUser(value = null) {
@@ -86,6 +87,7 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/historicoempleado/" + this.search + '/' + 10, config)
                 .then(function (result) {
+                    console.log(result)
                     self.datos = result;
                     if (result.data.data.length > 0 && descarga_excel) {
                         self.download_excel = true

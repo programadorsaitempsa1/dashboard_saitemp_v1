@@ -120,8 +120,8 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Contacto de emergencia:</label>
-                                <input type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp"
-                                    v-model="contacto_emergencia" />
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="1"
+                                    v-model="contacto_emergencia"></textarea>
                             </div>
                         </div>
                         <div class="col">
@@ -148,7 +148,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" @click="$router.go(-1)">
+                    <button type="submit" class="btn btn-primary" @click="atras()">
                         Atrás
                     </button>
                 </form>
@@ -179,8 +179,8 @@ export default {
             fondo_salud: '',
             numero_contacto: '',
             celular_contacto: '',
-            fondo_pension_actual:'',
-            ccf_actual:'',
+            fondo_pension_actual: '',
+            ccf_actual: '',
             parametro_ruta: this.$route.params.id
         }
     },
@@ -197,16 +197,19 @@ export default {
         this.getUser()
     },
     methods: {
+        atras() {
+            this.$router.push({ name: "empleados", params: { id: this.numero_identificacion } });
+        },
         getUser() {
             let self = this;
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/datosempleado/" + this.parametro_ruta, config)
                 .then(function (result) {
-                    self.llenarFormulario(result.data) ;
+                    self.llenarFormulario(result.data);
                 });
         },
-        llenarFormulario(result){
+        llenarFormulario(result) {
             this.tipo_identificacion = result.des_tip
             this.salario = result.sal_bas
             this.numero_identificacion = result.num_ide

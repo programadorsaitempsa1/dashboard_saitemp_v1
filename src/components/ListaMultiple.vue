@@ -1,10 +1,9 @@
 <template>
     <div class="col-3 lista-multiple" id="contenedor-select" @click="hover2 = !hover2">
-        <button style="margin:5px" class="btn btn-sm" v-for="(item, index) in elementos2" :key="index"
-            type="button">{{ item.nombre }}<i @click="eliminarElemento(index),swict()" class="bi bi-x"></i></button>
+        <button style="margin:5px" class="btn btn-sm" v-for="(item, index) in elementos2" :key="index" type="button">{{
+            item.nombre }}<i @click="eliminarElemento(index), swict()" class="bi bi-x"></i></button>
         <div v-if="hover2 && elementoslist2.length > 0" id="select2" @mouseleave="hover2 = false">
-            <div id="lista2" v-for="(item, index) in elementoslist2" :key="index"
-                @click="agregarElemento(index)">
+            <div id="lista2" v-for="(item, index) in elementoslist2" :key="index" @click="agregarElemento(index)">
                 {{ item.nombre }}
             </div>
         </div>
@@ -26,7 +25,19 @@ export default {
         elementos: {
             type: Array,
             default: () => []
+        },
+        index: {
+            type: Number,
+            default: null
+        },
+        tipolista: {
+            type: String,
+            default: null
+        },
+        verLista: {
+            type: Number
         }
+
     },
     data() {
         return {
@@ -35,19 +46,38 @@ export default {
             elementoslist2: []
         }
     },
+    watch: {
+        elementoslist() {
+            this.hover2 = false;
+            this.elementos2 = [...this.elementos];
+            this.elementoslist2 = [...this.elementoslist];
+        },
+        elementos() {
+            this.elementos2 = [...this.elementos];
+
+        }
+    },
     created() {
-        this.hover2 = false;
-        this.elementos2 = [...this.elementos];
-        this.elementoslist2 = [...this.elementoslist];
+        this.asignarLista()
     },
     methods: {
+        asignarLista() {
+            this.hover2 = false;
+            this.elementos2 = [...this.elementos];
+            this.elementoslist2 = [...this.elementoslist];
+        },
         agregarElemento(index) {
             this.elementos2.push(this.elementoslist2[index]);
             this.elementoslist2.splice(index, 1);
+            this.retornarArray()
         },
         eliminarElemento(index) {
             this.elementoslist2.push(this.elementos2[index]);
             this.elementos2.splice(index, 1);
+            this.retornarArray()
+        },
+        retornarArray() {
+            this.$emit('setLista', this.elementos2, this.tipolista, this.index)
         },
         swict() {
             setTimeout(() => {
@@ -78,7 +108,7 @@ export default {
     cursor: pointer;
     border-radius: 5px;
     margin-bottom: 5px;
-    margin-top: 5px;    
+    margin-top: 5px;
 }
 
 #select1 {
@@ -106,7 +136,7 @@ export default {
     cursor: pointer;
 }
 
-.btn{
+.btn {
     background-color: #126b41;
     color: white;
 }
