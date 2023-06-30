@@ -301,7 +301,7 @@ export default {
         },
     },
     created(){
-        console.log(this.ruta.split("/")[2])
+        // console.log(this.ruta.split("/")[2])
         this.empleados()
         if(this.empleados() || this.ruta == '/navbar/trump'){
                  this.spinner = false

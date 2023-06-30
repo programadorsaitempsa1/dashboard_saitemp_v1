@@ -37,6 +37,7 @@ import PowerBi from "../components/PowerBi.vue";
 import Ddashboard from "../components/Ddashboard.vue";
 import DdClientes from "../components/DdClientes.vue";
 import DdFormularioCliente from "../components/DdFormularioCliente.vue";
+import FormularioRegistro from "../components/FormularioRegistro.vue";
 
 
 Vue.use(VueRouter);
@@ -46,6 +47,11 @@ const routes = [
     path: "/",
     name: "login",
     component: InicioSesion,
+  },
+  {
+    path: "/formularioregistro",
+    name: "formularioregistro",
+    component: FormularioRegistro,
   },
   {
     path: "/navbar",
