@@ -169,6 +169,7 @@ export default {
     },
 
     created() {
+        this.registro = this.consulta
     },
     methods: {
         buscarRegistro(){

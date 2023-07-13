@@ -38,6 +38,7 @@ import Ddashboard from "../components/Ddashboard.vue";
 import DdClientes from "../components/DdClientes.vue";
 import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 import FormularioRegistro from "../components/FormularioRegistro.vue";
+import NovedadesNomina from "../components/NovedadesNomina.vue";
 
 
 Vue.use(VueRouter);
@@ -227,6 +228,11 @@ const routes = [
         path: "debida-diligencia/formulario-clientes/:id?",
         name: "debida-diligencia/formulario-clientes",
         component: DdFormularioCliente,
+      },
+      {
+        path: "gestion-novedades-nomina",
+        name: "gestion-novedades-nomina",
+        component: NovedadesNomina,
       },
     ],
   },

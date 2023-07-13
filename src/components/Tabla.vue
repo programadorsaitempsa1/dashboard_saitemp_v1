@@ -77,12 +77,12 @@
                         Realizar búsqueda
                     </button>
                 </div>
-                <div v-if="ruta == '/navbar/reporteitems' && this.campo != '' && this.operador && this.valor_comparar"
+                <!-- <div v-if="ruta == '/navbar/debida-diligencia/clientes' && this.campo != '' && this.operador && this.valor_comparar || this.valor_comparar2"
                     class="col-xs-3 col-md-3">
                     <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
-                        <a :href="URL_API + 'api/v1/itemsexport/' + base64consulta" rel="noopener noreferrer">Exportar excel</a>
+                        <a :href="URL_API + 'api/v1/'+endpointexport+'/' + base64consulta" rel="noopener noreferrer">Exportar excel</a>
                     </button>
-                </div>
+                </div> -->
                 <div class="col-xs-3 col-md-3">
                     <button @click="getRegistros()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
                         Borrar búsqueda
@@ -104,7 +104,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -131,7 +131,7 @@
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" colspan="2">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" colspan="3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,6 +178,11 @@
                         <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
                             <ConsultaContrato :item="item"/>
                         </td>
+                        <!-- <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
+                            <button type="button" class="btn btn-success btn-sm ">
+                               <a :href="URL_API + 'api/v1/formularioddexport/'+item.id" > <i class="bi bi-file-earmark-excel"></i> Exportar a excel </a>
+                            </button>
+                        </td> -->
                         <td v-if="ruta == '/navbar/reportes'">
                             <button type="button" class="btn btn-success btn-sm "
                                 v-if="item.nombre != 'S. Administrador'">
@@ -238,6 +243,7 @@ export default {
         tabla: [],
         datos: [],
         endpoint: {},
+        endpointexport: {},
         heigth_container: {},
         massiveUpdate: {},
         campos: {},
@@ -301,7 +307,6 @@ export default {
         },
     },
     created(){
-        // console.log(this.ruta.split("/")[2])
         this.empleados()
         if(this.empleados() || this.ruta == '/navbar/trump'){
                  this.spinner = false
@@ -335,10 +340,13 @@ export default {
             else if (this.ruta.includes('reporteitems')) {
                 return true
             }
-            else if (this.ruta.includes('sigcontratos')) {
-                return true
-            }
-            else if (this.ruta.includes('zonas')) {
+            // else if (this.ruta.includes('sigcontratos')) {
+            //     return true
+            // }
+            // else if (this.ruta.includes('zonas')) {
+            //     return true
+            // }
+            else if (this.ruta.includes('debida-diligencia')) {
                 return true
             }
         },
@@ -381,7 +389,7 @@ export default {
         },
         idCampo(campo) {
             this.listaItem.forEach(item => {
-                if (campo == item.nombre) {
+                if (campo.trim() == item.nombre.trim()) {
                     this.valor_comparar = item.id
                 }
             })
@@ -389,6 +397,7 @@ export default {
         llenarTabla(datos) {
             let self = this
             if (datos.data.data.length > 0) {
+                this.sin_registros = false
                 let claves = Object.keys(datos.data.data[0]); // Crea un array con los campos de los registros para ordenarlos posteriormente
                 self.campos2 = []
                 claves.forEach((element) => {
@@ -674,6 +683,16 @@ export default {
         verContrato(item) {
             this.$router.push({ name: 'debida-diligencia/formulario-clientes', params: { id: item.id } })
         },
+        exportFormularioDD(item){
+            console.log(item)
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/formularioddexport", config)
+                .then(function (result) {
+                   console.log(result.data)
+                });
+        }
     },
 };
 </script>
