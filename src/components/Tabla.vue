@@ -77,12 +77,12 @@
                         Realizar búsqueda
                     </button>
                 </div>
-                <!-- <div v-if="ruta == '/navbar/debida-diligencia/clientes' && this.campo != '' && this.operador && this.valor_comparar || this.valor_comparar2"
+                <div v-if="ruta == '/navbar/debida-diligencia/clientes' && this.campo != '' && this.operador && this.valor_comparar || this.valor_comparar2"
                     class="col-xs-3 col-md-3">
                     <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
                         <a :href="URL_API + 'api/v1/'+endpointexport+'/' + base64consulta" rel="noopener noreferrer">Exportar excel</a>
                     </button>
-                </div> -->
+                </div>
                 <div class="col-xs-3 col-md-3">
                     <button @click="getRegistros()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
                         Borrar búsqueda
@@ -175,7 +175,7 @@
                                 <i class="bi bi-eye"></i> Ver registro
                             </button>
                         </td>
-                        <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
+                        <td v-if="ruta == '/navbar/debida-diligencia/clientes' &&  userlogued.id == 1 ||  userlogued.id == 5">
                             <ConsultaContrato :item="item"/>
                         </td>
                         <!-- <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
@@ -248,6 +248,10 @@ export default {
         massiveUpdate: {},
         campos: {},
         listas: [],
+        userlogued:{
+            default:'',
+           
+        },
         search:{
             default:'',
             type:String

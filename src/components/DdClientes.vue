@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Debida diligencia clientes</h2>
-    <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :listas="listas" :endpointexport="endpointexport" />
+    <Tabla :datos="datos" :tabla="tabla"  :userlogued="userlogued" :endpoint="endpoint" :listas="listas" :endpointexport="endpointexport" />
   </div>
 </template>
 <script>
@@ -14,7 +14,7 @@ export default {
   },
   mixins: [],
   props: {
-
+    userlogued:{}
   },
   data() {
     return {

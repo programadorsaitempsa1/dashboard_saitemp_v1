@@ -2,6 +2,25 @@
   <div>
     <div class="container">
       <h2>Administrar Usuarios</h2>
+      <div class="row" style="width:80%; margin-bottom: 30px;">
+        <div class="col-xs-4 col-md-6">
+          <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">Buscar usuario</label>
+          <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+            placeholder="Escriba nombre o usuario" aria-describedby="emailHelp" v-model="usuario" />
+        </div>
+        <div class="col-xs-4 col-md-3">
+          <button v-if="usuario != ''" type="button" style="margin-top: 35px;" @click="getUser(usuario)"
+            class="btn btn-success btn-sm">
+            Buscar
+          </button>
+        </div>
+        <div class="col-xs-4 col-md-3">
+          <button v-if="usuario != ''" type="button" style="margin-top: 35px;" @click="getUsers(), usuario = ''"
+            class="btn btn-success btn-sm">
+            Borrar búsqueda
+          </button>
+        </div>
+      </div>
       <div class="row">
         <button type="button" id="newUser" class="col-xs-12 col-md-2 btn btn-success" @click="nuevoUsuario()">
           <i class="bi bi-file-earmark-plus"></i> Insertar usuario
@@ -96,6 +115,7 @@ export default {
       roluserlogued: "",
       actualiced: false,
       cantidad: 10,
+      usuario:'',
       ruta: '',
       spinner:true,
       percentaje1: 80, // Valor inicial del porcentaje
@@ -145,6 +165,17 @@ export default {
       let config = this.configHeader();
       axios
         .get(self.URL_API + "api/v1/users/" + self.cantidad, config)
+        .then(function (result) {
+          self.users = result.data.data;
+          self.result = result;
+          self.spinner = false
+        });
+    },
+    getUser() {
+      let self = this;
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + "api/v1/users/"+ self.usuario +'/'+ self.cantidad, config)
         .then(function (result) {
           self.users = result.data.data;
           self.result = result;

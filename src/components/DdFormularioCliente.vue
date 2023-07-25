@@ -1,5 +1,8 @@
 <template>
     <div class="container" id="contenedor-formulario">
+        <div v-if="loading" class="loading">
+            <div class="loader" id="loader">Loading...</div>
+        </div>
         <div class="row">
             <div class="col-2">
                 <img style="width: 80%;" src="@/assets/logo1.png" alt="">
@@ -114,9 +117,10 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Nombre completo / Razón social: *</label>
-                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
+                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="razon_social = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
-                            v-model="razon_social" />
+                            v-model="razon_social" /> -->
+                            <textarea name="" id="razon_social" rows="1" v-model="razon_social" @input="razon_social = formatInputUpperCase($event.target.value)"  ></textarea>
                         <span id="validate" v-if="razon_social == '' && submitted" class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
@@ -265,7 +269,7 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
                             aria-describedby="emailHelp" v-model="plazo_pago"
-                            @input="plazo_pago = formatInputUpperCase($event.target.value)" />
+                            @input="plazo_pago = validarNumero(plazo_pago)" />
                         <span id="validate" v-if="periodicidad_liquidacion_id == '' && submitted" class="error">{{
                             mensaje_error }}</span>
                     </div>
@@ -311,9 +315,10 @@
                         <label class="form-label">Observaciones a acuerdos
                             comerciales:
                         </label>
-                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
+                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="acuerdos_comerciales" />
+                            aria-describedby="emailHelp" v-model="acuerdos_comerciales" /> -->
+                            <textarea name="" id="acuerdos_comerciales"  rows="1" v-model="acuerdos_comerciales" @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"  ></textarea>
                     </div>
                 </div>
                 <div class="row" v-if="tipo_cliente == 1">
@@ -1249,8 +1254,10 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-success" type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
-            <button class="btn btn-success" type="submit" style="margin:30px" :disabled="btn_save">Guardar</button>
+            <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
+            <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                type="submit" style="margin:30px" :disabled="btn_save">Guardar</button>
         </form>
     </div>
 </template>
@@ -1271,7 +1278,9 @@ export default {
     },
     mixins: [],
     props: {
-
+        userlogued: {
+            default: '',
+        },
     },
     data() {
         return {
@@ -1450,7 +1459,8 @@ export default {
             tipo_archivo_: '',
             registroCliente: {},
             cliente_existe: false,
-            btn_save: false
+            btn_save: false,
+            loading: false,
 
         }
     },
@@ -1471,6 +1481,13 @@ export default {
         this.getRequsitos()
         this.fileInputsCountCopia = [...this.fileInputsCount]
         if (this.$route.params.id != undefined && this.$route.path != '/formularioregistro') {
+            this.loading = true
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: "smooth",
+            });
+            document.body.style.overflow = 'hidden';
             this.consultaFormulario(this.$route.params.id)
         }
         // else {
@@ -1487,13 +1504,16 @@ export default {
                     .then(function (result) {
                         if (result.data.nit != undefined && self.$route.params.id == undefined) {
                             self.showAlert('El nit ingresado ya se encuentra registrado en nuestra base de datos', 'error')
-                            return self.cliente_existe = true
+                            self.cliente_existe = true
+                            return
 
                         } else if (result.data.numero_identificacion != undefined && self.$route.params.id == undefined) {
                             self.showAlert('El número de identificación ingresado ya se encuentra registrado en nuestra base de datos', 'error')
-                            return self.cliente_existe = true
+                            self.cliente_existe = true
+                            return
                         } else {
-                            return self.cliente_existe = false
+                            self.cliente_existe = false
+                            return
                         }
                     });
             }
@@ -2250,17 +2270,23 @@ export default {
                 this.btn_save = false;
             }, "10000");
 
+            if(this.cliente_existe){
+                return
+            }
 
-            if (this.nit != '' && this.$route.params.id == undefined) {
-                this.getCliente(this.nit, 2)
-                if (this.cliente_existe) {
-                    return
-                }
-            } else if (this.numero_identificacion != '' && this.$route.params.id == undefined) {
-                this.getCliente(this.numero_identificacion, 1)
-                if (this.cliente_existe) {
-                    return
-                }
+            if(this.tipo_operacion_internacional == '') {
+                this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
+                return
+            }
+
+            if(this.correo_factura_electronica == '') {
+                this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
+                return
+            }
+
+            if(this.cliente_existe){
+                this.showAlert('El nit o número de documento ingresado ya se encuentra registrado en nuestra base de datos', 'error')
+                return
             }
 
             if (this.contratacion_directa == false && this.atraccion_seleccion == false && this.tipo_cliente == 1) {
@@ -2305,6 +2331,7 @@ export default {
                         .then(function (result) {
                             if (result.data.message == 'ok') {
                                 self.guardarArchivos(result.data.client)
+                                self.cliente_existe = true
                             } else {
                                 self.showAlert(result.data.message, result.data.status)
                             }
@@ -2404,6 +2431,8 @@ export default {
                 .get(self.URL_API + "api/v1/formulariocliente/" + id, config)
                 .then(function (result) {
                     self.llenarFormulario(result.data)
+                    self.loading = false
+                    document.body.style.overflow = 'auto';
                 });
         },
 
@@ -2737,8 +2766,93 @@ ul li {
     font-size: 0.7rem;
     float: left;
 }
-
 .error {
     color: red;
+}
+
+#acuerdos_comerciales,#razon_social{
+    width:100% ;
+    height: 37px;
+    border-radius: 5px;
+    border-color: rgb(191, 199, 199);
+    outline:none;
+    padding: 5px;
+}
+
+.loading{
+    background-color: rgba(230, 222, 222, 0.63);
+    position:fixed;
+    width: 100%;
+    height: 1000px;
+    /* top: 0%; */
+    left: 0%;
+    z-index: 200;
+}
+
+.loader {
+  font-size: 15px;
+  margin: 20% auto;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-animation: load4 1.3s infinite linear;
+  animation: load4 1.3s infinite linear;
+  z-index: 500;
+}
+@-webkit-keyframes load4 {
+  0%,
+  100% {
+    box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+  }
+  12.5% {
+    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  25% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  37.5% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  50% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  62.5% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  75% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+  }
+  87.5% {
+    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+  }
+}
+@keyframes load4 {
+  0%,
+  100% {
+    box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+  }
+  12.5% {
+    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  25% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  37.5% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  50% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  62.5% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+  }
+  75% {
+    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+  }
+  87.5% {
+    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+  }
 }
 </style>
