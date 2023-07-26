@@ -45,7 +45,6 @@ export default ({
   },
   methods: {
     login() {
-      console.log('prueba')
       let self = this;
       let username = { email: this.email, password: this.password };
       axios
