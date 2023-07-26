@@ -120,7 +120,8 @@
                         <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="razon_social = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
                             v-model="razon_social" /> -->
-                            <textarea name="" id="razon_social" rows="1" v-model="razon_social" @input="razon_social = formatInputUpperCase($event.target.value)"  ></textarea>
+                        <textarea name="" id="razon_social" rows="1" v-model="razon_social"
+                            @input="razon_social = formatInputUpperCase($event.target.value)"></textarea>
                         <span id="validate" v-if="razon_social == '' && submitted" class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
@@ -318,7 +319,8 @@
                         <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"
                             aria-describedby="emailHelp" v-model="acuerdos_comerciales" /> -->
-                            <textarea name="" id="acuerdos_comerciales"  rows="1" v-model="acuerdos_comerciales" @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"  ></textarea>
+                        <textarea name="" id="acuerdos_comerciales" rows="1" v-model="acuerdos_comerciales"
+                            @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                 </div>
                 <div class="row" v-if="tipo_cliente == 1">
@@ -532,7 +534,7 @@
                                     mensaje_error }}</span>
                         </div>
                         <div class="col mb-3">
-                            <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
+                            <label for="exampleInputEmail1" class="form-label">Número celular:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" v-model="item.telefono"
                                 @input="item.telefono = validarNumero(item.telefono)" />
@@ -1461,6 +1463,7 @@ export default {
             cliente_existe: false,
             btn_save: false,
             loading: false,
+            limite: 3 * 1024 * 1024,
 
         }
     },
@@ -1468,6 +1471,9 @@ export default {
 
     },
     watch: {
+        $route() {
+            this.limpiarformulario()
+        }
 
     },
     mounted() {
@@ -1647,10 +1653,9 @@ export default {
             let self = this;
             let config = this.configHeader();
             const document = new FormData();
-            var limite = 3 * 1024 * 1024;
             var bandera = 0
             this.file.forEach(function (item, index) {
-                if (item.size > limite) {
+                if (item.size > self.limite) {
                     self.showAlert('El archivo' + item.name + 'es demasiado pesado, el limite es de 3MB', 'error')
                     bandera++
                 }
@@ -1666,6 +1671,13 @@ export default {
                     .post(self.URL_API + "api/v1/formulariocliente/doc/" + id, document, config)
                     .then(function (result) {
                         self.showAlert(result.data.message, result.data.status)
+                    });
+            } else {
+                axios
+                    .delete(self.URL_API + "api/v1/formulariocliente/" + id, config)
+                    .then(function (result) {
+                        console.log(result)
+                        self.cliente_existe = false
                     });
             }
         },
@@ -2261,6 +2273,460 @@ export default {
                 }
             })
         },
+        limpiarformulario() {
+            this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }]
+            this.tipo_cliente = ''
+            this.cliente = false
+            this.consulta_tipo_cliente = ''
+            this.proveedor = false
+            this.tipo_proveedor = ''
+            this.tipo_proveedores = []
+            this.cliente_proveedor = []
+            this.consulta_cliente_proveedor = ''
+            this.consulta_tipo_proveedor = ''
+            this.tipo_clientes = []
+            this.operacion = ''
+            this.operaciones = []
+            this.consulta_operacion = ''
+            this.contratacion_directa = false
+            this.atraccion_seleccion = false
+            this.tiposPersona = []
+            this.tipo_persona = ''
+            this.consulta_tipo_persona = ''
+            this.persona_natural = false
+            this.persona_juridica = false
+            this.tiposIdentificacion = []
+            this.consulta_tipo_identificacion = ''
+            this.tipo_identificacion = ''
+            this.numero_identificacion = ''
+            this.fecha_expedicion = ''
+            this.nit = ''
+            this.digito_verificacion = ''
+            this.razon_social = ''
+            this.fecha_constitucion = ''
+            this.empleados_empresa = ''
+            this.codigos_ciiu = []
+            this.consulta_codigo_ciiu = ''
+            this.codigo_ciiu_id = ''
+            this.actividades_ciiu = []
+            this.consulta_actvidad_ciiu = ''
+            this.actividad_ciiu = ''
+            this.campos_actividad_ciiu = ['codigo_actividad', 'descripcion']
+            this.estratos = []
+            this.estrato = ''
+            this.consulta_estrato = ''
+            this.paises = []
+            this.pais = ''
+            this.consulta_pais = ''
+            this.departamentos = []
+            this.departamento = ''
+            this.consulta_departamento = ''
+            this.municipios = []
+            this.municipio = ''
+            this.consulta_municipio = ''
+            this.municipio_prestacion_servicio = ''
+            this.consulta_municipio_prestacion_servicio = ''
+            this.departamento_prestacion_servicio = ''
+            this.consulta_departamento_prestacion_servicio = ''
+            this.pais_prestacion_servicio = ''
+            this.consulta_pais_prestacion_servicio = ''
+            this.direccion_empresa = ''
+            this.contacto_empresa = ''
+            this.correo_electronico_empresa = ''
+            this.telefono_empresa = ''
+            this.celular_empresa = ''
+            this.sociedades_comerciales = []
+            this.consulta_sociedad_comercial = ''
+            this.sociedad_comercial = ''
+            this.otra_cual = ''
+            this.periodicidades_liquidacion = []
+            this.periodicidad_liquidacion_id = ''
+            this.consulta_periodicidad_pago = ''
+            this.plazo_pago = ''
+            this.aiu_negociado = ''
+            this.ejecutivos_comerciales = []
+            this.consulta_ejecutivo_comercial = ''
+            this.ejecutivo_comercial = ''
+            this.acuerdos_comerciales = ''
+            this.consulta_jornada_laboral = ''
+            this.jornadas_laborales = []
+            this.jornada_laboral = ''
+            this.consulta_rotacion_personal = ''
+            this.rotaciones_personal = []
+            this.riesgos_laborales = []
+            this.consulta_riesgo_laboral = []
+            this.riesgo_laboral = ''
+            this.consulta_riesgo_cliente = ''
+            this.fileInputsCount = []
+            this.consulta_tipo_identificacion_ac = []
+            this.accionistas = [{ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' }]
+            this.representantes_legales = [{ nombre: '', tipo_identificacion: '', identificacion: '', municipio: '', municipio_id: '', correo: '', telefono: '' }]
+            this.consulta_tipo_identificacion_rl = []
+            this.consulta_pais_rl = []
+            this.consulta_departamento_rl = []
+            this.consulta_municipio_rl = []
+            this.junta_directiva = false
+            this.miembros_Junta = [{ nombre: '', tipo_identificacion_id: '', identificacion: '' }]
+            this.consulta_tipo_identificacion_miembros_junta = []
+            this.consulta_responsable_impuesto_ventas = ''
+            this.responsable_impuesto_ventas = ''
+            this.correo_factura_electronica = ''
+            this.consulta_sucursal_facturacion = ''
+            this.sucursales = []
+            this.calidad_tributaria = [
+                { nombre: '¿Es Gran Contribuyente?:', opcion: '', numero_resolucion: '', fecha: '' },
+                { nombre: '¿Es Auto-Retenedor?', opcion: '', numero_resolucion: '', fecha: '' },
+                { nombre: '¿Exento de Impuesto a la Renta?', opcion: '', numero_resolucion: '', fecha: '' },]
+            this.consulta_calidad_tributaria = []
+            this.nombre_completo_contador = ''
+            this.consulta_contador = ''
+            this.tipo_identificacion_contador = ''
+            this.identificacion_contador = ''
+            this.telefono_contador = ''
+            this.nombre_completo_tesorero = ''
+            this.telefono_tesorero = ''
+            this.correo_tesorero = ''
+            this.ingreso_mensual = ''
+            this.costos_gastos = ''
+            this.activos = ''
+            this.otros_ingresos = ''
+            this.detalle_otros_ingresos = ''
+            this.pasivos = ''
+            this.total_ingresos = ''
+            this.reintegro_costos = ''
+            this.patrimonio = ''
+            this.consulta_operacion_moneda_extranjera = ''
+            this.operaciones_modena_extranjera = ''
+            this.tipo_operacion_internacional = ''
+            this.consulta_operacion_internacional = ''
+            this.tipos_operaciones_internacionales = []
+            this.bancos = []
+            this.referencias_bancarias = [{ banco_id: '', numero_cuenta: '', tipo_cuenta: '', sucursal: '', telefono: '', contacto: '' }]
+            this.consulta_banco_rb = []
+            this.consulta_tipo_cuenta_banco_rb = []
+            this.tipos_cuenta_bancos = []
+            this.referencias_comerciales = [{ nombre: '', contacto: '', telefono: '' }]
+            this.declaraciones_autorizaciones = false
+            this.personas_expuestas = [{ nombre: '', tipo_identificacion_id: '', identificacion: '', parentesco: '' }]
+            this.consultas_personas_expuestas = []
+            this.tipos_origen_fondos = []
+            this.tipo_origen_fondo = ''
+            this.consulta_origen_fondos = ''
+            this.otro_tipo_origen_fondos = ''
+            this.tipos_origenes_medios = []
+            this.tipo_origen_medios = ''
+            this.otro_tipo_origen_medios = ''
+            this.consulta_origen_medios1 = ''
+            this.consulta_origen_medios2 = ''
+            this.alto_manejo_efectivo = ''
+            this.consulta_origen_manejo_efectivo = ''
+            this.tratamiento_datos_personales = false
+            this.afirmacionNegacion = []
+            this.requisitos = []
+            this.tiposArchivo = []
+            this.examenFilter = []
+            this.otra = ''
+            this.banco = ''
+            this.tipo_cuenta_banco = ''
+            this.rotacion_personal = ''
+            this.sucursal = ''
+            this.hover = false
+            this.examenes = []
+            this.verLista = 1
+            this.fileInputsCountCopia = []
+            this.file = []
+            this.id_archivo = []
+            this.consulta_file = []
+            this.validate = []
+            this.guardar = false
+            this.cont = true
+            this.submitted = false
+            this.tipo_archivo_ = ''
+            this.registroCliente = {}
+            this.cliente_existe = false
+            this.btn_save = false
+        },
+        valida_campos() {
+            var self = this
+            if (this.tipo_cliente == '') {
+                this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
+                return true
+            }
+            if (this.tipo_persona == '' && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
+                return true
+            }
+            if (this.tipo_identificacion == '' && this.tipo_persona == 1) {
+                this.showAlert('Error, debe diligenciar el tipo de identificacion.', 'error')
+                return true
+            }
+
+            if (this.numero_identificacion == '' && this.tipo_persona == 1) {
+                this.showAlert('Error, debe diligenciar el numero de identificacion.', 'error')
+                return true
+            }
+            if (this.fecha_expedicion == '' && this.tipo_persona == 1) {
+                this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
+                return true
+            }
+            if (this.nit == '' && this.tipo_persona == 2 || this.tipo_persona == 3) {
+                this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
+                return true
+            }
+            if (this.contratacion_directa == false && this.atraccion_seleccion == false && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe seleccionar al menos un tipo de servicio y los campos obligatorios.', 'error')
+                return true
+            }
+
+            if (this.cliente_existe) {
+                this.showAlert('El nit o numero de documento ingresado ya se encuentra registrado en nuestra base de datos', 'error')
+                return true
+            }
+            if (this.razon_social == '') {
+                this.showAlert('Error, debe diligenciar el Nombre completo / Razón social.', 'error')
+                return true
+            }
+            if (this.fecha_constitucion == '') {
+                this.showAlert('Error, debe diligenciar la fecha de constitución.', 'error')
+                return true
+            }
+            if (this.empleados_empresa == '') {
+                this.showAlert('Error, debe diligenciar Cuantos empleados conforman la empresa.', 'error')
+                return true
+            }
+            if (this.actividad_ciiu == '') {
+                this.showAlert('Error, debe diligenciar la actividad ciiu.', 'error')
+                return true
+            }
+            if (this.estrato == '') {
+                this.showAlert('Error, debe diligenciar el Estrato socio económico (ubicación empresa).', 'error')
+                return true
+            }
+            if (this.direccion_empresa == '') {
+                this.showAlert('Error, debe diligenciar la dirección de la empresa en información general.', 'error')
+                return true
+            }
+            if (this.contacto_empresa == '') {
+                this.showAlert('Error, debe diligenciar la persona contacto empresa en información general.', 'error')
+                return true
+            }
+            if (this.correo_electronico_empresa == '') {
+                this.showAlert('Error, debe diligenciar el correo electrónico en información general.', 'error')
+                return true
+            }
+            if (this.telefono_empresa == '') {
+                this.showAlert('Error, debe diligenciar el teléfono empresa en información general.', 'error')
+                return true
+            }
+            if (this.celular_empresa == '') {
+                this.showAlert('Error, debe diligenciar el número celular en información general.', 'error')
+                return true
+            }
+            if (this.sociedad_comercial == '') {
+                this.showAlert('Error, debe diligenciar la actividad erconómica: sociedad comercial.', 'error')
+                return true
+            }
+            if (this.periodicidad_liquidacion_id == '') {
+                this.showAlert('Error, debe diligenciar la periodicidad de pago.', 'error')
+                return true
+            }
+            if (this.plazo_pago == '') {
+                this.showAlert('Error, debe diligenciar el plazo pago (días).', 'error')
+                return true
+            }
+            if (this.municipio_prestacion_servicio == '' || this.municipio_prestacion_servicio == undefined) {
+                this.showAlert('Error, debe diligenciar el campo ciudad prestación servicio.', 'error')
+                return true
+            }
+
+            if (this.aiu_negociado == '' && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el AIU negociado.', 'error')
+                return true
+            }
+            if (this.ejecutivo_comercial == '' || this.ejecutivo_comercial == undefined && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el campo ejecutivo comercial.', 'error')
+                return true
+            }
+            if (this.jornada_laboral == '' || this.jornada_laboral == undefined && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
+                return true
+            }
+            if (this.rotacion_personal == '' || this.rotacion_personal == undefined && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
+                return true
+            }
+
+            var mensaje_error = ''
+            this.fileInputsCount.forEach(function (item, index) {
+
+                if (item.nombre.includes("*") && self.file[index] == undefined) {
+                    mensaje_error += item.nombre + ", "
+                }
+            })
+            if (mensaje_error != '') {
+                this.showAlert('Error, los siguientes archivos no fueron adjuntados. ' + mensaje_error, 'error')
+                return true
+            }
+            this.file.forEach(function (item) {
+                if (item.size > self.limite) {
+                    self.showAlert('El archivo' + item.name + 'es demasiado pesado, el limite es de 3MB', 'error')
+                    return true
+                }
+            })
+
+            var valida_campo = 0
+            this.accionistas.forEach(function (item) {
+                if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
+                    valida_campo++
+                }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar el tipo de identificacion para los accionistas', 'error')
+                return true
+            }
+
+            valida_campo = 0
+            this.representantes_legales.forEach(function (item) {
+                if (item.tipo_identificacion == '' || item.tipo_identificacion == undefined) {
+                    valida_campo++
+                } if (item.municipio_id == '' || item.municipio_id == undefined) {
+                    valida_campo++
+                }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar los campos obligatorios para los representantes legales', 'error')
+                return true
+            }
+
+            valida_campo = 0
+            this.referencias_bancarias.forEach(function (item) {
+                if (item.banco_id == '' || item.banco_id == undefined) {
+                    valida_campo++
+                }
+                if (item.tipo_cuenta == '' || item.tipo_cuenta == undefined) {
+                    valida_campo++
+                }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar los campos obligatorios para las referencias bancarias', 'error')
+                return true
+            }
+
+            valida_campo = 0
+            this.personas_expuestas.forEach(function (item) {
+               if(item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined){
+                valida_campo++
+               }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar los campos obligatorios para personas expuestas', 'error')
+                return true
+            }
+
+
+            // if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
+            //     return true
+            // }
+            // if (this.file.length < this.fileInputsCount.length - 1 && this.tipo_cliente == 2) {
+            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
+            //     return true
+            // }
+
+            if (this.responsable_impuesto_ventas == '') {
+                this.showAlert('Error, debe diligenciar el responsable de impuestos a las ventas.', 'error')
+                return true
+            }
+            if (this.correo_factura_electronica == '') {
+                this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
+                return true
+            }
+            if (this.tipo_identificacion_contador == '') {
+                this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
+                return true
+            }
+            if (this.ingreso_mensual == '') {
+                this.showAlert('Error, debe diligenciar el ingreso mensual.', 'error')
+                return true
+            }
+            if (this.costos_gastos == '') {
+                this.showAlert('Error, debe diligenciar los costos y gastos mensual.', 'error')
+                return true
+            }
+            if (this.activos == '') {
+                this.showAlert('Error, debe diligenciar los activos.', 'error')
+                return true
+            }
+            if (this.otros_ingresos == '') {
+                this.showAlert('Error, debe diligenciar los otros Ingresos.', 'error')
+                return true
+            }
+            if (this.detalle_otros_ingresos == '') {
+                this.showAlert('Error, debe diligenciar el detalle de otros ingresos.', 'error')
+                return true
+            }
+            if (this.pasivos == '') {
+                this.showAlert('Error, debe diligenciar los ingresos pasivos.', 'error')
+                return true
+            }
+            if (this.total_ingresos == '') {
+                this.showAlert('Error, debe diligenciar el Total ingresos.', 'error')
+                return true
+            }
+            if (this.reintegro_costos == '') {
+                this.showAlert('Error, debe diligenciar el reintegro de costos y gastos.', 'error')
+                return true
+            }
+            if (this.patrimonio == '') {
+                this.showAlert('Error, debe diligenciar el Patrimonio.', 'error')
+                return true
+            }
+            if (this.operaciones_modena_extranjera == '') {
+                this.showAlert('Error, debe diligenciar si realiza operaciones en moneda extranjera.', 'error')
+                return true
+            }
+            if (this.tipo_operacion_internacional == '') {
+                this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
+                return true
+            }
+            if (this.declaraciones_autorizaciones == false) {
+                this.showAlert('Error, debe aceptar las declaraciones y autorizaciones.', 'error')
+                return true
+            }
+            if (this.tratamiento_datos_personales == false) {
+                this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
+                return true
+            }
+            if (this.sucursal == ''){
+                this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
+                return true
+            } 
+            if(this.responsable_impuesto_ventas == ''){
+                this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
+                return true
+            } 
+            if(this.calidad_tributaria[0].opcion == ''){
+                this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
+                return true
+            }
+            if(this.calidad_tributaria[1].opcion == ''){
+                this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
+                return true
+            } 
+            if(this.calidad_tributaria[2].opcion == '') {
+                this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
+                return true
+            }
+
+            this.calidad_tributaria.forEach(function (item) {
+                if (item.opcion == '') {
+                    return true
+                }
+
+            })
+            return false
+
+        },
         save() {
 
             this.btn_save = true;
@@ -2270,55 +2736,10 @@ export default {
                 this.btn_save = false;
             }, "10000");
 
-            if(this.cliente_existe){
+            if (this.valida_campos()) {
                 return
             }
 
-            if(this.tipo_operacion_internacional == '') {
-                this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
-                return
-            }
-
-            if(this.correo_factura_electronica == '') {
-                this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
-                return
-            }
-
-            if(this.cliente_existe){
-                this.showAlert('El nit o número de documento ingresado ya se encuentra registrado en nuestra base de datos', 'error')
-                return
-            }
-
-            if (this.contratacion_directa == false && this.atraccion_seleccion == false && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe seleccionar al menos un tipo de servicio y los campos obligatorios.', 'error')
-                return
-            }
-            if (this.declaraciones_autorizaciones == false) {
-                this.showAlert('Error, debe aceptar las declaraciones y autorizaciones.', 'error')
-                return
-            }
-            if (this.tratamiento_datos_personales == false) {
-                this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
-                return
-            }
-            if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
-                this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-                return
-            }
-            if (this.file.length < this.fileInputsCount.length - 1 && this.tipo_cliente == 2) {
-                this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-                return
-            }
-
-            if (this.tipo_identificacion_contador == '' || this.sucursal == '' || this.responsable_impuesto_ventas == '' || this.calidad_tributaria[0].opcion == '' || this.calidad_tributaria[1].opcion == '' || this.calidad_tributaria[2].opcion == '') {
-                return
-            }
-
-            this.calidad_tributaria.forEach(function (item) {
-                if (item.opcion == '') {
-                    return
-                }
-            })
             try {
                 let self = this;
                 this.crearCliente()
@@ -2766,22 +3187,24 @@ ul li {
     font-size: 0.7rem;
     float: left;
 }
+
 .error {
     color: red;
 }
 
-#acuerdos_comerciales,#razon_social{
-    width:100% ;
+#acuerdos_comerciales,
+#razon_social {
+    width: 100%;
     height: 37px;
     border-radius: 5px;
     border-color: rgb(191, 199, 199);
-    outline:none;
+    outline: none;
     padding: 5px;
 }
 
-.loading{
-    background-color: rgba(230, 222, 222, 0.63);
-    position:fixed;
+.loading {
+    background-color: rgba(252, 252, 252, 0.63);
+    position: fixed;
     width: 100%;
     height: 1000px;
     /* top: 0%; */
@@ -2790,69 +3213,87 @@ ul li {
 }
 
 .loader {
-  font-size: 15px;
-  margin: 20% auto;
-  width: 1em;
-  height: 1em;
-  border-radius: 50%;
-  position: relative;
-  text-indent: -9999em;
-  -webkit-animation: load4 1.3s infinite linear;
-  animation: load4 1.3s infinite linear;
-  z-index: 500;
+    font-size: 15px;
+    margin: 20% auto;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-animation: load4 1.3s infinite linear;
+    animation: load4 1.3s infinite linear;
+    z-index: 500;
 }
+
 @-webkit-keyframes load4 {
-  0%,
-  100% {
-    box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-  }
-  12.5% {
-    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  25% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  37.5% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  50% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  62.5% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  75% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-  }
-  87.5% {
-    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-  }
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
 }
+
 @keyframes load4 {
-  0%,
-  100% {
-    box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-  }
-  12.5% {
-    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  25% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  37.5% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  50% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  62.5% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-  }
-  75% {
-    box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-  }
-  87.5% {
-    box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-  }
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
 }
 </style>
