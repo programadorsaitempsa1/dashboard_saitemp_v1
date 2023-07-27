@@ -1260,7 +1260,7 @@
                 type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
             <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
                 type="submit" style="margin:30px" >Guardar</button>
-                <!-- :disabled="btn_save" -->
+            
         </form>
     </div>
 </template>
@@ -1462,7 +1462,6 @@ export default {
             tipo_archivo_: '',
             registroCliente: {},
             cliente_existe: false,
-            // btn_save: false,
             loading: false,
             limite: 3 * 1024 * 1024,
 
@@ -2445,7 +2444,7 @@ export default {
             this.tipo_archivo_ = ''
             this.registroCliente = {}
             this.cliente_existe = false
-            // this.btn_save = false
+            
         },
         valida_campos() {
             var self = this
@@ -2768,15 +2767,6 @@ export default {
                 return true
             }
 
-            // if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
-            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-            //     return true
-            // }
-            // if (this.file.length < this.fileInputsCount.length - 1 && this.tipo_cliente == 2) {
-            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-            //     return true
-            // }
-           
             if (this.tratamiento_datos_personales == false) {
                 this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
                 return true
@@ -2792,12 +2782,8 @@ export default {
         },
         save() {
 
-            // this.btn_save = true;
+          
             this.submitted = true;
-
-            // setTimeout(() => {
-            //     this.btn_save = false;
-            // }, "10000");
 
             if (this.valida_campos()) {
                 return
