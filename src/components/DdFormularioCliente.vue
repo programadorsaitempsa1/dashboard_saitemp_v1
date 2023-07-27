@@ -1259,7 +1259,8 @@
             <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
                 type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
             <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="submit" style="margin:30px" :disabled="btn_save">Guardar</button>
+                type="submit" style="margin:30px" >Guardar</button>
+                <!-- :disabled="btn_save" -->
         </form>
     </div>
 </template>
@@ -1461,7 +1462,7 @@ export default {
             tipo_archivo_: '',
             registroCliente: {},
             cliente_existe: false,
-            btn_save: false,
+            // btn_save: false,
             loading: false,
             limite: 3 * 1024 * 1024,
 
@@ -2444,7 +2445,7 @@ export default {
             this.tipo_archivo_ = ''
             this.registroCliente = {}
             this.cliente_existe = false
-            this.btn_save = false
+            // this.btn_save = false
         },
         valida_campos() {
             var self = this
@@ -2456,7 +2457,16 @@ export default {
                 this.showAlert('Error, debe diligenciar el tipo de proveedor.', 'error')
                 return true
             }
+            if(this.tipo_cliente == 1 && this.operacion == ''){
+                this.showAlert('Error, debe diligenciar el tipo de operación.', 'error')
+                return true
+            }
+
             if (this.tipo_persona == '' && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
+                return true
+            }
+            if (this.tipo_persona == '' && this.tipo_cliente == 2) {
                 this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
                 return true
             }
@@ -2506,6 +2516,10 @@ export default {
                 this.showAlert('Error, debe diligenciar el Estrato socio económico (ubicación empresa).', 'error')
                 return true
             }
+            if (this.municipio == '' || this.municipio == undefined) {
+                this.showAlert('Error, debe diligenciar el campo ciudad en informacion general.', 'error')
+                return true
+            }
             if (this.direccion_empresa == '') {
                 this.showAlert('Error, debe diligenciar la dirección de la empresa en información general.', 'error')
                 return true
@@ -2527,7 +2541,7 @@ export default {
                 return true
             }
             if (this.sociedad_comercial == '') {
-                this.showAlert('Error, debe diligenciar la actividad erconómica: sociedad comercial.', 'error')
+                this.showAlert('Error, debe diligenciar la actividad económica: sociedad comercial.', 'error')
                 return true
             }
             if (this.periodicidad_liquidacion_id == '') {
@@ -2700,6 +2714,14 @@ export default {
                 this.showAlert('Error, debe diligenciar el Patrimonio.', 'error')
                 return true
             }
+            if (this.operaciones_modena_extranjera == '') {
+                this.showAlert('Error, debe diligenciar si realiza operaciones en moneda extranjera.', 'error')
+                return true
+            }
+            if (this.tipo_operacion_internacional == '') {
+                this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
+                return true
+            }
 
             valida_campo = 0
             var valida_campos_bancarias = 0
@@ -2722,6 +2744,10 @@ export default {
                 self.showAlert('Error, debe diligenciar los campos correspondientes para referencias bancarias', 'error')
                 return true
             }
+            if (this.declaraciones_autorizaciones == false) {
+                this.showAlert('Error, debe aceptar las declaraciones y autorizaciones.', 'error')
+                return true
+            }
 
             valida_campo = 0
             var valida_campos_expuestas = 0
@@ -2742,8 +2768,6 @@ export default {
                 return true
             }
 
-
-
             // if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
             //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
             //     return true
@@ -2752,26 +2776,11 @@ export default {
             //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
             //     return true
             // }
-
-    
-            if (this.operaciones_modena_extranjera == '') {
-                this.showAlert('Error, debe diligenciar si realiza operaciones en moneda extranjera.', 'error')
-                return true
-            }
-            if (this.tipo_operacion_internacional == '') {
-                this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
-                return true
-            }
-            if (this.declaraciones_autorizaciones == false) {
-                this.showAlert('Error, debe aceptar las declaraciones y autorizaciones.', 'error')
-                return true
-            }
+           
             if (this.tratamiento_datos_personales == false) {
                 this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
                 return true
             }
-           
-
             this.calidad_tributaria.forEach(function (item) {
                 if (item.opcion == '') {
                     return true
@@ -2783,12 +2792,12 @@ export default {
         },
         save() {
 
-            this.btn_save = true;
+            // this.btn_save = true;
             this.submitted = true;
 
-            setTimeout(() => {
-                this.btn_save = false;
-            }, "10000");
+            // setTimeout(() => {
+            //     this.btn_save = false;
+            // }, "10000");
 
             if (this.valida_campos()) {
                 return
