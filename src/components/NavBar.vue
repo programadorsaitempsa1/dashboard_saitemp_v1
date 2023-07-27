@@ -347,7 +347,7 @@ export default {
 }
 
 .aside:hover {
-  width: 240px;
+  width: 280px;
 }
 
 /* .aside2 {

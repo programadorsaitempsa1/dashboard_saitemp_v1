@@ -39,6 +39,7 @@ import DdClientes from "../components/DdClientes.vue";
 import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 import FormularioRegistro from "../components/FormularioRegistro.vue";
 import NovedadesNomina from "../components/NovedadesNomina.vue";
+import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue";
 
 
 Vue.use(VueRouter);
@@ -233,6 +234,11 @@ const routes = [
         path: "gestion-novedades-nomina",
         name: "gestion-novedades-nomina",
         component: NovedadesNomina,
+      },
+      {
+        path: "solicitud-novedades-nomina",
+        name: "solicitud-novedades-nomina",
+        component: SolicitudNovedadesNomina,
       },
     ],
   },

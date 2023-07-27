@@ -20,7 +20,8 @@
     "vue-cryptojs": "^2.3.1",
     "vue-router": "^3.5.1",
     "vue-signature-pad": "2.0.5",
-    "vue-sweetalert2": "^5.0.5"
+    "vue-sweetalert2": "^5.0.5",
+    "vue2-editor": "^2.10.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
