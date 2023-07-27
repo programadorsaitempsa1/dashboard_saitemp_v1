@@ -2473,7 +2473,7 @@ export default {
                 this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
                 return true
             }
-            if (this.tipo_persona == 2 || this.tipo_persona == 3 && this.nit == '') {
+            if (this.tipo_persona != 1 && this.nit == '') {
                 this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
                 return true
             }
@@ -2547,15 +2547,15 @@ export default {
                 this.showAlert('Error, debe diligenciar el AIU negociado.', 'error')
                 return true
             }
-            if (this.ejecutivo_comercial == '' || this.ejecutivo_comercial == undefined && this.tipo_cliente == 1) {
+            if (this.ejecutivo_comercial == '' && this.tipo_cliente == 1 || this.ejecutivo_comercial == undefined) {
                 this.showAlert('Error, debe diligenciar el campo ejecutivo comercial.', 'error')
                 return true
             }
-            if (this.jornada_laboral == '' || this.jornada_laboral == undefined && this.tipo_cliente == 1) {
+            if (this.jornada_laboral == '' && this.tipo_cliente == 1 || this.jornada_laboral == undefined) {
                 this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
                 return true
             }
-            if (this.rotacion_personal == '' || this.rotacion_personal == undefined && this.tipo_cliente == 1) {
+            if (this.rotacion_personal == '' && this.tipo_cliente == 1 || this.rotacion_personal == undefined) {
                 this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
                 return true
             }
