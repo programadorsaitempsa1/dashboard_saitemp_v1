@@ -2448,153 +2448,208 @@ export default {
         },
         valida_campos() {
             var self = this
-            if (this.tipo_cliente == '') {
-                this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
-                return true
-            }
-            if (this.tipo_persona == '' && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
-                return true
-            }
-            if (this.tipo_identificacion == '' && this.tipo_persona == 1) {
-                this.showAlert('Error, debe diligenciar el tipo de identificacion.', 'error')
-                return true
-            }
+            // if (this.tipo_cliente == '') {
+            //     this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
+            //     return true
+            // }
+            // if (this.tipo_persona == '' && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
+            //     return true
+            // }
+            // if (this.tipo_identificacion == '' && this.tipo_persona == 1) {
+            //     this.showAlert('Error, debe diligenciar el tipo de identificacion.', 'error')
+            //     return true
+            // }
 
-            if (this.numero_identificacion == '' && this.tipo_persona == 1) {
-                this.showAlert('Error, debe diligenciar el numero de identificacion.', 'error')
-                return true
-            }
-            if (this.fecha_expedicion == '' && this.tipo_persona == 1) {
-                this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
-                return true
-            }
-            if (this.nit == '' && this.tipo_persona == 2 || this.tipo_persona == 3) {
-                this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
-                return true
-            }
-            if (this.contratacion_directa == false && this.atraccion_seleccion == false && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe seleccionar al menos un tipo de servicio y los campos obligatorios.', 'error')
-                return true
-            }
+            // if (this.numero_identificacion == '' && this.tipo_persona == 1) {
+            //     this.showAlert('Error, debe diligenciar el numero de identificacion.', 'error')
+            //     return true
+            // }
+            // if (this.fecha_expedicion == '' && this.tipo_persona == 1) {
+            //     this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
+            //     return true
+            // }
+            // if (this.nit == '' && this.tipo_persona == 2 || this.tipo_persona == 3) {
+            //     this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
+            //     return true
+            // }
+            // if (this.contratacion_directa == false && this.atraccion_seleccion == false && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe seleccionar al menos un tipo de servicio y los campos obligatorios.', 'error')
+            //     return true
+            // }
 
-            if (this.cliente_existe) {
-                this.showAlert('El nit o numero de documento ingresado ya se encuentra registrado en nuestra base de datos', 'error')
-                return true
-            }
-            if (this.razon_social == '') {
-                this.showAlert('Error, debe diligenciar el Nombre completo / Razón social.', 'error')
-                return true
-            }
-            if (this.fecha_constitucion == '') {
-                this.showAlert('Error, debe diligenciar la fecha de constitución.', 'error')
-                return true
-            }
-            if (this.empleados_empresa == '') {
-                this.showAlert('Error, debe diligenciar Cuantos empleados conforman la empresa.', 'error')
-                return true
-            }
-            if (this.actividad_ciiu == '') {
-                this.showAlert('Error, debe diligenciar la actividad ciiu.', 'error')
-                return true
-            }
-            if (this.estrato == '') {
-                this.showAlert('Error, debe diligenciar el Estrato socio económico (ubicación empresa).', 'error')
-                return true
-            }
-            if (this.direccion_empresa == '') {
-                this.showAlert('Error, debe diligenciar la dirección de la empresa en información general.', 'error')
-                return true
-            }
-            if (this.contacto_empresa == '') {
-                this.showAlert('Error, debe diligenciar la persona contacto empresa en información general.', 'error')
-                return true
-            }
-            if (this.correo_electronico_empresa == '') {
-                this.showAlert('Error, debe diligenciar el correo electrónico en información general.', 'error')
-                return true
-            }
-            if (this.telefono_empresa == '') {
-                this.showAlert('Error, debe diligenciar el teléfono empresa en información general.', 'error')
-                return true
-            }
-            if (this.celular_empresa == '') {
-                this.showAlert('Error, debe diligenciar el número celular en información general.', 'error')
-                return true
-            }
-            if (this.sociedad_comercial == '') {
-                this.showAlert('Error, debe diligenciar la actividad erconómica: sociedad comercial.', 'error')
-                return true
-            }
-            if (this.periodicidad_liquidacion_id == '') {
-                this.showAlert('Error, debe diligenciar la periodicidad de pago.', 'error')
-                return true
-            }
-            if (this.plazo_pago == '') {
-                this.showAlert('Error, debe diligenciar el plazo pago (días).', 'error')
-                return true
-            }
-            if (this.municipio_prestacion_servicio == '' || this.municipio_prestacion_servicio == undefined) {
-                this.showAlert('Error, debe diligenciar el campo ciudad prestación servicio.', 'error')
-                return true
-            }
+            // if (this.cliente_existe) {
+            //     this.showAlert('El nit o numero de documento ingresado ya se encuentra registrado en nuestra base de datos', 'error')
+            //     return true
+            // }
+            // if (this.razon_social == '') {
+            //     this.showAlert('Error, debe diligenciar el Nombre completo / Razón social.', 'error')
+            //     return true
+            // }
+            // if (this.fecha_constitucion == '') {
+            //     this.showAlert('Error, debe diligenciar la fecha de constitución.', 'error')
+            //     return true
+            // }
+            // if (this.empleados_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar Cuantos empleados conforman la empresa.', 'error')
+            //     return true
+            // }
+            // if (this.actividad_ciiu == '') {
+            //     this.showAlert('Error, debe diligenciar la actividad ciiu.', 'error')
+            //     return true
+            // }
+            // if (this.estrato == '') {
+            //     this.showAlert('Error, debe diligenciar el Estrato socio económico (ubicación empresa).', 'error')
+            //     return true
+            // }
+            // if (this.direccion_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar la dirección de la empresa en información general.', 'error')
+            //     return true
+            // }
+            // if (this.contacto_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar la persona contacto empresa en información general.', 'error')
+            //     return true
+            // }
+            // if (this.correo_electronico_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar el correo electrónico en información general.', 'error')
+            //     return true
+            // }
+            // if (this.telefono_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar el teléfono empresa en información general.', 'error')
+            //     return true
+            // }
+            // if (this.celular_empresa == '') {
+            //     this.showAlert('Error, debe diligenciar el número celular en información general.', 'error')
+            //     return true
+            // }
+            // if (this.sociedad_comercial == '') {
+            //     this.showAlert('Error, debe diligenciar la actividad erconómica: sociedad comercial.', 'error')
+            //     return true
+            // }
+            // if (this.periodicidad_liquidacion_id == '') {
+            //     this.showAlert('Error, debe diligenciar la periodicidad de pago.', 'error')
+            //     return true
+            // }
+            // if (this.plazo_pago == '') {
+            //     this.showAlert('Error, debe diligenciar el plazo pago (días).', 'error')
+            //     return true
+            // }
+            // if (this.municipio_prestacion_servicio == '' || this.municipio_prestacion_servicio == undefined) {
+            //     this.showAlert('Error, debe diligenciar el campo ciudad prestación servicio.', 'error')
+            //     return true
+            // }
 
-            if (this.aiu_negociado == '' && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe diligenciar el AIU negociado.', 'error')
-                return true
-            }
-            if (this.ejecutivo_comercial == '' || this.ejecutivo_comercial == undefined && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe diligenciar el campo ejecutivo comercial.', 'error')
-                return true
-            }
-            if (this.jornada_laboral == '' || this.jornada_laboral == undefined && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
-                return true
-            }
-            if (this.rotacion_personal == '' || this.rotacion_personal == undefined && this.tipo_cliente == 1) {
-                this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
-                return true
-            }
+            // if (this.aiu_negociado == '' && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe diligenciar el AIU negociado.', 'error')
+            //     return true
+            // }
+            // if (this.ejecutivo_comercial == '' || this.ejecutivo_comercial == undefined && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe diligenciar el campo ejecutivo comercial.', 'error')
+            //     return true
+            // }
+            // if (this.jornada_laboral == '' || this.jornada_laboral == undefined && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
+            //     return true
+            // }
+            // if (this.rotacion_personal == '' || this.rotacion_personal == undefined && this.tipo_cliente == 1) {
+            //     this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
+            //     return true
+            // }
 
-            var mensaje_error = ''
-            this.fileInputsCount.forEach(function (item, index) {
+            // var mensaje_error = ''
+            // this.fileInputsCount.forEach(function (item, index) {
 
-                if (item.nombre.includes("*") && self.file[index] == undefined) {
-                    mensaje_error += item.nombre + ", "
-                }
-            })
-            if (mensaje_error != '') {
-                this.showAlert('Error, los siguientes archivos no fueron adjuntados. ' + mensaje_error, 'error')
-                return true
-            }
-            this.file.forEach(function (item) {
-                if (item.size > self.limite) {
-                    self.showAlert('El archivo' + item.name + 'es demasiado pesado, el limite es de 3MB', 'error')
-                    return true
-                }
-            })
+            //     if (item.nombre.includes("*") && self.file[index] == undefined) {
+            //         mensaje_error += item.nombre + ", "
+            //     }
+            // })
+            // if (mensaje_error != '') {
+            //     this.showAlert('Error, los siguientes archivos no fueron adjuntados. ' + mensaje_error, 'error')
+            //     return true
+            // }
+            // this.file.forEach(function (item) {
+            //     if (item.size > self.limite) {
+            //         self.showAlert('El archivo' + item.name + 'es demasiado pesado, el limite es de 3MB', 'error')
+            //         return true
+            //     }
+            // })
 
             var valida_campo = 0
+            var valida_campo_dependiente = 0
             this.accionistas.forEach(function (item) {
                 if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
                     valida_campo++
+                }
+                if (item.identificacion == '' && item.socio == '' && item.participacion == '' && item.tipo_identificacion_id != 0) {
+                    valida_campo_dependiente++
                 }
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar el tipo de identificacion para los accionistas', 'error')
                 return true
             }
-
+            if (valida_campo_dependiente > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para accionistas', 'error')
+                return true
+            }
             valida_campo = 0
+            valida_campo_dependiente = 0
             this.representantes_legales.forEach(function (item) {
                 if (item.tipo_identificacion == '' || item.tipo_identificacion == undefined) {
                     valida_campo++
-                } if (item.municipio_id == '' || item.municipio_id == undefined) {
+                } 
+                if (item.municipio_id == '' || item.municipio_id == undefined) {
                     valida_campo++
                 }
+                if (item.nombre == '' && item.correo == '' && item.identificacion == ''&& item.telefono == '' && item.tipo_identificacion != 0) {
+                    valida_campo_dependiente++
+                }
+                
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para los representantes legales', 'error')
+                return true
+            }
+            if (valida_campo_dependiente > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para los representantes legales', 'error')
+                return true
+            }
+            
+            if (this.responsable_impuesto_ventas == '') {
+                this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
+                return true
+            }
+            if (this.correo_factura_electronica == '') {
+                this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
+                return true
+            }
+            if (this.sucursal == '') {
+                this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
+                return true
+            }
+           
+            if (this.calidad_tributaria[0].opcion == '' || this.calidad_tributaria[0].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
+                return true
+            }
+            if(this.calidad_tributaria[0].opcion == 1 && this.calidad_tributaria[0].numero_resolucion == '' && this.calidad_tributaria[0].fecha == '' ){
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[1].opcion == '' || this.calidad_tributaria[1].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
+                return true
+            }
+            if(this.calidad_tributaria[1].opcion == 1 && this.calidad_tributaria[1].numero_resolucion == '' && this.calidad_tributaria[1].fecha == '' ){
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[2].opcion == '' || this.calidad_tributaria[2].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
+                return true
+            }
+            if(this.calidad_tributaria[2].opcion == 1 && this.calidad_tributaria[2].numero_resolucion == '' && this.calidad_tributaria[2].fecha == '' ){
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
                 return true
             }
 
@@ -2614,9 +2669,9 @@ export default {
 
             valida_campo = 0
             this.personas_expuestas.forEach(function (item) {
-               if(item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined){
-                valida_campo++
-               }
+                if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
+                    valida_campo++
+                }
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para personas expuestas', 'error')
@@ -2633,14 +2688,7 @@ export default {
             //     return true
             // }
 
-            if (this.responsable_impuesto_ventas == '') {
-                this.showAlert('Error, debe diligenciar el responsable de impuestos a las ventas.', 'error')
-                return true
-            }
-            if (this.correo_factura_electronica == '') {
-                this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
-                return true
-            }
+            
             if (this.tipo_identificacion_contador == '') {
                 this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
                 return true
@@ -2697,26 +2745,7 @@ export default {
                 this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
                 return true
             }
-            if (this.sucursal == ''){
-                this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
-                return true
-            } 
-            if(this.responsable_impuesto_ventas == ''){
-                this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
-                return true
-            } 
-            if(this.calidad_tributaria[0].opcion == ''){
-                this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
-                return true
-            }
-            if(this.calidad_tributaria[1].opcion == ''){
-                this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
-                return true
-            } 
-            if(this.calidad_tributaria[2].opcion == '') {
-                this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
-                return true
-            }
+           
 
             this.calidad_tributaria.forEach(function (item) {
                 if (item.opcion == '') {
