@@ -2452,6 +2452,10 @@ export default {
                 this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
                 return true
             }
+            if(this.tipo_cliente == 2 && this.tipo_proveedor == ''){
+                this.showAlert('Error, debe diligenciar el tipo de proveedor.', 'error')
+                return true
+            }
             if (this.tipo_persona == '' && this.tipo_cliente == 1) {
                 this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
                 return true
@@ -2698,6 +2702,7 @@ export default {
             }
 
             valida_campo = 0
+            var valida_campos_bancarias = 0
             this.referencias_bancarias.forEach(function (item) {
                 if (item.banco_id == '' || item.banco_id == undefined) {
                     valida_campo++
@@ -2705,22 +2710,38 @@ export default {
                 if (item.tipo_cuenta == '' || item.tipo_cuenta == undefined) {
                     valida_campo++
                 }
+                if(item.contacto == '' && item.numero_cuenta == '' && item.sucursal == '' && item.telefono == '' && item.banco_id != 0){
+                    valida_campos_bancarias++
+                }
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para las referencias bancarias', 'error')
                 return true
             }
+            if (valida_campos_bancarias > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para referencias bancarias', 'error')
+                return true
+            }
 
             valida_campo = 0
+            var valida_campos_expuestas = 0
             this.personas_expuestas.forEach(function (item) {
                 if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
                     valida_campo++
+                }
+                if(item.nombre == '' && item.identificacion == '' && item.parentesco == '' && item.tipo_identificacion_id != 0){
+                    valida_campos_expuestas++
                 }
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para personas expuestas', 'error')
                 return true
             }
+            if (valida_campos_expuestas > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para personas expuestas', 'error')
+                return true
+            }
+
 
 
             // if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
