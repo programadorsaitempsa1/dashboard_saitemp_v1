@@ -2469,7 +2469,7 @@ export default {
                 this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
                 return true
             }
-            if (this.nit == '' && this.tipo_persona == 2 || this.tipo_persona == 3) {
+            if (this.tipo_persona == 2 || this.tipo_persona == 3 && this.nit == '') {
                 this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
                 return true
             }
@@ -2652,6 +2652,50 @@ export default {
                 this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
                 return true
             }
+            if (this.tipo_identificacion_contador == '' || this.tipo_identificacion_contador == undefined) {
+                this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
+                return true
+            }
+            if(this.tipo_identificacion_contador != 0 && this.nombre_completo_contador == '' && this.identificacion_contador == '' && this.telefono_contador == ''){
+            this.showAlert('Error, debe diligenciar todos los campos en datos del contador.', 'error')
+                 return true
+             }
+             if (this.ingreso_mensual == '') {
+                this.showAlert('Error, debe diligenciar el ingreso mensual.', 'error')
+                return true
+            }
+            if (this.costos_gastos == '') {
+                this.showAlert('Error, debe diligenciar los costos y gastos mensual.', 'error')
+                return true
+            }
+            if (this.activos == '') {
+                this.showAlert('Error, debe diligenciar los activos.', 'error')
+                return true
+            }
+            if (this.otros_ingresos == '') {
+                this.showAlert('Error, debe diligenciar los otros Ingresos.', 'error')
+                return true
+            }
+            if (this.detalle_otros_ingresos == '') {
+                this.showAlert('Error, debe diligenciar el detalle de otros ingresos.', 'error')
+                return true
+            }
+            if (this.pasivos == '') {
+                this.showAlert('Error, debe diligenciar los ingresos pasivos.', 'error')
+                return true
+            }
+            if (this.total_ingresos == '') {
+                this.showAlert('Error, debe diligenciar el Total ingresos.', 'error')
+                return true
+            }
+            if (this.reintegro_costos == '') {
+                this.showAlert('Error, debe diligenciar el reintegro de costos y gastos.', 'error')
+                return true
+            }
+            if (this.patrimonio == '') {
+                this.showAlert('Error, debe diligenciar el Patrimonio.', 'error')
+                return true
+            }
 
             valida_campo = 0
             this.referencias_bancarias.forEach(function (item) {
@@ -2688,47 +2732,7 @@ export default {
             //     return true
             // }
 
-            
-            if (this.tipo_identificacion_contador == '') {
-                this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
-                return true
-            }
-            if (this.ingreso_mensual == '') {
-                this.showAlert('Error, debe diligenciar el ingreso mensual.', 'error')
-                return true
-            }
-            if (this.costos_gastos == '') {
-                this.showAlert('Error, debe diligenciar los costos y gastos mensual.', 'error')
-                return true
-            }
-            if (this.activos == '') {
-                this.showAlert('Error, debe diligenciar los activos.', 'error')
-                return true
-            }
-            if (this.otros_ingresos == '') {
-                this.showAlert('Error, debe diligenciar los otros Ingresos.', 'error')
-                return true
-            }
-            if (this.detalle_otros_ingresos == '') {
-                this.showAlert('Error, debe diligenciar el detalle de otros ingresos.', 'error')
-                return true
-            }
-            if (this.pasivos == '') {
-                this.showAlert('Error, debe diligenciar los ingresos pasivos.', 'error')
-                return true
-            }
-            if (this.total_ingresos == '') {
-                this.showAlert('Error, debe diligenciar el Total ingresos.', 'error')
-                return true
-            }
-            if (this.reintegro_costos == '') {
-                this.showAlert('Error, debe diligenciar el reintegro de costos y gastos.', 'error')
-                return true
-            }
-            if (this.patrimonio == '') {
-                this.showAlert('Error, debe diligenciar el Patrimonio.', 'error')
-                return true
-            }
+    
             if (this.operaciones_modena_extranjera == '') {
                 this.showAlert('Error, debe diligenciar si realiza operaciones en moneda extranjera.', 'error')
                 return true
