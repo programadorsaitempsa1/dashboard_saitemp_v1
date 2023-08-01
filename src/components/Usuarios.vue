@@ -54,6 +54,7 @@
               <th scope="col">#</th>
               <th scope="col">Nombre</th>
               <th scope="col">Correo electrónico</th>
+              <th scope="col">Usuario</th>
               <th scope="col">estado</th>
               <th scope="col">Rol</th>
               <th colspan="2" scope="col">Acciones</th>
@@ -63,6 +64,7 @@
             <tr v-for="(item, index) in users" :key="item.id">
               <th scope="row">{{ index + 1 }}</th>
               <td>{{ item.nombres }} {{ item.apellidos }}</td>
+              <td>{{ item.usuario }}</td>
               <td>{{ item.email }}</td>
               <td>{{ item.estado }}</td>
               <td>{{ item.rol }}</td>
@@ -121,6 +123,7 @@ export default {
       percentaje1: 80, // Valor inicial del porcentaje
       percentaje2: 30, // Valor inicial del porcentaje
       percentaje3: 45, // Valor inicial del porcentaje
+      loading:false
     };
   },
   mounted() {
@@ -315,5 +318,6 @@ label {
 }
 
 /* fin spinner*/
+
 
 </style>
