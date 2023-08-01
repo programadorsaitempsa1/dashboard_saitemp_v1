@@ -1,30 +1,41 @@
 <template>
     <div id="app">
         <vue-editor v-model="content"></vue-editor>
-        <h3>Previsualización del contenido</h3>
-        <div v-html="content"></div>
     </div>
 </template>
   
 <script>
 import { VueEditor } from "vue2-editor";
 
-
 export default {
     components: {
         VueEditor
+    },
+    props: {
+        enviar_correo: {}
+
     },
 
     data() {
         return {
             content: ""
         };
+    },
+    watch: {
+        enviar_correo() {
+            this.send()
+        }
+    },
+    methods: {
+        send() {
+            this.$emit('enviar',this.content)
+        },
     }
+
 };
 </script>
 <style>
-
-.prev{
+.prev {
     border: 1px solid rgb(207, 202, 202);
     padding: 20px;
 }

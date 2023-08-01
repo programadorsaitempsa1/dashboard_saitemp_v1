@@ -1,54 +1,94 @@
 <template>
     <div>
+        <div v-if="loading" class="loading">
+            <div class="loader" id="loader">Loading...</div>
+        </div>
         <div class="container">
             <h3>{{ titulo }}</h3>
-            <div class="card col-xs-12 col-md-6" style="height: 680px;">
+            <div class="card col-xs-12 col-md-6" style="height: 515px;">
                 <form>
-                    <div class="mb-3">
-                        <label class="form-label">Nombres</label>
-                        <input type="text" autocomplete="off" class="form-control" v-model="nombres" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Apellidos</label>
-                        <input type="text" autocomplete="off" class="form-control" v-model="apellidos" />
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Nombres</label>
+                                <input type="text" autocomplete="off" class="form-control" v-model="nombres" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Apellidos</label>
+                                <input type="text" autocomplete="off" class="form-control" v-model="apellidos" />
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">N. Documento de identidad</label>
-                        <input type="text" class="form-control" v-model="documento_identidad"
-                        autocomplete="off" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                        <input type="text" class="form-control" v-model="documento_identidad" autocomplete="off"
+                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
-                            v-model="email"
-                            autocomplete="off" :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
+                                    v-model="usuario" autocomplete="off"
+                                    :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña correo</label>
+                                <input type="password" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
+                                    v-model="contrasena_correo" autocomplete="off" />
+                                    <!-- :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" -->
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" required class="form-control" id="exampleInputPassword1" v-model="password" />
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Usuario</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
+                                    v-model="email" autocomplete="off"
+                                    :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" autocomplete="new-password" required class="form-control" id="exampleInputPassword1"
+                                    v-model="password" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Rol</label>
-                        <select id="inputState1" class="form-select" v-model="rol" @change="rolId(rol)"
-                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
-                            <option v-for="(item, index) in roles" :key="index">
-                                {{ item.nombre }}
-                            </option>
-                        </select>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Rol</label>
+                                <select id="inputState1" class="form-select" v-model="rol" @change="rolId(rol)"
+                                    :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
+                                    <option v-for="(item, index) in roles" :key="index">
+                                        {{ item.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3" v-if="($route.params.id != null)">
+                                <label class="form-label">Estado</label>
+                                <select id="inputState2" class="form-select" v-model="estado" @change="estadoId(estado)"
+                                    :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
+                                    <option v-for="(item, index) in estados" :key="index">
+                                        {{ item.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3" v-if="($route.params.id != null)">
-                        <label class="form-label">Estado</label>
-                        <select id="inputState2" class="form-select" v-model="estado" @change="estadoId(estado)"
-                            :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true">
-                            <option v-for="(item, index) in estados" :key="index">
-                                {{ item.nombre }}
-                            </option>
-                        </select>
-                    </div>
-                    <button  type="button" class="btn btn-success" @click="register()">
+                    <button type="button" class="btn btn-success" @click="register()">
                         Guardar
                     </button>
-                    
+
                 </form>
             </div>
         </div>
@@ -78,12 +118,17 @@ export default {
             id_user: "",
             roluserlogued: '',
             editar_usuario: false,
+            usuario: '',
+            contrasena_correo:'',
+            loading: false,
 
         };
     },
 
     created() {
-        this.getUser()
+        if(this.$route.params.id != undefined){
+            this.getUser()
+        }
         this.userLogued()
         this.getRoles()
         this.getEstados()
@@ -96,6 +141,8 @@ export default {
             let user = {
                 nombres: this.nombres,
                 apellidos: this.apellidos,
+                usuario: this.usuario,
+                contrasena_correo: this.contrasena_correo,
                 email: this.email,
                 password: this.password,
                 rol_id: this.rolId_,
@@ -162,12 +209,14 @@ export default {
         },
         getUser() {
             let self = this;
+            self.loading = true
             let config = this.configHeader();
             axios
                 .get(self.URL_API + 'api/v1/userbyid/' + self.$route.params.id, config)
                 .then(function (result) {
                     self.nombres = result.data[0].nombres
                     self.apellidos = result.data[0].apellidos
+                    self.usuario = result.data[0].usuario
                     self.email = result.data[0].email
                     self.rol = result.data[0].rol
                     self.estado = result.data[0].estado
@@ -176,6 +225,7 @@ export default {
                     self.contrato = result.data[0].contrato_numero;
                     self.contratoId_ = result.data[0].contrato_id;
                     self.documento_identidad = result.data[0].documento_identidad;
+                    self.loading = false
                 }).catch(function () {
                     // self.$router.push("/");
                 });
@@ -283,5 +333,103 @@ button {
 
 #emailHelp {
     color: red;
+}
+
+/* Loading */
+.loading {
+    background-color: rgba(252, 252, 252, 0.63);
+    position: fixed;
+    width: 100%;
+    height: 1000px;
+    /* top: 0%; */
+    left: 0%;
+    z-index: 200;
+}
+
+.loader {
+    font-size: 15px;
+    margin: 20% auto;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-animation: load4 1.3s infinite linear;
+    animation: load4 1.3s infinite linear;
+    z-index: 500;
+}
+
+@-webkit-keyframes load4 {
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
+}
+
+@keyframes load4 {
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
+
+    /* Fin loading */
 }
 </style>

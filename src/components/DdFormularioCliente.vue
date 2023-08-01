@@ -3251,6 +3251,7 @@ ul li {
     padding: 5px;
 }
 
+/* Loading */
 .loading {
     background-color: rgba(252, 252, 252, 0.63);
     position: fixed;
@@ -3344,5 +3345,7 @@ ul li {
     87.5% {
         box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
     }
+
 }
+/* Fin loading */
 </style>
