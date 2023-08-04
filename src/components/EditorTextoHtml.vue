@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         send() {
-            this.$emit('enviar',this.content)
+            this.$emit('valida_campos',this.content)
         },
     }
 

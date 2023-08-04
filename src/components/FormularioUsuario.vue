@@ -5,7 +5,7 @@
         </div>
         <div class="container">
             <h3>{{ titulo }}</h3>
-            <div class="card col-xs-12 col-md-6" style="height: 515px;">
+            <div class="card col-xs-12 col-md-8">
                 <form>
                     <div class="row">
                         <div class="col">
@@ -38,9 +38,9 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label">Contraseña correo</label>
-                                <input type="password" class="form-control" id="exampleInputEmail1" aria-describedby="prueba"
-                                    v-model="contrasena_correo" autocomplete="off" />
-                                    <!-- :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" -->
+                                <input type="password" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="prueba" v-model="contrasena_correo" autocomplete="off" />
+                                <!-- :disabled="roluserlogued == 'S. Administrador' || roluserlogued == 'Administrador' ? false : true" -->
                             </div>
                         </div>
                     </div>
@@ -56,8 +56,8 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" autocomplete="new-password" required class="form-control" id="exampleInputPassword1"
-                                    v-model="password" />
+                                <input type="password" autocomplete="new-password" required class="form-control"
+                                    id="exampleInputPassword1" v-model="password" />
                             </div>
                         </div>
                     </div>
@@ -82,6 +82,27 @@
                                         {{ item.nombre }}
                                     </option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="formFileMultiple" class="form-label">Adjuntar imagen firma correo</label>
+                            <div class="input-group mb-3">
+                                <input class="form-control" type="file" @change="cargarArchivo($event)"
+                                    id="formFileMultiple" multiple>
+                                <span style="cursor: pointer" class="input-group-text" @click="quitarAdjuntos()"
+                                    id="basic-addon1">Quitar archivos</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col botones" v-for="item, index in file" :key="index">
+                                <div class="btn-group btn-group" role="group" aria-label="Small button group">
+                                    <button type="button" class="btn btn-success btn adjunto"><i
+                                            class="bi bi-file-earmark-check"></i>
+                                        {{ item.name }} {{ '(' +
+                                            formatearPesoArchivo(item.size) + ')' }}</button>
+                                    <button type="button" @click="file.splice(index, 1)" class="btn btn-success"><i
+                                            class="bi bi-x"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,14 +140,15 @@ export default {
             roluserlogued: '',
             editar_usuario: false,
             usuario: '',
-            contrasena_correo:'',
+            contrasena_correo: '',
             loading: false,
+            file: [],
 
         };
     },
 
     created() {
-        if(this.$route.params.id != undefined){
+        if (this.$route.params.id != undefined) {
             this.getUser()
         }
         this.userLogued()
@@ -138,23 +160,41 @@ export default {
             let self = this;
             let config = this.configHeader();
             let accion = "register";
-            let user = {
-                nombres: this.nombres,
-                apellidos: this.apellidos,
-                usuario: this.usuario,
-                contrasena_correo: this.contrasena_correo,
-                email: this.email,
-                password: this.password,
-                rol_id: this.rolId_,
-                documento_identidad: this.documento_identidad,
-            };
+
+            const form = new FormData();
+            form.append("nombres", this.nombres);
+            form.append('apellidos', this.apellidos);
+            form.append('usuario', this.usuario);
+            form.append('contrasena_correo', this.contrasena_correo);
+            form.append('email', this.email);
+            form.append('password', this.password);
+            form.append('rol_id', this.rolId_);
+            form.append('documento_identidad', this.documento_identidad);
+
+            this.file.forEach(function (item, index) {
+                form.append('archivo' + index, item)
+            })
+
+            // let user = {
+            //     nombres: this.nombres,
+            //     apellidos: this.apellidos,
+            //     usuario: this.usuario,
+            //     contrasena_correo: this.contrasena_correo,
+            //     email: this.email,
+            //     password: this.password,
+            //     rol_id: this.rolId_,
+            //     documento_identidad: this.documento_identidad,
+            // };
             if (this.$route.params.id != undefined) {
-                user.estado_id = self.estadoId_;
-                user.id_user = this.$route.params.id
+                form.append('estado_id', this.estadoId_);
+                form.append('id_user', this.$route.params.id);
+
+                // user.estado_id = self.estadoId_;
+                // user.id_user = this.$route.params.id
                 accion = "user";
             }
             axios
-                .post(self.URL_API + "api/v1/" + accion, user, config)
+                .post(self.URL_API + "api/v1/" + accion, form, config)
                 .then(function (result) {
                     if (result.data.status == "error") {
                         self.showAlert(result.data.message, result.data.status);
@@ -275,6 +315,27 @@ export default {
                 timer: 1500,
             })
         },
+        cargarArchivo(event) {
+            var self = this
+            const file = event.target.files;
+            for (var i = 0; i < file.length; i++) {
+                self.file.push(file[i])
+            }
+        },
+        quitarAdjuntos() {
+            this.file = []
+        },
+        formatearPesoArchivo(pesoBytes) {
+            if (pesoBytes < 1024) {
+                return `${pesoBytes} bytes`;
+            } else if (pesoBytes < 1024 * 1024) {
+                return `${Math.ceil(pesoBytes / 1024)} KB`;
+            } else if (pesoBytes < 1024 * 1024 * 1024) {
+                return `${Math.ceil(pesoBytes / (1024 * 1024))} MB`;
+            } else {
+                return `${Math.ceil(pesoBytes / (1024 * 1024 * 1024))} GB`;
+            }
+        },
         configHeader() {
             let config = {
                 headers: {
@@ -288,7 +349,7 @@ export default {
 </script>
 <style scoped>
 .card {
-    height: 520px;
+    /* height: 520px; */
     margin: auto;
     padding: 20px;
     background-color: rgba(239, 237, 237, 0.642);
@@ -316,7 +377,8 @@ h2 {
 
 button {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    /* margin-bottom: 20px; */
 }
 
 .logo {
@@ -431,5 +493,18 @@ button {
     }
 
     /* Fin loading */
+}
+
+.adjunto {
+    white-space: nowrap;
+    margin-bottom: 10px;
+    background-color: #239B56;
+    color: rgb(255, 255, 255);
+    width: 100%;
+    /* max-width: 500px; */
+}
+
+.botones {
+    padding: 5px;
 }
 </style>
