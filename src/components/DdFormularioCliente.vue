@@ -2766,7 +2766,22 @@ export default {
                 self.showAlert('Error, debe diligenciar los campos correspondientes para personas expuestas', 'error')
                 return true
             }
-
+            if (this.tipo_origen_fondo == '') {
+                this.showAlert('Error, debe diligenciar el tipo de origen de los fondos.', 'error')
+                return true
+            }
+            if (this.tipo_origen_medios == '') {
+                this.showAlert('Error, debe diligenciar el tipo de origen de los medios .', 'error')
+                return true
+            }
+            if (this.otro_tipo_origen_medios == '') {
+                this.showAlert('Error, debe diligenciar el otro tipo de origen de los medios .', 'error')
+                return true
+            }
+            if (this.alto_manejo_efectivo == '') {
+                this.showAlert('Error, debe diligenciar si las operaciones que realiza por su actividad implican un alto manejo de efectivo .', 'error')
+                return true
+            }
             if (this.tratamiento_datos_personales == false) {
                 this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
                 return true
