@@ -174,23 +174,9 @@ export default {
             this.file.forEach(function (item, index) {
                 form.append('archivo' + index, item)
             })
-
-            // let user = {
-            //     nombres: this.nombres,
-            //     apellidos: this.apellidos,
-            //     usuario: this.usuario,
-            //     contrasena_correo: this.contrasena_correo,
-            //     email: this.email,
-            //     password: this.password,
-            //     rol_id: this.rolId_,
-            //     documento_identidad: this.documento_identidad,
-            // };
             if (this.$route.params.id != undefined) {
                 form.append('estado_id', this.estadoId_);
                 form.append('id_user', this.$route.params.id);
-
-                // user.estado_id = self.estadoId_;
-                // user.id_user = this.$route.params.id
                 accion = "user";
             }
             axios
@@ -234,19 +220,6 @@ export default {
                 self.estadoId_ = "";
             }
         },
-        contratoId(contrato) {
-            let self = this;
-            var cont = 0;
-            this.contratos.forEach(function (element) {
-                if (contrato == element.numero) {
-                    self.contratoId_ = element.id;
-                    cont++;
-                }
-            });
-            if (cont <= 0) {
-                self.contratoId_ = "";
-            }
-        },
         getUser() {
             let self = this;
             self.loading = true
@@ -254,17 +227,15 @@ export default {
             axios
                 .get(self.URL_API + 'api/v1/userbyid/' + self.$route.params.id, config)
                 .then(function (result) {
-                    self.nombres = result.data[0].nombres
-                    self.apellidos = result.data[0].apellidos
+                    self.nombres = result.data[0].nombres != 'null' ? result.data[0].nombres:''
+                    self.apellidos = result.data[0].apellidos != 'null' ? result.data[0].apellidos:''
                     self.usuario = result.data[0].usuario
-                    self.email = result.data[0].email
+                    self.email = result.data[0].email != 'null' ? result.data[0].email:''
                     self.rol = result.data[0].rol
                     self.estado = result.data[0].estado
                     self.estadoId_ = result.data[0].id_estado;
                     self.rolId_ = result.data[0].id_rol;
-                    self.contrato = result.data[0].contrato_numero;
-                    self.contratoId_ = result.data[0].contrato_id;
-                    self.documento_identidad = result.data[0].documento_identidad;
+                    self.documento_identidad = result.data[0].documento_identidad != 'null'?result.data[0].documento_identidad:''
                     self.loading = false
                 }).catch(function () {
                     // self.$router.push("/");
