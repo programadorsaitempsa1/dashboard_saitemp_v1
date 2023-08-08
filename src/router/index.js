@@ -40,6 +40,7 @@ import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 import FormularioRegistro from "../components/FormularioRegistro.vue";
 import NovedadesNomina from "../components/NovedadesNomina.vue";
 import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue";
+import ConsultaNN from "../components/ConsultaNN.vue";
 
 
 Vue.use(VueRouter);
@@ -239,6 +240,11 @@ const routes = [
         path: "solicitud-novedades-nomina",
         name: "solicitud-novedades-nomina",
         component: SolicitudNovedadesNomina,
+      },
+      {
+        path: "correo-novedades-nomina",
+        name: "correo-novedades-nomina",
+        component: ConsultaNN,
       },
     ],
   },
