@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <vue-editor v-model="content"></vue-editor>
+        <vue-editor v-model="content" :editor-toolbar="showToolbar ? toolbarOptions : []"></vue-editor>
     </div>
 </template>
   
@@ -12,23 +12,50 @@ export default {
         VueEditor
     },
     props: {
-        enviar_correo: {}
+        enviar_correo: {},
+        index: {
+            type: Number,
+            default: null,
+        },
+        showToolbar: {
+            type: Boolean,
+            default: false
+        },
+        consulta: {
+            type: String,
+            default: ''
+        },
 
     },
 
     data() {
         return {
-            content: ""
+            content: "",
+            toolbarOptions: [[{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],],
         };
     },
     watch: {
         enviar_correo() {
             this.send()
-        }
+        },
+        content() {
+            this.retornoTexto()
+        },
+        consulta() {
+            this.content = this.consulta
+        },
+    },
+    created() {
+        this.content = this.consulta
     },
     methods: {
         send() {
-            this.$emit('valida_campos',this.content)
+            this.$emit('valida_campos', this.content)
+        },
+        retornoTexto() {
+            if (this.index != null) {
+                this.$emit('retornoTexto', this.index, this.content)
+            }
         },
     }
 

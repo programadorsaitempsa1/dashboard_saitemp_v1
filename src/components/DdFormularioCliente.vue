@@ -344,7 +344,7 @@
                 </div>
             </div>
             <h6 class="tituloseccion" v-if="tipo_cliente == 1">Cargos empresa</h6>
-            <div id="seccion" v-if="tipo_cliente == 1">
+            <div id="seccion" v-if="tipo_cliente == 1 && cargos[0].requisitos.length > 0">
                 <div class="row">
                     <div class="row">
                         <div class="col-3">
@@ -357,14 +357,14 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Nombre del cargo: *</label>
+                            <label for="exampleInputEmail1" class="form-label">Categoria cargo: *</label>
 
                         </div>
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Requisito:</label>
+                            <label for="exampleInputEmail1" class="form-label">Requisitos:</label>
                         </div>
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Examen:</label>
+                            <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
@@ -385,8 +385,8 @@
                         <!-- <span id="validate" v-if="item.riesgo === '' && submitted" class="error">{{ mensaje_error
                             }}</span> -->
                         <div class="col-2">
-                            <SearchList eventoCampo="getRiesgosLaborales" :index="index" nombreItem="nombre"
-                                :registros="riesgos_laborales" @getRiesgosLaborales="getRiesgosLaborales"
+                            <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
+                                :registros="riesgos_laborales" @getRiesgosLaborales2="getRiesgosLaborales2"
                                 placeholder="Seleccionar" :consulta="consulta_riesgo_laboral[index]" />
                             <span id="validate" v-if="item.riesgo == '' && submitted" class="error">{{ mensaje_error
                             }}</span>
@@ -394,6 +394,112 @@
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(cargos, index)"></i>
                         </div>
+                    </div>
+                </div>
+                <span id="clasificador" @click="agregarCargo()" style="cursor: pointer"><i
+                        class="bi bi-plus-circle-fill"></i>
+                    Agregar cargo
+                </span>
+            </div>
+            <div id="seccion" v-if="tipo_cliente == 1 && cargos[0].requisitos.length <= 0">
+                <div class="row cargos">
+                    <div class="row">
+                        <h5 style="text-align: left;">Número de cargos registrados: {{ cargos2.length }}</h5>
+                        <div class="col-3">
+                            <SearchList nombreCampo="Riesgo de la empresa: (ARL)" eventoCampo="getRiesgosLaborales"
+                                nombreItem="nombre" :disabled="true" :registros="riesgos_laborales"
+                                :consulta="consulta_riesgo_cliente" @getRiesgosLaborales="getRiesgosLaborales"
+                                placeholder="Seleccionar" />
+                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
+                            }}</span>
+                        </div>
+                    </div>
+                    <div class="row" id="contenedor-select" v-for="item, index in cargos2" :key="item.id">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-check-label" for="flexSwitchCheckChecked">Por favor seleccione si el tipo
+                                    de
+                                    cargo:</label>
+                            </div>
+                            <div style="display: flex;">
+                                <div class="form-check m-2" v-for="item, index2 in tipo_cargos" :key="index2">
+                                    <input class="form-check-input" type="radio"
+                                        @click="getSubCategoriaCargo(item.id, index)" :value="item.id"
+                                        v-model="tipo_cargo[index]" :name="'radio' + index" id="radio3">
+                                    {{ item.nombre }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Categoria cargo: *</label>
+
+                            </div>
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Cargo:</label>
+                            </div>
+                            <!-- <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
+                            </div> -->
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <!-- nombreCampo="Riesgo de la empresa: (ARL)" -->
+                            <SearchList nombreItem="nombre" :registros="arry_subcategoria_cargos[index]"
+                                :consulta="consulta_subcategoria_cargos[index]" eventoCampo="getListaCargos" :index="index"
+                                @getListaCargos="getListaCargos" placeholder="Seleccionar" />
+                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
+                            }}</span>
+                        </div>
+                        <div class="col">
+                            <!-- nombreCampo="Riesgo de la empresa: (ARL)" -->
+                            <SearchList nombreItem="nombre" :registros="array_lista_cargos[index]"
+                                :consulta="consulta_lista_cargos[index]" eventoCampo="getExamenesRecomendaciones"
+                                @getExamenesRecomendaciones="getExamenesRecomendaciones" :index="index"
+                                placeholder="Seleccionar" />
+                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
+                            }}</span>
+                        </div>
+                        <div class="col">
+                            <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
+                                :registros="riesgos" @getRiesgosLaborales2="getRiesgosLaborales2" placeholder="Seleccionar"
+                                :consulta="consulta_riesgo_laboral[index]" />
+                            <span id="validate" v-if="item.riesgo == '' && submitted" class="error">{{ mensaje_error
+                            }}</span>
+                        </div>
+                        <div class="row">
+                            <label for="exampleInputEmail1" class="form-label">Funciones del cargo:</label>
+                            <div class="col">
+                                <EditorTextoHtml :consulta="consulta_textohtml[index]" :index="index"
+                                    @retornoTexto="retornoTexto" :showToolbar="true" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
+                            <div class="col">
+                                <div class="col-12 lista-multiple">
+                                    <button style="margin:5px" class="btn btn-success btn-sm"
+                                        v-for="(item, index) in array_lista_examenes[index]" :key="index" type="button">{{
+                                            item.nombre }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" v-for="item, index3 in array_lista_recomendaciones[index]" :key="index3">
+                            <div class="col orientacion"><label style="width: 100%;">ORIENTACIONES ESPECIFICAS PARA LOS
+                                    EXAMENES:</label>
+                                <span>{{ item.recomendacion1 }}</span>
+                            </div>
+                            <div class="col orientacion"><label style="width: 100%;">PATOLOGIAS QUE RESTRINGEN LA
+                                    LABOR:</label>
+                                <span>{{ item.recomendacion2 }}</span>
+                            </div>
+                            <div class="col-1 trash">
+                                <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(cargos2, index)"></i>
+                            </div>
+                        </div>
+                        <hr v-if="cargos2.length > 1">
                     </div>
                 </div>
                 <span id="clasificador" @click="agregarCargo()" style="cursor: pointer"><i
@@ -483,8 +589,8 @@
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Porcentaje Participación (%):</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" maxlength="3" v-model="item.participacion"
-                                @input="item.participacion = validarNumero(item.participacion)" />
+                                aria-describedby="emailHelp" maxlength="10" v-model="item.participacion" />
+                            <!-- @input="item.participacion = validarNumero(item.participacion)" -->
                             <span id="validate"
                                 v-if="item.participacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
                                 class="error">{{ mensaje_error
@@ -1259,8 +1365,8 @@
             <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
                 type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
             <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="submit" style="margin:30px" >Guardar</button>
-            
+                type="submit" style="margin:30px">Guardar</button>
+
         </form>
     </div>
 </template>
@@ -1271,6 +1377,7 @@ import SearchTable from './SearchTable.vue';
 import ListaMultiple from './ListaMultiple.vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import EditorTextoHtml from './EditorTextoHtml.vue';
 
 export default {
 
@@ -1278,6 +1385,7 @@ export default {
         SearchList,
         SearchTable,
         ListaMultiple,
+        EditorTextoHtml
     },
     mixins: [],
     props: {
@@ -1371,6 +1479,7 @@ export default {
             riesgo_laboral: '',
             consulta_riesgo_cliente: '',
             cargos: [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }],
+            cargos2: [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo: '' }],
             fileInputsCount: [],
             consulta_tipo_identificacion_ac: [],
             accionistas: [{ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' }],
@@ -1464,6 +1573,23 @@ export default {
             cliente_existe: false,
             loading: false,
             limite: 3 * 1024 * 1024,
+            riesgos: [],
+            tipo_cargo: [],
+            subcategoria_cargos: [],
+            arry_subcategoria_cargos: [],
+            lista_cargos: [],
+            array_lista_cargos: [],
+            lista_examenes: [],
+            array_lista_examenes: [],
+            lista_recomendaciones: [],
+            array_lista_recomendaciones: [],
+            categoria_cargo_id: '',
+            // consulta_cargos:[]
+            consulta_subcategoria_cargos: [],
+            consulta_lista_cargos: [],
+            consulta_textohtml: [],
+            enviar_correo: false,
+            tipo_cargos: []
 
         }
     },
@@ -1473,7 +1599,10 @@ export default {
     watch: {
         $route() {
             this.limpiarformulario()
-        }
+        },
+        // tipo_cargo() {
+        //     this.getSubCategoriaCargo(this.tipo_cargo)
+        // }
 
     },
     mounted() {
@@ -1481,7 +1610,6 @@ export default {
     },
 
     created() {
-        // console.log(this.$route.path)
         this.estabilidad_laboral == false
         this.getExamenes()
         this.getRequsitos()
@@ -1496,11 +1624,98 @@ export default {
             document.body.style.overflow = 'hidden';
             this.consultaFormulario(this.$route.params.id)
         }
-        // else {
-        //     this.variables = [{}]
-        // }
+        this.getRiesgosLaborales()
+        this.getCategoriaCargo()
+
     },
     methods: {
+        retornoTexto(index, texto) {
+            // var funcion_cargo = texto.replace(/<\/?[^>]+(>|$)/g, "")
+            this.cargos2[index].funcion_cargo = texto
+        },
+        getCategoriaCargo() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/categoriacargo", config)
+                .then(function (result) {
+                    self.tipo_cargos = result.data
+
+                });
+        },
+        getSubCategoriaCargo(id, index = null) {
+            if (index != null) {
+                if (this.cargos2[index].cargo != '') {
+                    this.consulta_subcategoria_cargos[index] = ' '
+                    this.consulta_lista_cargos[index] = ' '
+                    this.cargos2[index].cargo = ''
+                }
+
+
+                this.array_lista_cargos[index] = []
+                this.arry_subcategoria_cargos[index] = []
+                this.array_lista_examenes[index] = []
+                this.cargos2[index].examenes = []
+            }
+
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/subcategoriacargo/" + id, config)
+                .then(function (result) {
+                    self.arry_subcategoria_cargos.splice(index, 1, result.data)
+
+                });
+        },
+        getListaCargos(item = null, index = null) {
+            if (item != null) {
+                this.categoria_cargo_id = item.id
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listacargos/" + item.id, config)
+                    .then(function (result) {
+                        self.array_lista_cargos.splice(index, 1, result.data)
+
+                    });
+            }
+        },
+        getExamenesRecomendaciones(item = null, index = null) {
+            if (index != null) {
+                this.cargos2[index].cargo = item.id
+            }
+            this.getListaRecomendaciones(index)
+            this.getListaExamenes(index)
+        },
+        getListaExamenes(index = null) {
+            if (index != null) {
+                // this.cargos2[index].cargo = item.id
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listaexamenes/" + this.categoria_cargo_id, config)
+                    .then(function (result) {
+                        self.array_lista_examenes.splice(index, 1, result.data)
+                        self.cargos2[index].examenes = result.data
+
+                    });
+            }
+        },
+        getListaRecomendaciones(index = null) {
+            if (index != null) {
+                //     console.log(item)
+                // this.cargos2[index].cargo = item.id
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listarecomendaciones/" + this.categoria_cargo_id, config)
+                    .then(function (result) {
+                        self.array_lista_recomendaciones.splice(index, 1, result.data)
+                        self.cargos2[index].recomendaciones = result.data
+
+                    });
+            }
+        },
         getCliente(id, tipo_id) {
             if (id.trim() != '') {
                 let self = this;
@@ -1693,6 +1908,9 @@ export default {
             if (this.cargos.length <= 4) {
                 this.cargos.push({ cargo: '', requisitos: [], examenes: [], riesgo: '' })
             }
+            if (this.cargos2.length <= 9) {
+                this.cargos2.push({ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' })
+            }
         },
         agregarAccionista() {
             if (this.accionistas.length <= 4) {
@@ -1862,27 +2080,6 @@ export default {
                     self.consulta_tipo_identificacion = 'No aplica'
                 }, "10");
             }
-            // let self = this
-            // if (persona_natural) {
-            // this.nit = undefined
-            // this.fecha_constitucion = undefined
-            // this.digito_verificacion = ''
-            // this.consulta_tipo_identificacion = undefined
-            // setTimeout(() => {
-            //     self.consulta_tipo_identificacion = ''
-            // }, "10");
-            // document.getElementById("fecha_constitucion").value = "";
-            // } else if (!persona_natural) {
-            // this.consulta_tipo_identificacion = ''
-            // this.tipo_identificacion = undefined
-            // this.digito_verificacion = ''
-            // this.fecha_expedicion = undefined
-            // this.numero_identificacion = undefined
-            // document.getElementById("fecha_expedicion").value = "";
-            // setTimeout(() => {
-            //     self.consulta_tipo_identificacion = 'No aplica'
-            // }, "10");
-            // }
         },
         getTipoIdentificacion() {
             if (this.tiposIdentificacion == '') {
@@ -1899,9 +2096,6 @@ export default {
             self.tiposArchivo = this.fileInputsCount
         },
         setTipoArchivo(item, index) {
-            // if(item != null){
-            //    this.tipo_archivo_ = item.id
-            // }
             let self = this
             this.id_archivo.splice(index, 1, item.id)
             if (typeof item == 'string') {
@@ -2025,13 +2219,17 @@ export default {
             }
         },
         getActividadesCiiu(item = null) {
-            if (item != null) {
+            var id = ''
+            if (item != null && item.codigo != undefined) {
                 this.codigo_ciiu_id = item.codigo
+                id = item.id
+            } else {
+                id = item
             }
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/actividadciiu/" + item.id, config)
+                .get(self.URL_API + "api/v1/actividadciiu/" + id, config)
                 .then(function (result) {
                     self.actividades_ciiu = result.data
                 });
@@ -2067,6 +2265,7 @@ export default {
         getRiesgosLaborales(item = null, index = null) {
             if (item != null && index != null) {
                 this.cargos[index].riesgo = item.id;
+                this.cargos2[index].riesgo_laboral_id = item.id;
             }
             if (item != null && index == null) {
                 this.riesgo_laboral = item.id;
@@ -2080,6 +2279,24 @@ export default {
                         self.riesgos_laborales = result.data
                     });
             }
+        },
+        getRiesgosLaborales2(item = null, index = null) {
+            if (item != null) {
+                this.cargos2[index].riesgo_laboral_id = item.id
+            }
+            var self = this
+            self.riesgos = []
+            var riesgo = ''
+            this.actividades_ciiu.data.forEach(function (item) {
+                self.riesgos_laborales.forEach(function (item2) {
+                    if (item.codigo_actividad.split("")[0] == item2.id) {
+                        if (riesgo != item2.nombre) {
+                            self.riesgos.push({ id: item2.id, nombre: item2.nombre })
+                            riesgo = item2.nombre
+                        }
+                    }
+                })
+            })
         },
         getExamenes(item = null) {
             if (item != null) {
@@ -2244,8 +2461,15 @@ export default {
             }
         },
         setActividadesCiiu(item) {
+            var self = this
             if (item != null) {
-                this.actividad_ciiu = item.split(" ")[0]
+                self.actividad_ciiu = item.split(" ")[0]
+                self.riesgos_laborales.forEach(function (item) {
+                    if (item.id == self.actividad_ciiu.split("")[0]) {
+                        self.riesgo_laboral = self.actividad_ciiu.split("")[0]
+                        self.consulta_riesgo_cliente = item.nombre
+                    }
+                })
             }
         },
         filterResults(value, array, nombrearray) {
@@ -2275,6 +2499,18 @@ export default {
         },
         limpiarformulario() {
             this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }]
+            this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            for (let i = 0; i < this.cargos2.length; i++) {
+                this.tipo_cargo[i] = ''
+                this.categoria_cargo_id = ''
+                this.consulta_subcategoria_cargos[i] = ''
+                this.consulta_lista_cargos[i] = ''
+                this.cargos2[i].cargo = ''
+                this.consulta_textohtml[i] = ''
+                this.consulta_riesgo_laboral[i] = ''
+                this.array_lista_examenes[i] = []
+                this.array_lista_recomendaciones[i] = []
+            }
             this.tipo_cliente = ''
             this.cliente = false
             this.consulta_tipo_cliente = ''
@@ -2444,19 +2680,20 @@ export default {
             this.tipo_archivo_ = ''
             this.registroCliente = {}
             this.cliente_existe = false
-            
+
         },
         valida_campos() {
             var self = this
+
             if (this.tipo_cliente == '') {
                 this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
                 return true
             }
-            if(this.tipo_cliente == 2 && this.tipo_proveedor == ''){
+            if (this.tipo_cliente == 2 && this.tipo_proveedor == '') {
                 this.showAlert('Error, debe diligenciar el tipo de proveedor.', 'error')
                 return true
             }
-            if(this.tipo_cliente == 1 && this.operacion == ''){
+            if (this.tipo_cliente == 1 && this.operacion == '') {
                 this.showAlert('Error, debe diligenciar el tipo de operación.', 'error')
                 return true
             }
@@ -2568,10 +2805,35 @@ export default {
                 this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
                 return true
             }
+
             if (this.rotacion_personal == '' && this.tipo_cliente == 1 || this.rotacion_personal == undefined) {
                 this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
                 return true
             }
+
+            if (this.cargos2[0].cargo == '' || this.cargos2[0].riesgo_laboral_id == '') {
+                this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
+                return true
+            }
+
+            var contador = 0
+            this.cargos2.forEach(function (item) {
+                if (item.cargo == '' || item.riesgo_laboral_id == '') {
+                    contador++
+                }
+
+            })
+            if (contador > 0) {
+                self.showAlert('Error, debe diligenciar los campos para cargos.', 'error')
+                return true
+            }
+
+            this.cargos2.forEach(function (item) {
+                if (item.cargo == '' || item.riesgo_laboral_id == '') {
+                    this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
+                    return true
+                }
+            })
 
             var mensaje_error = ''
             this.fileInputsCount.forEach(function (item, index) {
@@ -2601,6 +2863,7 @@ export default {
                     valida_campo_dependiente++
                 }
             })
+
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar el tipo de identificacion para los accionistas', 'error')
                 return true
@@ -2614,14 +2877,14 @@ export default {
             this.representantes_legales.forEach(function (item) {
                 if (item.tipo_identificacion == '' || item.tipo_identificacion == undefined) {
                     valida_campo++
-                } 
+                }
                 if (item.municipio_id == '' || item.municipio_id == undefined) {
                     valida_campo++
                 }
-                if (item.nombre == '' && item.correo == '' && item.identificacion == ''&& item.telefono == '' && item.tipo_identificacion != 0) {
+                if (item.nombre == '' && item.correo == '' && item.identificacion == '' && item.telefono == '' && item.tipo_identificacion != 0) {
                     valida_campo_dependiente++
                 }
-                
+
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para los representantes legales', 'error')
@@ -2631,7 +2894,7 @@ export default {
                 self.showAlert('Error, debe diligenciar los campos correspondientes para los representantes legales', 'error')
                 return true
             }
-            
+
             if (this.responsable_impuesto_ventas == '') {
                 this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
                 return true
@@ -2644,12 +2907,12 @@ export default {
                 this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
                 return true
             }
-           
+
             if (this.calidad_tributaria[0].opcion == '' || this.calidad_tributaria[0].opcion == undefined) {
                 this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
                 return true
             }
-            if(this.calidad_tributaria[0].opcion == 1 && this.calidad_tributaria[0].numero_resolucion == '' && this.calidad_tributaria[0].fecha == '' ){
+            if (this.calidad_tributaria[0].opcion == 1 && this.calidad_tributaria[0].numero_resolucion == '' && this.calidad_tributaria[0].fecha == '') {
                 this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
                 return true
             }
@@ -2657,7 +2920,7 @@ export default {
                 this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
                 return true
             }
-            if(this.calidad_tributaria[1].opcion == 1 && this.calidad_tributaria[1].numero_resolucion == '' && this.calidad_tributaria[1].fecha == '' ){
+            if (this.calidad_tributaria[1].opcion == 1 && this.calidad_tributaria[1].numero_resolucion == '' && this.calidad_tributaria[1].fecha == '') {
                 this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
                 return true
             }
@@ -2665,7 +2928,7 @@ export default {
                 this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
                 return true
             }
-            if(this.calidad_tributaria[2].opcion == 1 && this.calidad_tributaria[2].numero_resolucion == '' && this.calidad_tributaria[2].fecha == '' ){
+            if (this.calidad_tributaria[2].opcion == 1 && this.calidad_tributaria[2].numero_resolucion == '' && this.calidad_tributaria[2].fecha == '') {
                 this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
                 return true
             }
@@ -2673,11 +2936,11 @@ export default {
                 this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
                 return true
             }
-            if(this.tipo_identificacion_contador != 0 && this.nombre_completo_contador == '' && this.identificacion_contador == '' && this.telefono_contador == ''){
-            this.showAlert('Error, debe diligenciar todos los campos en datos del contador.', 'error')
-                 return true
-             }
-             if (this.ingreso_mensual == '') {
+            if (this.tipo_identificacion_contador != 0 && this.nombre_completo_contador == '' && this.identificacion_contador == '' && this.telefono_contador == '') {
+                this.showAlert('Error, debe diligenciar todos los campos en datos del contador.', 'error')
+                return true
+            }
+            if (this.ingreso_mensual == '') {
                 this.showAlert('Error, debe diligenciar el ingreso mensual.', 'error')
                 return true
             }
@@ -2731,7 +2994,7 @@ export default {
                 if (item.tipo_cuenta == '' || item.tipo_cuenta == undefined) {
                     valida_campo++
                 }
-                if(item.contacto == '' && item.numero_cuenta == '' && item.sucursal == '' && item.telefono == '' && item.banco_id != 0){
+                if (item.contacto == '' && item.numero_cuenta == '' && item.sucursal == '' && item.telefono == '' && item.banco_id != 0) {
                     valida_campos_bancarias++
                 }
             })
@@ -2754,7 +3017,7 @@ export default {
                 if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
                     valida_campo++
                 }
-                if(item.nombre == '' && item.identificacion == '' && item.parentesco == '' && item.tipo_identificacion_id != 0){
+                if (item.nombre == '' && item.identificacion == '' && item.parentesco == '' && item.tipo_identificacion_id != 0) {
                     valida_campos_expuestas++
                 }
             })
@@ -2796,8 +3059,6 @@ export default {
 
         },
         save() {
-
-          
             this.submitted = true;
 
             if (this.valida_campos()) {
@@ -2901,6 +3162,7 @@ export default {
                 municipio_prestacion_servicio: this.municipio_prestacion_servicio
             }
             this.registroCliente.cargos = this.cargos
+            this.registroCliente.cargos2 = this.cargos2
             this.registroCliente.accionistas = this.accionistas
             this.registroCliente.representantes_legales = this.representantes_legales
             this.registroCliente.miembros_Junta = this.miembros_Junta
@@ -2935,6 +3197,7 @@ export default {
 
         llenarFormulario(item) {
             let self = this
+            this.getActividadesCiiu(item.codigo_ciiu_id)
             this.operacion = item.operacion_id
             this.consulta_operacion = item.tipo_operacion
             this.tipo_persona = item.tipo_persona_id
@@ -3055,14 +3318,37 @@ export default {
                     });
             })
 
-            this.cargos = item.cargos
-            for (var i = 0; i < item.cargos.length; i++) {
-                this.requisitos[i] = item.cargos[i].requisitos
-                this.examenes[i] = item.cargos[i].examenes
-                this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
-                this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+            if (item.cargos.length > 0) {
+                console.log('cargos')
+                this.cargos = item.cargos
+                for (let i = 0; i < item.cargos.length; i++) {
+                    this.requisitos[i] = item.cargos[i].requisitos
+                    this.examenes[i] = item.cargos[i].examenes
+                    this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
+                    this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                }
+            } else {
+                this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
             }
 
+            if (item.cargos2.length > 0) {
+
+                this.cargos2 = item.cargos2
+
+                for (let i = 0; i < item.cargos2.length; i++) {
+                    this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
+                    this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
+                    this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                    this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                    this.cargos2[i].cargo = item.cargos2[i].id_cargo
+                    this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
+                    this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
+                    this.array_lista_examenes[i] = item.cargos2[i].examenes
+                    this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                }
+            } else {
+                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo: '' }]
+            }
             item.documentos_adjuntos.forEach(function (item) {
                 self.id_archivo.push(item.tipo_documento_id)
             })
@@ -3173,7 +3459,8 @@ label {
     margin: 20px 0px 5px 0px;
 }
 
-#seccion {
+#seccion,
+.orientacion {
     border: solid #D5DBDB 0.5px;
     padding: 30px;
     border-radius: 10px;
@@ -3290,6 +3577,7 @@ ul li {
     z-index: 500;
 }
 
+
 @-webkit-keyframes load4 {
 
     0%,
@@ -3362,5 +3650,18 @@ ul li {
     }
 
 }
+
 /* Fin loading */
+
+.lista-multiple {
+    border: 0.7px rgba(207, 205, 205, 0.815) solid;
+    border-radius: 7px;
+    position: relative;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* .orientacion{
+    text-align: justify;
+} */
 </style>
