@@ -1362,10 +1362,26 @@
                     </div>
                 </div>
             </div>
-            <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
-            <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="submit" style="margin:30px">Guardar</button>
+            <!-- <div class="col-3">
+                <SearchList nombreCampo="Registros guardados" nombreItem="nombre" :registros="razon_social_cliente"
+                    consulta="" eventoCampo="setFormularioGuardado" @setFormularioGuardado="setFormularioGuardado"
+                    placeholder="Seleccionar" />
+            </div> -->
+            <div class="row">
+                <div class="col">
+                    <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                        type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
+                </div>
+                <div class="col">
+                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                        type="submit" style="margin:30px">Guardar</button>
+                </div>
+                <!-- <div class="col">
+                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                        type="button" style="margin:30px" @click="guardadoParcial">Guardado parcial</button>
+                </div> -->
+            </div>
+
 
         </form>
     </div>
@@ -1479,7 +1495,7 @@ export default {
             riesgo_laboral: '',
             consulta_riesgo_cliente: '',
             cargos: [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }],
-            cargos2: [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo: '' }],
+            cargos2: [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }],
             fileInputsCount: [],
             consulta_tipo_identificacion_ac: [],
             accionistas: [{ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' }],
@@ -1589,7 +1605,9 @@ export default {
             consulta_lista_cargos: [],
             consulta_textohtml: [],
             enviar_correo: false,
-            tipo_cargos: []
+            tipo_cargos: [],
+            formularios_guardados: [],
+            razon_social_cliente: []
 
         }
     },
@@ -1610,6 +1628,10 @@ export default {
     },
 
     created() {
+        const urlCompleta = window.location.href;
+        if (urlCompleta.includes('debidadiligencia.saitempsa.com')) {
+            this.URL_API = 'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/'
+        }
         this.estabilidad_laboral == false
         this.getExamenes()
         this.getRequsitos()
@@ -1626,11 +1648,57 @@ export default {
         }
         this.getRiesgosLaborales()
         this.getCategoriaCargo()
-
+        // var self = this
+        // if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
+        //     self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
+        //     self.razon_social_cliente = []
+        //     self.formularios_guardados.forEach(function (item,index) {
+        //         self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+        //     })
+        // }
     },
     methods: {
+        // setFormularioGuardado(item = null) {
+        //     var self = this
+        //     if (item != null) {
+        //         this.formularios_guardados.forEach(function (item2) {
+        //             if (item2.razon_social == item.nombre) {
+        //                 self.llenarFormularioGuardado(item2)
+        //             }
+        //         });
+        //     }
+
+        // },
+        // guardadoParcial() {
+        //     var self = this
+        //     this.crearCliente()
+        //     if (localStorage.getItem("cliente") === null || localStorage.getItem("cliente") === '') {
+        //         self.formularios_guardados.push(self.registroCliente)
+        //         localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+        //     } else {
+        //         self.formularios_guardados = (JSON.parse(localStorage.getItem("cliente")))
+        //         self.formularios_guardados.push(self.registroCliente)
+        //         localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+        //         // console.log(self.formularios_guardados)
+
+        //         // self.formularios_guardados.forEach(function (item, index) {
+        //         //     if (item.nit == self.registroCliente.nit || item.numero_identificacion == self.registroCliente.numero_identificacion) {
+        //         //         self.formularios_guardados.splice(index, 1, JSON.stringify(self.registroCliente))
+        //         //         localStorage.setItem("cliente", self.formularios_guardados);
+        //         //     } else {
+        //         //         self.formularios_guardados.push(JSON.stringify(self.registroCliente))
+        //         //         localStorage.setItem("cliente", self.formularios_guardados);
+        //         //     }
+        //         // })
+
+        //     }
+        //     self.razon_social_cliente = []
+        //     self.formularios_guardados.forEach(function (item, index) {
+        //         self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+        //     })
+
+        // },
         retornoTexto(index, texto) {
-            // var funcion_cargo = texto.replace(/<\/?[^>]+(>|$)/g, "")
             this.cargos2[index].funcion_cargo = texto
         },
         getCategoriaCargo() {
@@ -2811,29 +2879,24 @@ export default {
                 return true
             }
 
-            if (this.cargos2[0].cargo == '' || this.cargos2[0].riesgo_laboral_id == '') {
-                this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
-                return true
-            }
-
-            var contador = 0
-            this.cargos2.forEach(function (item) {
-                if (item.cargo == '' || item.riesgo_laboral_id == '') {
-                    contador++
-                }
-
-            })
-            if (contador > 0) {
-                self.showAlert('Error, debe diligenciar los campos para cargos.', 'error')
-                return true
-            }
-
-            this.cargos2.forEach(function (item) {
-                if (item.cargo == '' || item.riesgo_laboral_id == '') {
+            if (this.tipo_cliente != 2) {
+                if (this.cargos2[0].cargo == '' || this.cargos2[0].riesgo_laboral_id == '') {
                     this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
                     return true
                 }
-            })
+
+                var contador = 0
+                this.cargos2.forEach(function (item) {
+                    if (item.cargo == '' || item.riesgo_laboral_id == '') {
+                        contador++
+                    }
+
+                })
+                if (contador > 0) {
+                    self.showAlert('Error, debe diligenciar los campos para cargos.', 'error')
+                    return true
+                }
+            }
 
             var mensaje_error = ''
             this.fileInputsCount.forEach(function (item, index) {
@@ -3194,8 +3257,10 @@ export default {
                     return archivo;
                 });
         },
-
-        llenarFormulario(item) {
+        // llenarFormularioGuardado(item = null){
+        //     console.log('llenar formulario', item)
+        // },
+        llenarFormulario(item = null) {
             let self = this
             this.getActividadesCiiu(item.codigo_ciiu_id)
             this.operacion = item.operacion_id
@@ -3347,7 +3412,7 @@ export default {
                     this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
                 }
             } else {
-                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo: '' }]
+                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
             }
             item.documentos_adjuntos.forEach(function (item) {
                 self.id_archivo.push(item.tipo_documento_id)
