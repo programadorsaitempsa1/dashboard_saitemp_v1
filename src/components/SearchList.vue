@@ -115,10 +115,10 @@ export default {
         listaEnCadena(item) {
             switch (this.eventoCampo) {
                 case 'getPaises':
-                    this.$emit('getDepartamentos', item)
+                    this.$emit('getDepartamentos', item, this.ordenCampo, this.index)
                     break;
                 case 'getDepartamentos':
-                    this.$emit('getMunicipios', item)
+                    this.$emit('getMunicipios', item, this.ordenCampo, this.index)
                     break;
                 case 'setMunicipios':
                     this.$emit('setMunicipios', item, this.ordenCampo, this.index)

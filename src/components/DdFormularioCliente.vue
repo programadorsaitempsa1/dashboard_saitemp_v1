@@ -173,14 +173,14 @@
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Pais: *" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nombre"
-                            :consulta="consulta_pais" :registros="paises" @getDepartamentos="getDepartamentos"
-                            placeholder="Seleccione una opción" />
+                            :consulta="consulta_pais" :registros="paises" :ordenCampo="1"
+                            @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento: *" nombreItem="nombre" eventoCampo="getDepartamentos"
-                            :consulta="consulta_departamento" :registros="departamentos" @getMunicipios="getMunicipios"
-                            placeholder="Seleccione una opción" />
+                            :consulta="consulta_departamento" :registros="departamentos" :ordenCampo="1"
+                            @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
@@ -278,13 +278,13 @@
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Pais prestación servicio: *" @getPaises="getPaises" eventoCampo="getPaises"
-                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :registros="paises"
+                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :ordenCampo="2" :registros="paises"
                             @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento prestación servicio: *" nombreItem="nombre"
-                            eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio"
+                            eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio" :ordenCampo="2"
                             :registros="departamentos" @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
@@ -667,7 +667,7 @@
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Pais de expedición: *" @getPaises="getPaises" eventoCampo="getPaises"
-                                nombreItem="nombre" :registros="paises" @getDepartamentos="getDepartamentos"
+                                nombreItem="nombre" :registros="paises" @getDepartamentos="getDepartamentos" :ordenCampo="3"
                                 placeholder="Seleccione una opción" :consulta="consulta_pais_rl[index]" />
 
                         </div>
@@ -1210,7 +1210,7 @@
                         </li>
                     </ul>
                     <div class="col">
-                        <SearchList nombreCampo="Selecciones una opción" @getTipoOrigenFondos="getTipoOrigenFondos"
+                        <SearchList nombreCampo="Seleccione una opción" @getTipoOrigenFondos="getTipoOrigenFondos"
                             eventoCampo="getTipoOrigenFondos" nombreItem="nombre" :registros="tipos_origen_fondos"
                             placeholder="Origen de fondos" :consulta="consulta_origen_fondos" />
                         <span id="validate" v-if="tipo_origen_fondo == '' && submitted" class="error">{{ mensaje_error
@@ -1362,11 +1362,11 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-3">
+            <div class="col-3">
                 <SearchList nombreCampo="Registros guardados" nombreItem="nombre" :registros="razon_social_cliente"
                     consulta="" eventoCampo="setFormularioGuardado" @setFormularioGuardado="setFormularioGuardado"
                     placeholder="Seleccionar" />
-            </div> -->
+            </div>
             <div class="row">
                 <div class="col">
                     <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
@@ -1376,10 +1376,26 @@
                     <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
                         type="submit" style="margin:30px">Guardar</button>
                 </div>
-                <!-- <div class="col">
-                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                        type="button" style="margin:30px" @click="guardadoParcial">Guardado parcial</button>
-                </div> -->
+                <div class="col" style="margin:30px">
+                    <!-- <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                        type="button" style="margin:30px" @click="guardadoParcial">Guardado parcial</button> -->
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button type="button" class="btn btn-success" @click="guardadoParcial">Guardado parcial</button>
+
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Eliminar registro
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li v-for="item, index in razon_social_cliente" :key="index"><a class="dropdown-item"
+                                        style="cursor:pointer" @click="eliminarItem(item)">{{
+                                            item.nombre }}</a></li>
+                                <!-- <li><a class="dropdown-item" href="#">Dropdown link</a></li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
@@ -1624,9 +1640,15 @@ export default {
 
     },
     mounted() {
+        window.addEventListener('keydown', this.convinacionGuardado);
+        window.addEventListener('keydown', this.convinacionAutoRelleno);
 
     },
+    beforeDestroy() {
+        window.removeEventListener('keydown', this.convinacionGuardado);
+        window.removeEventListener('keydown', this.convinacionAutoRelleno);
 
+    },
     created() {
         const urlCompleta = window.location.href;
         if (urlCompleta.includes('debidadiligencia.saitempsa.com')) {
@@ -1648,58 +1670,229 @@ export default {
         }
         this.getRiesgosLaborales()
         this.getCategoriaCargo()
-        // var self = this
-        // if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
-        //     self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
-        //     self.razon_social_cliente = []
-        //     self.formularios_guardados.forEach(function (item,index) {
-        //         self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
-        //     })
-        // }
+        var self = this
+        if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
+            self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
+            self.razon_social_cliente = []
+            self.formularios_guardados.forEach(function (item, index) {
+                self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+            })
+        }
     },
     methods: {
-        // setFormularioGuardado(item = null) {
-        //     var self = this
-        //     if (item != null) {
-        //         this.formularios_guardados.forEach(function (item2) {
-        //             if (item2.razon_social == item.nombre) {
-        //                 self.llenarFormularioGuardado(item2)
-        //             }
-        //         });
-        //     }
+        setLabelPais(item = null, campo = null, index = null) {
+            if (item != null) {
+                switch (campo) {
+                    case 1:
+                        // this.tipo_identificacion = item.cod_tip;
+                        this.consulta_pais = item.nombre
+                        break
+                    case 2:
+                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_pais_prestacion_servicio = item.nombre
+                        break
+                    case 3:
+                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_pais_rl[index] = item.nombre
+                        break
+                }
+            }
+        },
+        setLabelDepartamento(item = null, campo = null, index = null) {
+            if (item != null) {
+                switch (campo) {
+                    case 1:
+                        // this.tipo_identificacion = item.cod_tip;
+                        this.consulta_departamento = item.nombre
+                        break
+                    case 2:
+                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_departamento_prestacion_servicio = item.nombre
+                        break
+                    case 3:
+                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_departamento_rl[index] = item.nombre
+                        break
+                }
+            }
+        },
+      
+        eliminarItem(registro) {
+            var self = this
+            if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
+                self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
+                self.formularios_guardados.forEach(function (item, index) {
+                    if (item.razon_social == registro.nombre) {
+                        self.formularios_guardados.splice(index, 1)
+                        self.razon_social_cliente.splice(index, 1)
+                        localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                    }
+                })
+            }
+        },
+        convinacionAutoRelleno(event) {
+            if (event.ctrlKey && event.altKey && event.key >= '1' && event.key <= '9') {
+                event.preventDefault();
+                const numero = parseInt(event.key);
+                this.setFormularioGuardado(null, numero)
+            }
+        },
+        setFormularioGuardado(item = null, numero) {
+            var self = this
+            if (item != null) {
+                this.formularios_guardados.forEach(function (item2) {
+                    if (item2.razon_social == item.nombre) {
+                        self.llenarFormularioGuardado(item2)
+                    }
+                });
+            } else {
+                this.formularios_guardados.forEach(function (item2, index) {
+                    if (index == numero-1) {
+                        self.llenarFormularioGuardado(item2)
+                    }
+                });
+            }
 
-        // },
-        // guardadoParcial() {
-        //     var self = this
-        //     this.crearCliente()
-        //     if (localStorage.getItem("cliente") === null || localStorage.getItem("cliente") === '') {
-        //         self.formularios_guardados.push(self.registroCliente)
-        //         localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
-        //     } else {
-        //         self.formularios_guardados = (JSON.parse(localStorage.getItem("cliente")))
-        //         self.formularios_guardados.push(self.registroCliente)
-        //         localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
-        //         // console.log(self.formularios_guardados)
+        },
+        convinacionGuardado(event) {
+            if (event.ctrlKey && event.key.toLowerCase() === 's') {
+                event.preventDefault();
+                this.guardadoParcial()
+            }
+        },
+        guardadoParcial() {
 
-        //         // self.formularios_guardados.forEach(function (item, index) {
-        //         //     if (item.nit == self.registroCliente.nit || item.numero_identificacion == self.registroCliente.numero_identificacion) {
-        //         //         self.formularios_guardados.splice(index, 1, JSON.stringify(self.registroCliente))
-        //         //         localStorage.setItem("cliente", self.formularios_guardados);
-        //         //     } else {
-        //         //         self.formularios_guardados.push(JSON.stringify(self.registroCliente))
-        //         //         localStorage.setItem("cliente", self.formularios_guardados);
-        //         //     }
-        //         // })
+            var self = this
+            this.crearCliente()
+            this.agregarCamposCliente()
+            if (localStorage.getItem("cliente") === null || localStorage.getItem("cliente") === '') {
+                self.formularios_guardados.push(self.registroCliente)
+                localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+            } else {
+                self.formularios_guardados = (JSON.parse(localStorage.getItem("cliente")))
+                var bandera = 0
+                var posicion = 0
+                self.formularios_guardados.forEach(function (item, index) {
+                    // if (item.nit == self.registroCliente.nit && item.numero_identificacion == self.registroCliente.numero_identificacion) {
+                    if (item.razon_social == self.registroCliente.razon_social) {
+                        bandera++
+                        posicion = index
+                    }
+                })
 
-        //     }
-        //     self.razon_social_cliente = []
-        //     self.formularios_guardados.forEach(function (item, index) {
-        //         self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
-        //     })
+                if (bandera > 0) {
+                    self.formularios_guardados.splice(posicion, 1, self.registroCliente)
+                    localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                } else {
+                    self.formularios_guardados.push(self.registroCliente)
+                    localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                }
 
-        // },
+            }
+            self.razon_social_cliente = []
+            self.formularios_guardados.forEach(function (item, index) {
+                self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+            })
+
+        },
+        agregarCamposCliente() {
+            var self = this
+            self.registroCliente.consulta_tipo_cliente = this.consulta_tipo_cliente
+            self.registroCliente.consulta_tipo_proveedor = this.consulta_tipo_proveedor
+            self.registroCliente.consulta_operacion = this.consulta_operacion
+            self.registroCliente.contratacion_directa = this.contratacion_directa
+            self.registroCliente.atraccion_seleccion = this.atraccion_seleccion
+            self.registroCliente.consulta_tipo_persona = this.consulta_tipo_persona
+            self.registroCliente.consulta_tipo_identificacion = this.consulta_tipo_identificacion
+            self.registroCliente.numero_identificacion = this.numero_identificacion
+            self.registroCliente.fecha_expedicion = this.fecha_expedicion
+            self.registroCliente.nit = this.nit
+            self.registroCliente.digito_verificacion = this.digito_verificacion
+            self.registroCliente.razon_social = this.razon_social
+            self.registroCliente.fecha_constitucion = this.fecha_constitucion
+            self.registroCliente.empleados_empresa = this.empleados_empresa
+            self.registroCliente.consulta_codigo_ciiu = this.consulta_codigo_ciiu
+            self.registroCliente.consulta_actvidad_ciiu = this.consulta_actvidad_ciiu
+            self.registroCliente.consulta_estrato = this.consulta_estrato
+            self.registroCliente.consulta_pais = this.consulta_pais
+            self.registroCliente.consulta_departamento = this.consulta_departamento
+            self.registroCliente.consulta_municipio = this.consulta_municipio
+            self.registroCliente.direccion_empresa = this.direccion_empresa
+            self.registroCliente.contacto_empresa = this.contacto_empresa
+            self.registroCliente.correo_electronico_empresa = this.correo_electronico_empresa
+            self.registroCliente.telefono_empresa = this.telefono_empresa
+            self.registroCliente.celular_empresa = this.celular_empresa
+            self.registroCliente.consulta_sociedad_comercial = this.consulta_sociedad_comercial
+            self.registroCliente.otra_cual = this.otra_cual
+            self.registroCliente.consulta_periodicidad_pago = this.consulta_periodicidad_pago
+            self.registroCliente.plazo_pago = this.plazo_pago
+            self.registroCliente.consulta_pais_prestacion_servicio = this.consulta_pais_prestacion_servicio
+            self.registroCliente.consulta_departamento_prestacion_servicio = this.consulta_departamento_prestacion_servicio
+            self.registroCliente.consulta_municipio_prestacion_servicio = this.consulta_municipio_prestacion_servicio
+            self.registroCliente.aiu_negociado = this.aiu_negociado
+            self.registroCliente.consulta_ejecutivo_comercial = this.consulta_ejecutivo_comercial
+            self.registroCliente.acuerdos_comerciales = this.acuerdos_comerciales
+            self.registroCliente.consulta_jornada_laboral = this.consulta_jornada_laboral
+            self.registroCliente.consulta_rotacion_personal = this.consulta_rotacion_personal
+            self.registroCliente.consulta_riesgo_cliente = this.consulta_riesgo_cliente
+            self.registroCliente.junta_directiva = this.junta_directiva
+            self.registroCliente.consulta_responsable_impuesto_ventas = this.consulta_responsable_impuesto_ventas
+            self.registroCliente.correo_factura_electronica = this.correo_factura_electronica
+            self.registroCliente.consulta_sucursal_facturacion = this.consulta_sucursal_facturacion
+            self.registroCliente.nombre_completo_contador = this.nombre_completo_contador
+            self.registroCliente.consulta_contador = this.consulta_contador
+            self.registroCliente.identificacion_contador = this.identificacion_contador
+            self.registroCliente.telefono_contador = this.telefono_contador
+            self.registroCliente.nombre_completo_tesorero = this.nombre_completo_tesorero
+            self.registroCliente.telefono_tesorero = this.telefono_tesorero
+            self.registroCliente.correo_tesorero = this.correo_tesorero
+            self.registroCliente.ingreso_mensual = this.ingreso_mensual
+            self.registroCliente.costos_gastos = this.costos_gastos
+            self.registroCliente.activos = this.activos
+            self.registroCliente.otros_ingresos = this.otros_ingresos
+            self.registroCliente.detalle_otros_ingresos = this.detalle_otros_ingresos
+            self.registroCliente.pasivos = this.pasivos
+            self.registroCliente.total_ingresos = this.total_ingresos
+            self.registroCliente.reintegro_costos = this.reintegro_costos
+            self.registroCliente.patrimonio = this.patrimonio
+            self.registroCliente.consulta_operacion_moneda_extranjera = this.consulta_operacion_moneda_extranjera
+            self.registroCliente.consulta_operacion_internacional = this.consulta_operacion_internacional
+            self.registroCliente.declaraciones_autorizaciones = this.declaraciones_autorizaciones
+            self.registroCliente.consulta_origen_fondos = this.consulta_origen_fondos
+            self.registroCliente.otro_tipo_origen_fondos = this.otro_tipo_origen_fondos
+            self.registroCliente.consulta_origen_medios1 = this.consulta_origen_medios1
+            self.registroCliente.consulta_origen_medios2 = this.consulta_origen_medios2
+            self.registroCliente.consulta_origen_manejo_efectivo = this.consulta_origen_manejo_efectivo
+            self.registroCliente.tratamiento_datos_personales = this.tratamiento_datos_personales
+            self.registroCliente.codigo_ciiu_id = this.codigo_ciiu_id
+            self.registroCliente.consulta_tipo_identificacion_ac = this.consulta_tipo_identificacion_ac
+            self.registroCliente.consulta_tipo_identificacion_rl = this.consulta_tipo_identificacion_rl
+            self.registroCliente.consulta_tipo_identificacion_miembros_junta = this.consulta_tipo_identificacion_miembros_junta
+            self.registroCliente.consultas_personas_expuestas = this.consultas_personas_expuestas
+            self.registroCliente.consulta_banco_rb = this.consulta_banco_rb
+            self.registroCliente.consulta_tipo_cuenta_banco_rb = this.consulta_tipo_cuenta_banco_rb
+            self.registroCliente.consulta_pais = this.consulta_pais
+            self.registroCliente.consulta_departamento = this.consulta_departamento
+            self.registroCliente.consulta_municipio = this.consulta_municipio
+            self.registroCliente.consulta_pais_prestacion_servicio = this.consulta_pais_prestacion_servicio
+            self.registroCliente.consulta_municipio_prestacion_servicio = this.consulta_municipio_prestacion_servicio
+            self.registroCliente.consulta_pais_rl = this.consulta_pais_rl
+            self.registroCliente.consulta_departamento_rl = this.consulta_departamento_rl
+            self.registroCliente.consulta_municipio_rl = this.consulta_municipio_rl
+
+
+            this.cargos2.forEach(function (item, index) {
+                item.tipo_cargo = self.tipo_cargo[index] == 1 ? 'Administrativo' : 'Operativo'
+                item.tipo_cargo_id = self.tipo_cargo[index]
+                item.cargo_id = self.cargos2[index].cargo
+                item.cargo = self.consulta_lista_cargos[index]
+                item.riesgo_laboral = self.consulta_riesgo_laboral[index]
+                item.categoria = self.consulta_subcategoria_cargos[index]
+            })
+        },
         retornoTexto(index, texto) {
             this.cargos2[index].funcion_cargo = texto
+            this.consulta_textohtml[index] = texto
         },
         getCategoriaCargo() {
             let self = this;
@@ -1738,6 +1931,7 @@ export default {
         getListaCargos(item = null, index = null) {
             if (item != null) {
                 this.categoria_cargo_id = item.id
+                this.consulta_subcategoria_cargos[index] = item.nombre
                 let self = this;
                 let config = this.configHeader();
                 axios
@@ -1751,6 +1945,7 @@ export default {
         getExamenesRecomendaciones(item = null, index = null) {
             if (index != null) {
                 this.cargos2[index].cargo = item.id
+                this.consulta_lista_cargos[index] = item.nombre
             }
             this.getListaRecomendaciones(index)
             this.getListaExamenes(index)
@@ -1771,7 +1966,6 @@ export default {
         },
         getListaRecomendaciones(index = null) {
             if (index != null) {
-                //     console.log(item)
                 // this.cargos2[index].cargo = item.id
                 let self = this;
                 let config = this.configHeader();
@@ -2026,21 +2220,25 @@ export default {
                 switch (campo) {
                     case 1:
                         this.responsable_impuesto_ventas = item.id;
+                        this.consulta_responsable_impuesto_ventas = item.nombre
                         break
                     case 2:
                         this.calidad_tributaria[index].opcion = item.id;
                         break
                     case 3:
                         this.operaciones_modena_extranjera = item.id;
+                        this.consulta_operacion_moneda_extranjera = item.nombre
                         break
                     case 4:
                         this.alto_manejo_efectivo = item.id;
+                        this.consulta_origen_manejo_efectivo = item.nombre
                         break
                 }
             }
         },
         getTipoCliente(item = null) {
             if (item != null) {
+                this.consulta_tipo_cliente = item.nombre
                 this.tipo_cliente = item.id
                 if (this.tipo_cliente == 1) {
                     this.getTipoArchivo(item.id)
@@ -2070,6 +2268,7 @@ export default {
         },
         getTipoProveedor(item = null) {
             if (item != null) {
+                this.consulta_tipo_proveedor = item.nombre
                 this.tipo_proveedor = item.id
                 this.getTipoArchivo(item.id)
             }
@@ -2100,6 +2299,7 @@ export default {
         },
         getOperacion(item = null) {
             if (item != null) {
+                this.consulta_operacion = item.nombre
                 this.operacion = item.id;
             }
             // if (this.operacion == '') {
@@ -2114,6 +2314,7 @@ export default {
         },
         getTipoPersona(item = null) {
             if (item != null) {
+                this.consulta_tipo_persona = item.nombre
                 this.tipo_persona = item.id;
                 this.persona_natural = item.id == 1 ? false : true
                 this.opcionesTipoPersona(!this.persona_natural)
@@ -2184,21 +2385,27 @@ export default {
                 switch (campo) {
                     case 1:
                         this.tipo_identificacion = item.cod_tip;
+                        this.consulta_tipo_identificacion = item.des_tip
                         break
                     case 2:
                         this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_tipo_identificacion_ac[index] = item.des_tip
                         break
                     case 3:
                         this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_tipo_identificacion_rl[index] = item.des_tip
                         break
                     case 4:
                         this.miembros_Junta[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_tipo_identificacion_miembros_junta[index] = item.des_tip
                         break
                     case 5:
                         this.tipo_identificacion_contador = item.cod_tip;
+                        this.consulta_contador = item.des_tip
                         break
                     case 6:
                         this.personas_expuestas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consultas_personas_expuestas[index] = item.des_tip
                         break
 
                 }
@@ -2207,6 +2414,7 @@ export default {
         getEstratos(item = null) {
             if (item != null) {
                 this.estrato = item.id;
+                this.consulta_estrato = item.nombre
             }
             if (this.estratos == '') {
                 let self = this;
@@ -2240,8 +2448,9 @@ export default {
                     });
             }
         },
-        getDepartamentos(item) {
+        getDepartamentos(item, ordenCampo, index) {
             let self = this;
+            this.setLabelPais(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/departamentos/" + item.id, config)
@@ -2252,6 +2461,7 @@ export default {
         getSociedadesComerciales(item = null) {
             if (item != null) {
                 this.sociedad_comercial = item.id;
+                this.consulta_sociedad_comercial = item.nombre
             }
             if (this.sociedades_comerciales == '') {
                 let self = this;
@@ -2263,8 +2473,9 @@ export default {
                     });
             }
         },
-        getMunicipios(item = null) {
+        getMunicipios(item, ordenCampo, index) {
             let self = this;
+            this.setLabelDepartamento(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/municipios/" + item.id, config)
@@ -2275,6 +2486,7 @@ export default {
         getEjecutivos_comerciales(item = null) {
             if (item != null) {
                 this.ejecutivo_comercial = item.cod_ven;
+                this.consulta_ejecutivo_comercial = item.nom_ven
             }
             if (this.ejecutivos_comerciales == '') {
                 let self = this;
@@ -2289,7 +2501,8 @@ export default {
         getActividadesCiiu(item = null) {
             var id = ''
             if (item != null && item.codigo != undefined) {
-                this.codigo_ciiu_id = item.codigo
+                this.codigo_ciiu_id = item.id
+                this.consulta_codigo_ciiu = item.codigo
                 id = item.id
             } else {
                 id = item
@@ -2305,6 +2518,7 @@ export default {
         getJornadasLaborales(item = null) {
             if (item != null) {
                 this.jornada_laboral = item.id;
+                this.consulta_jornada_laboral = item.nombre
             }
             if (this.jornadas_laborales == '') {
                 let self = this;
@@ -2319,6 +2533,7 @@ export default {
         getRotacionesPersonal(item = null) {
             if (item != null) {
                 this.rotacion_personal = item.id;
+                this.consulta_rotacion_personal = item.nombre
             }
             if (this.rotaciones_personal == '') {
                 let self = this;
@@ -2351,6 +2566,7 @@ export default {
         getRiesgosLaborales2(item = null, index = null) {
             if (item != null) {
                 this.cargos2[index].riesgo_laboral_id = item.id
+                this.consulta_riesgo_laboral[index] = item.nombre
             }
             var self = this
             self.riesgos = []
@@ -2397,6 +2613,7 @@ export default {
         getPeriodicidadPago(item = null) {
             if (item != null) {
                 this.periodicidad_liquidacion_id = item.id;
+                this.consulta_periodicidad_pago = item.nombre
             }
             if (this.periodicidades_liquidacion == '') {
                 let self = this;
@@ -2424,6 +2641,7 @@ export default {
                 switch (campo) {
                     case 1:
                         this.referencias_bancarias[index].banco_id = item.cod_ban;
+                        this.consulta_banco_rb[index] = item.nom_ban
                         break
                 }
             }
@@ -2444,6 +2662,7 @@ export default {
                 switch (campo) {
                     case 1:
                         this.referencias_bancarias[index].tipo_cuenta = item.id;
+                        this.consulta_tipo_cuenta_banco_rb[index] = item.nombre
                         break
                 }
             }
@@ -2451,6 +2670,7 @@ export default {
         getSucursales(item = null) {
             if (item != null) {
                 this.sucursal = item.cod_suc;
+                this.consulta_sucursal_facturacion = item.nom_suc
             }
             if (this.sucursales == '') {
                 let self = this;
@@ -2465,6 +2685,7 @@ export default {
         getTiposOperacionesInternacionales(item = null) {
             if (item != null) {
                 this.tipo_operacion_internacional = item.id;
+                this.consulta_operacion_internacional = item.nombre
             }
             if (this.tipos_operaciones_internacionales == '') {
                 let self = this;
@@ -2479,6 +2700,7 @@ export default {
         getTipoOrigenFondos(item = null) {
             if (item != null) {
                 this.tipo_origen_fondo = item.id;
+                this.consulta_origen_fondos = item.nombre
             }
             if (this.tipos_origen_fondos == '') {
                 let self = this;
@@ -2506,9 +2728,11 @@ export default {
                 switch (campo) {
                     case 1:
                         this.tipo_origen_medios = item.id;
+                        this.consulta_origen_medios1 = item.nombre
                         break
                     case 2:
                         this.otro_tipo_origen_medios = item.id;
+                        this.consulta_origen_medios2 = item.nombre
                         break
                 }
             }
@@ -2518,12 +2742,15 @@ export default {
                 switch (campo) {
                     case 1:
                         this.municipio = item.id;
+                        this.consulta_municipio = item.nombre
                         break
                     case 2:
                         this.municipio_prestacion_servicio = item.id;
+                        this.consulta_municipio_prestacion_servicio = item.nombre
                         break
                     case 3:
                         this.representantes_legales[index].municipio_id = item.id;
+                        this.consulta_municipio_rl[index] = item.nombre
                         break
                 }
             }
@@ -2531,6 +2758,7 @@ export default {
         setActividadesCiiu(item) {
             var self = this
             if (item != null) {
+                this.consulta_actvidad_ciiu = item
                 self.actividad_ciiu = item.split(" ")[0]
                 self.riesgos_laborales.forEach(function (item) {
                     if (item.id == self.actividad_ciiu.split("")[0]) {
@@ -2879,7 +3107,7 @@ export default {
                 return true
             }
 
-            if (this.tipo_cliente != 2) {
+            if (this.tipo_cliente != 2 && this.cargos[0].cargo == '') {
                 if (this.cargos2[0].cargo == '' || this.cargos2[0].riesgo_laboral_id == '') {
                     this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
                     return true
@@ -3257,9 +3485,252 @@ export default {
                     return archivo;
                 });
         },
-        // llenarFormularioGuardado(item = null){
-        //     console.log('llenar formulario', item)
-        // },
+        llenarFormularioGuardado(item = null) {
+            console.log(item)
+            var self = this
+            if (item.tipo_cliente_id != '') {
+                if (item.tipo_cliente_id == 1) {
+                    this.getTipoArchivo(item.tipo_cliente_id)
+                } else {
+                    this.getTipoArchivo(item.tipo_proveedor_id)
+                }
+            }
+            if (item.codigo_ciiu_id != '') {
+                this.getActividadesCiiu(item.codigo_ciiu_id)
+            }
+            this.consulta_tipo_cliente = item.consulta_tipo_cliente
+            this.consulta_tipo_proveedor = item.consulta_tipo_proveedor
+            this.consulta_operacion = item.consulta_operacion
+            this.contratacion_directa = item.contratacion_directa
+            this.atraccion_seleccion = item.atraccion_seleccion
+            this.consulta_tipo_persona = item.consulta_tipo_persona
+            this.consulta_tipo_identificacion = item.consulta_tipo_identificacion
+            this.numero_identificacion = item.numero_identificacion
+            this.fecha_expedicion = item.fecha_expedicion
+            this.nit = item.nit
+            this.digito_verificacion = item.digito_verificacion
+            this.razon_social = item.razon_social
+            this.fecha_constitucion = item.fecha_constitucion
+            this.empleados_empresa = item.empleados_empresa
+            this.consulta_codigo_ciiu = item.consulta_codigo_ciiu
+            this.consulta_actvidad_ciiu = item.consulta_actvidad_ciiu
+            this.consulta_estrato = item.consulta_estrato
+            this.consulta_pais = item.consulta_pais
+            this.consulta_departamento = item.consulta_departamento
+            this.consulta_municipio = item.consulta_municipio
+            this.direccion_empresa = item.direccion_empresa
+            this.contacto_empresa = item.contacto_empresa
+            this.correo_electronico_empresa = item.correo_electronico_empresa
+            this.telefono_empresa = item.telefono_empresa
+            this.celular_empresa = item.celular_empresa
+            this.consulta_sociedad_comercial = item.consulta_sociedad_comercial
+            this.otra_cual = item.otra_cual
+            this.consulta_periodicidad_pago = item.consulta_periodicidad_pago
+            this.plazo_pago = item.plazo_pago
+            this.consulta_departamento_prestacion_servicio = item.consulta_departamento_prestacion_servicio
+            this.consulta_municipio_prestacion_servicio = item.consulta_municipio_prestacion_servicio
+            this.aiu_negociado = item.aiu_negociado
+            this.consulta_ejecutivo_comercial = item.consulta_ejecutivo_comercial
+            this.acuerdos_comerciales = item.acuerdos_comerciales
+            this.consulta_jornada_laboral = item.consulta_jornada_laboral
+            this.consulta_rotacion_personal = item.consulta_rotacion_personal
+            this.consulta_riesgo_cliente = item.consulta_riesgo_cliente
+            this.junta_directiva = item.junta_directiva
+            this.consulta_responsable_impuesto_ventas = item.consulta_responsable_impuesto_ventas
+            this.correo_factura_electronica = item.correo_factura_electronica
+            this.consulta_sucursal_facturacion = item.consulta_sucursal_facturacion
+            this.nombre_completo_contador = item.nombre_completo_contador
+            this.consulta_contador = item.consulta_contador
+            this.identificacion_contador = item.identificacion_contador
+            this.telefono_contador = item.telefono_contador
+            this.nombre_completo_tesorero = item.nombre_completo_tesorero
+            this.telefono_tesorero = item.telefono_tesorero
+            this.correo_tesorero = item.correo_tesorero
+            this.ingreso_mensual = item.ingreso_mensual
+            this.costos_gastos = item.costos_gastos
+            this.activos = item.activos
+            this.otros_ingresos = item.otros_ingresos
+            this.detalle_otros_ingresos = item.detalle_otros_ingresos
+            this.pasivos = item.pasivos
+            this.total_ingresos = item.total_ingresos
+            this.reintegro_costos = item.reintegro_costos
+            this.patrimonio = item.patrimonio
+            this.consulta_operacion_moneda_extranjera = item.consulta_operacion_moneda_extranjera
+            this.consulta_operacion_internacional = item.consulta_operacion_internacional
+            this.declaraciones_autorizaciones = item.declaraciones_autorizaciones
+            this.consulta_origen_fondos = item.consulta_origen_fondos
+            this.otro_tipo_origen_fondos = item.otro_tipo_origen_fondos
+            this.consulta_origen_medios1 = item.consulta_origen_medios1
+            this.consulta_origen_medios2 = item.consulta_origen_medios2
+            this.consulta_origen_manejo_efectivo = item.consulta_origen_manejo_efectivo
+            this.tratamiento_datos_personales = item.tratamiento_datos_personales
+            this.referencias_comerciales = item.referencias_comerciales
+            this.tipo_cliente = item.tipo_cliente_id
+            this.consulta_pais = item.consulta_pais
+            this.consulta_departamento = item.consulta_departamento
+            this.consulta_municipio = item.consulta_municipio
+            this.consulta_pais_prestacion_servicio = item.consulta_pais_prestacion_servicio
+            this.consulta_departamento_prestacion_servicio = item.consulta_departamento_prestacion_servicio
+            this.consulta_municipio_prestacion_servicio = item.consulta_municipio_prestacion_servicio
+
+            // this.operacion = item.operacion
+            // this.tipo_persona = item.tipo_persona
+
+                this.operacion = item.operacion
+                this.tipo_persona = item.tipo_persona
+                // this.digito_verificacion = item.digito_verificacion
+                // this.razon_social = item.
+                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+                this.tipo_identificacion = item.tipo_identificacion
+                // this.numero_identificacion = item
+                // this.fecha_expedicion = item
+                // this.contratacion_directa = item
+                // this.atraccion_seleccion = item
+                // this.nit = item
+                // this.fecha_constitucion = item
+                this.actividad_ciiu = item.actividad_ciiu
+                this.codigo_ciiu_id = item.codigo_ciiu_id
+                this.estrato = item.estrato
+                this.municipio = item.municipio
+                // this.direccion_empresa = item
+                // this.contacto_empresa = item
+                // this.correo_electronico_empresa = item
+                // this.telefono_empresa = item
+                // this.celular_empresa = item
+                this.sociedad_comercial = item.sociedad_comercial
+                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+                // this.otra_cual = item
+                // this.acuerdo_comercial = item
+                // this.aiu_negociado = item
+                // this.plazo_pago = item
+                this.ejecutivo_comercial = item.vendedor
+                // this.empleados_empresa = item
+                this.jornada_laboral = item.jornada_laboral
+                this.rotacion_personal = item.rotacion_personal
+                // this.riesgo_laboral = item
+                // this.junta_directiva = item
+                this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
+                // this.correo_factura_electronica = item
+                this.sucursal = item.sucursal_facturacion
+                // this.declaraciones_autorizaciones = item
+                // this.tratamiento_datos_personales = item
+                this.tipo_operacion_internacional = item.tipo_operacion_internacional
+                this.operaciones_modena_extranjera = item.operaciones_internacionales
+                this.tipo_origen_fondo = item.tipo_origen_fondo
+                this.tipo_origen_medios = item.tipo_origen_medios
+                // this.otro_tipo_origen_fondos = item.
+                this.otro_tipo_origen_medios = item.otro_tipo_origen_medios
+                this.alto_manejo_efectivo = item.alto_manejo_efectivo
+                // this.nombre_completo_contador = item
+                this.tipo_identificacion_contador = item.tipo_identificacion_contador
+                // this.identificacion_contador = item
+                // this.telefono_contador = item
+                // this.nombre_completo_tesorero = item
+                // this.telefono_tesorero = item
+                // this.correo_tesorero = item
+                // this.ingreso_mensual = item
+                // this.otros_ingresos = item
+                // this.total_ingresos = item
+                // this.costos_gastos = item
+                // this.detalle_otros_ingresos = item
+                // this.reintegro_costos = item
+                // this.activos = item
+                // this.pasivos = item
+                // this.patrimonio = item
+                // this.tipo_cliente = item
+                // this.tipo_proveedor = item
+                this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
+            
+            // this.cargos = item
+            // this.cargos2 = item
+            // this.accionistas = item
+            // this.representantes_legales = item
+            // this.miembros_Junta = item
+            // this.calidad_tributaria = item
+            // this.referencias_bancarias = item
+            // this.referencias_comerciales = item
+            // this.personas_expuestas = item
+       
+
+            if (item.tipo_persona == 1) {
+                this.persona_natural = true
+                this.persona_juridica = false
+            } else {
+                this.persona_juridica = true
+                this.persona_natural = false
+            }
+
+            if (item.cargos.length > 0) {
+                this.cargos = item.cargos
+                for (let i = 0; i < item.cargos.length; i++) {
+                    this.requisitos[i] = item.cargos[i].requisitos
+                    this.examenes[i] = item.cargos[i].examenes
+                    this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
+                    this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                }
+            } else {
+                this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
+            }
+
+            if (item.cargos2.length > 0) {
+                this.cargos2 = item.cargos2
+                for (let i = 0; i < item.cargos2.length; i++) {
+                    this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
+                    this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
+                    this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                    this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                    // this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                    this.cargos2[i].cargo = parseInt(item.cargos2[i].cargo_id)
+                    this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
+                    this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
+                    this.array_lista_examenes[i] = item.cargos2[i].examenes
+                    this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                }
+            } else {
+                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            }
+
+            this.representantes_legales = item.representantes_legales
+            item.consulta_tipo_identificacion_rl.forEach(function (item) {
+                self.consulta_tipo_identificacion_rl.push(item)
+            })
+
+            this.accionistas = item.accionistas;
+            item.consulta_tipo_identificacion_ac.forEach(function (item, index) {
+                self.consulta_tipo_identificacion_ac[index] = item
+            })
+
+            this.referencias_bancarias = item.referencias_bancarias
+            item.consulta_banco_rb.forEach(function (item) {
+                self.consulta_banco_rb.push(item)
+            })
+            item.consulta_tipo_cuenta_banco_rb.forEach(function (item) {
+                self.consulta_tipo_cuenta_banco_rb.push(item)
+            })
+
+            self.personas_expuestas = item.personas_expuestas
+
+            item.consultas_personas_expuestas.forEach(function (item) {
+                self.consultas_personas_expuestas.push(item)
+            })
+
+            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha
+
+            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha
+
+            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha
+
+
+        },
         llenarFormulario(item = null) {
             let self = this
             this.getActividadesCiiu(item.codigo_ciiu_id)
@@ -3384,7 +3855,6 @@ export default {
             })
 
             if (item.cargos.length > 0) {
-                console.log('cargos')
                 this.cargos = item.cargos
                 for (let i = 0; i < item.cargos.length; i++) {
                     this.requisitos[i] = item.cargos[i].requisitos
@@ -3397,9 +3867,7 @@ export default {
             }
 
             if (item.cargos2.length > 0) {
-
                 this.cargos2 = item.cargos2
-
                 for (let i = 0; i < item.cargos2.length; i++) {
                     this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
                     this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
