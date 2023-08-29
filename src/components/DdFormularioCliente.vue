@@ -1363,7 +1363,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-3" v-if="hide_bottons">
                 <SearchList nombreCampo="Registros guardados" nombreItem="nombre" :registros="razon_social_cliente"
                     consulta="" eventoCampo="setFormularioGuardado" @setFormularioGuardado="setFormularioGuardado"
                     placeholder="Seleccionar" />
@@ -1371,13 +1371,13 @@
             <div class="row">
                 <div class="col">
                     <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                        type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
+                        type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
                 </div>
                 <div class="col">
                     <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
                         type="submit" style="margin:30px">Guardar</button>
                 </div>
-                <div class="col" style="margin:30px">
+                <div v-if="hide_bottons" class="col" style="margin:30px">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                         <button type="button" class="btn btn-success" @click="guardadoParcial">Guardado parcial</button>
 
@@ -1622,7 +1622,8 @@ export default {
             enviar_correo: false,
             tipo_cargos: [],
             formularios_guardados: [],
-            razon_social_cliente: []
+            razon_social_cliente: [],
+            hide_bottons: true
 
         }
     },
@@ -2045,6 +2046,15 @@ export default {
 
             this.digito_verificacion = (y > 1) ? 11 - y : y;
             console.log('')
+        },
+        hideBottons() {
+            var self = this
+            this.hide_bottons = false
+            setTimeout(() => {
+                self.generarPDF()
+                self.hide_bottons = true
+            }, "10");
+         
         },
         generarPDF() {
             const elemento = document.getElementById('contenedor-formulario');
