@@ -29,6 +29,7 @@ export default {
             plazo_pago: '',
             aiu_negociado: '',
             correo_facturacion_electronica: '',
+            id:''
 
         }
     },
@@ -68,9 +69,11 @@ export default {
                     self.plazo_pago = result.data.plazo_pago
                     self.aiu_negociado = result.data.aiu_negociado
                     self.correo_facturacion_electronica = result.data.correo_facturacion_electronica
+                    self.id = result.data.id
                     delete result.data.aiu_negociado 
                     delete result.data.plazo_pago 
                     delete result.data.correo_facturacion_electronica 
+                    delete result.data.id
                     for (var i = 0; i <= Object.keys(result.data).length; i++) {
                         if (i % 2 == 0) {
                             try {
@@ -148,7 +151,7 @@ export default {
         seccion2() { //titulos intermedios del documento
             this.titulos = [
                 { nombre: 'EMPRESA DE SERVICIOS TEMPORALES (EST):', posicion: 7 },
-                { nombre: 'EMPRESA USUARIA (EU):', posicion: 1 },
+                { nombre: 'EMPRESA USUARIA (EU) Ref:'+this.id, posicion: 1 },
             ]
             this.llenarTitulos(this.titulos)
         },

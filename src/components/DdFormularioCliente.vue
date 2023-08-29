@@ -21,6 +21,7 @@
         <form @submit.prevent="save()">
             <h6 class="tituloseccion">Información general</h6>
             <div id="seccion">
+                <p v-if="$route.params.id != undefined">Ref: {{ $route.params.id }}</p>
                 <div class="row">
                     <div class="col-4">
                         <SearchList nombreCampo="Tipo de cliente: *" @getTipoCliente="getTipoCliente"
