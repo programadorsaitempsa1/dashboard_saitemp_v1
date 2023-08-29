@@ -278,14 +278,15 @@
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Pais prestación servicio: *" @getPaises="getPaises" eventoCampo="getPaises"
-                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :ordenCampo="2" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
+                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :ordenCampo="2"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento prestación servicio: *" nombreItem="nombre"
-                            eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio" :ordenCampo="2"
-                            :registros="departamentos" @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
+                            eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio"
+                            :ordenCampo="2" :registros="departamentos" @getMunicipios="getMunicipios"
+                            placeholder="Seleccione una opción" />
                         <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
@@ -1377,8 +1378,6 @@
                         type="submit" style="margin:30px">Guardar</button>
                 </div>
                 <div class="col" style="margin:30px">
-                    <!-- <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                        type="button" style="margin:30px" @click="guardadoParcial">Guardado parcial</button> -->
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                         <button type="button" class="btn btn-success" @click="guardadoParcial">Guardado parcial</button>
 
@@ -1716,7 +1715,7 @@ export default {
                 }
             }
         },
-      
+
         eliminarItem(registro) {
             var self = this
             if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
@@ -1747,7 +1746,7 @@ export default {
                 });
             } else {
                 this.formularios_guardados.forEach(function (item2, index) {
-                    if (index == numero-1) {
+                    if (index == numero - 1) {
                         self.llenarFormularioGuardado(item2)
                     }
                 });
@@ -1763,6 +1762,12 @@ export default {
         guardadoParcial() {
 
             var self = this
+            if (this.razon_social == '') {
+                this.showAlert('Debe diligenciar el campo razón social para guardar el formulario de forma parcial', 'error')
+                return
+            } else {
+                this.showAlert('Se realizó un guardado de forma parcial exitosamente', 'success')
+            }
             this.crearCliente()
             this.agregarCamposCliente()
             if (localStorage.getItem("cliente") === null || localStorage.getItem("cliente") === '') {
@@ -3486,8 +3491,13 @@ export default {
                 });
         },
         llenarFormularioGuardado(item = null) {
-            console.log(item)
             var self = this
+            this.cliente_existe = false
+            if (item.numero_identificacion != '') {
+                this.getCliente(item.numero_identificacion, 1)
+            } else if (item.nit != '') {
+                this.getCliente(item.nit, 2)
+            }
             if (item.tipo_cliente_id != '') {
                 if (item.tipo_cliente_id == 1) {
                     this.getTipoArchivo(item.tipo_cliente_id)
@@ -3576,71 +3586,71 @@ export default {
             // this.operacion = item.operacion
             // this.tipo_persona = item.tipo_persona
 
-                this.operacion = item.operacion
-                this.tipo_persona = item.tipo_persona
-                // this.digito_verificacion = item.digito_verificacion
-                // this.razon_social = item.
-                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
-                this.tipo_identificacion = item.tipo_identificacion
-                // this.numero_identificacion = item
-                // this.fecha_expedicion = item
-                // this.contratacion_directa = item
-                // this.atraccion_seleccion = item
-                // this.nit = item
-                // this.fecha_constitucion = item
-                this.actividad_ciiu = item.actividad_ciiu
-                this.codigo_ciiu_id = item.codigo_ciiu_id
-                this.estrato = item.estrato
-                this.municipio = item.municipio
-                // this.direccion_empresa = item
-                // this.contacto_empresa = item
-                // this.correo_electronico_empresa = item
-                // this.telefono_empresa = item
-                // this.celular_empresa = item
-                this.sociedad_comercial = item.sociedad_comercial
-                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
-                // this.otra_cual = item
-                // this.acuerdo_comercial = item
-                // this.aiu_negociado = item
-                // this.plazo_pago = item
-                this.ejecutivo_comercial = item.vendedor
-                // this.empleados_empresa = item
-                this.jornada_laboral = item.jornada_laboral
-                this.rotacion_personal = item.rotacion_personal
-                // this.riesgo_laboral = item
-                // this.junta_directiva = item
-                this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
-                // this.correo_factura_electronica = item
-                this.sucursal = item.sucursal_facturacion
-                // this.declaraciones_autorizaciones = item
-                // this.tratamiento_datos_personales = item
-                this.tipo_operacion_internacional = item.tipo_operacion_internacional
-                this.operaciones_modena_extranjera = item.operaciones_internacionales
-                this.tipo_origen_fondo = item.tipo_origen_fondo
-                this.tipo_origen_medios = item.tipo_origen_medios
-                // this.otro_tipo_origen_fondos = item.
-                this.otro_tipo_origen_medios = item.otro_tipo_origen_medios
-                this.alto_manejo_efectivo = item.alto_manejo_efectivo
-                // this.nombre_completo_contador = item
-                this.tipo_identificacion_contador = item.tipo_identificacion_contador
-                // this.identificacion_contador = item
-                // this.telefono_contador = item
-                // this.nombre_completo_tesorero = item
-                // this.telefono_tesorero = item
-                // this.correo_tesorero = item
-                // this.ingreso_mensual = item
-                // this.otros_ingresos = item
-                // this.total_ingresos = item
-                // this.costos_gastos = item
-                // this.detalle_otros_ingresos = item
-                // this.reintegro_costos = item
-                // this.activos = item
-                // this.pasivos = item
-                // this.patrimonio = item
-                // this.tipo_cliente = item
-                // this.tipo_proveedor = item
-                this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
-            
+            this.operacion = item.operacion
+            this.tipo_persona = item.tipo_persona
+            // this.digito_verificacion = item.digito_verificacion
+            // this.razon_social = item.
+            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+            this.tipo_identificacion = item.tipo_identificacion
+            // this.numero_identificacion = item
+            // this.fecha_expedicion = item
+            // this.contratacion_directa = item
+            // this.atraccion_seleccion = item
+            // this.nit = item
+            // this.fecha_constitucion = item
+            this.actividad_ciiu = item.actividad_ciiu
+            this.codigo_ciiu_id = item.codigo_ciiu_id
+            this.estrato = item.estrato
+            this.municipio = item.municipio
+            // this.direccion_empresa = item
+            // this.contacto_empresa = item
+            // this.correo_electronico_empresa = item
+            // this.telefono_empresa = item
+            // this.celular_empresa = item
+            this.sociedad_comercial = item.sociedad_comercial
+            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+            // this.otra_cual = item
+            // this.acuerdo_comercial = item
+            // this.aiu_negociado = item
+            // this.plazo_pago = item
+            this.ejecutivo_comercial = item.vendedor
+            // this.empleados_empresa = item
+            this.jornada_laboral = item.jornada_laboral
+            this.rotacion_personal = item.rotacion_personal
+            // this.riesgo_laboral = item
+            // this.junta_directiva = item
+            this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
+            // this.correo_factura_electronica = item
+            this.sucursal = item.sucursal_facturacion
+            // this.declaraciones_autorizaciones = item
+            // this.tratamiento_datos_personales = item
+            this.tipo_operacion_internacional = item.tipo_operacion_internacional
+            this.operaciones_modena_extranjera = item.operaciones_internacionales
+            this.tipo_origen_fondo = item.tipo_origen_fondo
+            this.tipo_origen_medios = item.tipo_origen_medios
+            // this.otro_tipo_origen_fondos = item.
+            this.otro_tipo_origen_medios = item.otro_tipo_origen_medios
+            this.alto_manejo_efectivo = item.alto_manejo_efectivo
+            // this.nombre_completo_contador = item
+            this.tipo_identificacion_contador = item.tipo_identificacion_contador
+            // this.identificacion_contador = item
+            // this.telefono_contador = item
+            // this.nombre_completo_tesorero = item
+            // this.telefono_tesorero = item
+            // this.correo_tesorero = item
+            // this.ingreso_mensual = item
+            // this.otros_ingresos = item
+            // this.total_ingresos = item
+            // this.costos_gastos = item
+            // this.detalle_otros_ingresos = item
+            // this.reintegro_costos = item
+            // this.activos = item
+            // this.pasivos = item
+            // this.patrimonio = item
+            // this.tipo_cliente = item
+            // this.tipo_proveedor = item
+            this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
+
             // this.cargos = item
             // this.cargos2 = item
             // this.accionistas = item
@@ -3650,7 +3660,7 @@ export default {
             // this.referencias_bancarias = item
             // this.referencias_comerciales = item
             // this.personas_expuestas = item
-       
+
 
             if (item.tipo_persona == 1) {
                 this.persona_natural = true
