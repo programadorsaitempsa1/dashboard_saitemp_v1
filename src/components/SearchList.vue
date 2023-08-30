@@ -1,15 +1,18 @@
 <template>
-    <div id="contenedor-select">
+    <div id="contenedor-select" class="was-validated">
         <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                 <input type="text" @focus="consultaEndPoint()" @click="hover = !hover" @keyup="hover = true"
                     autocomplete="off" @input="filterResults(registro, registros, 'registros')" class="form-control"
-                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" :disabled="disabled"/>
-                <span class="input-group-text" style="cursor:pointer" @click="listaEnCadena(registro),registro= ''"
+                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro"
+                    :disabled="disabled" :required="valida_campo"/>
+                <span class="input-group-text" style="cursor:pointer" @click="listaEnCadena(registro), registro = ''"
                     id="basic-addon3"><i class="bi bi-x"></i></span>
-                <!-- <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span> -->
+                <div class="invalid-feedback">
+                    {{ mensaje_error }}
+                </div>
             </div>
         </div>
         <div v-if="hover && registros.length > 0" id="select1" @mouseleave="hover = false">
@@ -50,6 +53,10 @@ export default {
             type: Boolean,
             default: false
         },
+        valida_campo: {
+            type: Boolean,
+            default: true
+        },
         consulta: {
             type: String,
             default: ''
@@ -60,6 +67,7 @@ export default {
             hover: false,
             registro: '',
             registrosFilter: this.registros,
+            mensaje_error:'¡Este campo debe ser diligenciado!'
         }
     },
 
@@ -101,10 +109,10 @@ export default {
             if (this.archivos) {
                 let self = this
                 search = array.forEach(function (element) {
-                        if (self.nombreItems(element) != undefined) {
-                            return element;
-                        }
-                    });
+                    if (self.nombreItems(element) != undefined) {
+                        return element;
+                    }
+                });
             } else {
                 search = array.filter(item => this.nombreItems(item).toLowerCase().match(value.toLowerCase()));
                 if (nombrearray == 'registros') {
@@ -116,6 +124,7 @@ export default {
             switch (this.eventoCampo) {
                 case 'getPaises':
                     this.$emit('getDepartamentos', item, this.ordenCampo, this.index)
+                    console.log(item, this.ordenCampo, this.index)
                     break;
                 case 'getDepartamentos':
                     this.$emit('getMunicipios', item, this.ordenCampo, this.index)
@@ -145,7 +154,7 @@ export default {
                     this.$emit('setTipoOrigenMedios', item, this.ordenCampo)
                     break;
                 case 'getTipoArhivo':
-                    this.$emit('setTipoArchivo', item,this.index)
+                    this.$emit('setTipoArchivo', item, this.index)
                     break;
             }
         }

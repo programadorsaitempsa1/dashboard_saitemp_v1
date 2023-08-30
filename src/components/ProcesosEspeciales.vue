@@ -21,7 +21,7 @@
                     @getGeneric="getGeneric(item.tab_hlp, item.nom_hlp, item.des_hlp)" eventoCampo="getGeneric"
                     :nombreItem="item.nom_hlp" :endpoint="endpoint" :item="item.tab_hlp" :item1="item.nom_hlp"
                     :item2="item.des_hlp" :posicion="item.ord_cmp" placeholder="Seleccione una opcion"
-                    :showModal="showModal" :datos="registros" />
+                    :showModal="showModal" :datos="registros" :valida_campo="false"/>
             </div>
             <div class="col-6" v-if="item.tip_obj.trim() == 'L'">
                 <div>
@@ -34,12 +34,12 @@
             <div class="col-6 mb-3" v-if="item.tip_obj.trim() == 'F'">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">{{ item.des_param }}</label>
                 <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" />
+                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" :valida_campo="false"/>
             </div>
             <div class="col-6 mb-3" v-if="item.tip_obj.trim() == 'T'">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">{{ item.des_param }}</label>
                 <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" />
+                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" :valida_campo="false"/>
             </div>
         </div>
         <div class="row">
