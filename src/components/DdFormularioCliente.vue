@@ -18,7 +18,7 @@
                 <p>Versión 5</p>
             </div>
         </div>
-        <form @submit.prevent="save()">
+        <form class="was-validated" @submit.prevent="save()">
             <h6 class="tituloseccion">Información general</h6>
             <div id="seccion">
                 <p v-if="$route.params.id != undefined">Ref: {{ $route.params.id }}</p>
@@ -27,15 +27,11 @@
                         <SearchList nombreCampo="Tipo de cliente: *" @getTipoCliente="getTipoCliente"
                             eventoCampo="getTipoCliente" nombreItem="nombre" :consulta="consulta_tipo_cliente"
                             :registros="cliente_proveedor" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_cliente == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col" v-if="tipo_cliente == 2">
                         <SearchList nombreCampo="Tipo de proveedor: *" @getTipoProveedor="getTipoProveedor"
                             eventoCampo="getTipoProveedor" nombreItem="nombre" :consulta="consulta_tipo_proveedor"
                             :registros="tipo_proveedores" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_proveedor == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col"></div>
                 </div>
@@ -44,8 +40,6 @@
                         <SearchList nombreCampo="Operación: *" @getOperacion="getOperacion" eventoCampo="getOperacion"
                             nombreItem="nombre" :consulta="consulta_operacion" :registros="operaciones"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="operacion == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Tipo de servicio
@@ -69,8 +63,6 @@
                         <SearchList nombreCampo="Tipo de persona: *" @getTipoPersona="getTipoPersona"
                             eventoCampo="getTipoPersona" nombreItem="nombre" :registros="tiposPersona"
                             :consulta="consulta_tipo_persona" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_persona == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
@@ -78,8 +70,6 @@
                             @setTipoIdentificacion="setTipoIdentificacion" :registros="tiposIdentificacion"
                             :consulta="consulta_tipo_identificacion" placeholder="Seleccione una opción"
                             :disabled="!persona_natural" />
-                        <span id="validate" v-if="tipo_persona == 1 && tipo_identificacion == '' && submitted"
-                            class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Número de
@@ -87,27 +77,30 @@
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="numero_identificacion"
                             @input="numero_identificacion = validarNumero(numero_identificacion), calcularDigitoVerificacion(numero_identificacion)"
-                            @blur="getCliente(numero_identificacion, 1)" :disabled="!persona_natural" />
-                        <span id="validate" v-if="numero_identificacion === '' && tipo_persona == 1 && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            @blur="getCliente(numero_identificacion, 1)" :disabled="!persona_natural" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Fecha de expedición: *</label>
                         <input type="date" class="form-control" autocomplete="off" id="fecha_expedicion"
-                            aria-describedby="emailHelp" v-model="fecha_expedicion" :disabled="!persona_natural" />
-                        <span id="validate" v-if="fecha_expedicion == '' && tipo_persona == 1 && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="fecha_expedicion" :disabled="!persona_natural" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">NIT: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="nit" :disabled="!persona_juridica"
-                            @input="nit = validarNumero(nit), calcularDigitoVerificacion(nit)" @blur="getCliente(nit, 2)" />
-                        <span id="validate" v-if="nit == '' && tipo_persona == 2 && submitted" class="error">{{
-                            mensaje_error }}</span>
-
+                            @input="nit = validarNumero(nit), calcularDigitoVerificacion(nit)" @blur="getCliente(nit, 2)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Dígito de verificación: *</label>
@@ -118,21 +111,20 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Nombre completo / Razón social: *</label>
-                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
-                            @input="razon_social = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
-                            v-model="razon_social" /> -->
-                        <textarea name="" id="razon_social" rows="1" v-model="razon_social"
+                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social"
                             @input="razon_social = formatInputUpperCase($event.target.value)"></textarea>
-                        <span id="validate" v-if="razon_social == '' && submitted" class="error">{{ mensaje_error }}</span>
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Fecha de constitución: *
                         </label>
                         <input type="date" class="form-control" autocomplete="off" aria-describedby="emailHelp"
-                            id="fecha_constitucion" v-model="fecha_constitucion" />
-                        <!-- :disabled="!persona_juridica" -->
-                        <span id="validate" v-if="fecha_constitucion == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            id="fecha_constitucion" v-model="fecha_constitucion" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Cuantos empleados conforman la
@@ -140,9 +132,10 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="6"
                             aria-describedby="emailHelp" v-model="empleados_empresa" :disabled="proveedor"
-                            @input="empleados_empresa = validarNumero(empleados_empresa)" />
-                        <span id="validate" v-if="empleados_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="empleados_empresa = validarNumero(empleados_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -151,24 +144,17 @@
                             eventoCampo="getCodigosCiiu" nombreItem="codigo" :registros="codigos_ciiu"
                             :consulta="consulta_codigo_ciiu" @getActividadesCiiu="getActividadesCiiu"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="codigo_ciiu_id == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <SearchTable nombreCampo="Actividad ciiu: *" eventoCampo="setActividadesCiiu"
                             @setActividadesCiiu="setActividadesCiiu" endpoint="actividadciiu/filetr"
                             :consulta="consulta_actvidad_ciiu" :nombreItem="campos_actividad_ciiu" :datos="actividades_ciiu"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="actividad_ciiu == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
-
                     </div>
                     <div class="col mb-3">
                         <SearchList nombreCampo="Estrato socio económico (ubicación empresa): *" @getEstratos="getEstratos"
                             eventoCampo="getEstratos" :consulta="consulta_estrato" nombreItem="nombre" :registros="estratos"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="estrato == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                 </div>
                 <div class="row">
@@ -176,20 +162,16 @@
                         <SearchList nombreCampo="Pais: *" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nombre"
                             :consulta="consulta_pais" :registros="paises" :ordenCampo="1"
                             @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento: *" nombreItem="nombre" eventoCampo="getDepartamentos"
                             :consulta="consulta_departamento" :registros="departamentos" :ordenCampo="1"
                             @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad: *" nombreItem="nombre" :registros="municipios"
                             :consulta="consulta_municipio" @setMunicipios="setMunicipios" eventoCampo="setMunicipios"
                             :ordenCampo="1" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="variables[0].municipio === undefined && submitted" class="error">{{
-                            mensaje_error }}</span> -->
                     </div>
                 </div>
                 <div class="row">
@@ -198,28 +180,30 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="direccion_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="direccion_empresa" />
-                        <span id="validate" v-if="direccion_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
-
+                            aria-describedby="emailHelp" v-model="direccion_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Persona contacto empresa: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="150"
                             @input="contacto_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="contacto_empresa" />
-                        <span id="validate" v-if="contacto_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            aria-describedby="emailHelp" v-model="contacto_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Correo electrónico: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="correo_electronico_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="correo_electronico_empresa" />
-                        <span id="validate" v-if="correo_electronico_empresa == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="correo_electronico_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -228,26 +212,26 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="telefono_empresa"
-                            @input="telefono_empresa = validarNumero(telefono_empresa)" />
-                        <span id="validate" v-if="telefono_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="telefono_empresa = validarNumero(telefono_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Número celular: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="celular_empresa"
-                            @input="celular_empresa = validarNumero(celular_empresa)" />
-                        <span id="validate" v-if="celular_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="celular_empresa = validarNumero(celular_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Actividad Económica: Sociedad Comercial: *" nombreItem="nombre"
                             :consulta="consulta_sociedad_comercial" :registros="sociedades_comerciales"
                             eventoCampo="getSociedadesComerciales" @getSociedadesComerciales="getSociedadesComerciales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="sociedad_comercial == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                 </div>
                 <div class="row">
@@ -263,17 +247,16 @@
                             :consulta="consulta_periodicidad_pago" :registros="periodicidades_liquidacion"
                             eventoCampo="getPeriodicidadPago" @getPeriodicidadPago="getPeriodicidadPago"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="periodicidad_liquidacion_id == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Plazo pago (días): *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
                             aria-describedby="emailHelp" v-model="plazo_pago"
-                            @input="plazo_pago = validarNumero(plazo_pago)" />
-                        <span id="validate" v-if="periodicidad_liquidacion_id == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            @input="plazo_pago = validarNumero(plazo_pago)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -281,21 +264,17 @@
                         <SearchList nombreCampo="Pais prestación servicio: *" @getPaises="getPaises" eventoCampo="getPaises"
                             nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :ordenCampo="2"
                             :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento prestación servicio: *" nombreItem="nombre"
                             eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio"
                             :ordenCampo="2" :registros="departamentos" @getMunicipios="getMunicipios"
                             placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad prestación servicio: *" nombreItem="nombre" :registros="municipios"
                             :consulta="consulta_municipio_prestacion_servicio" @setMunicipios="setMunicipios"
                             eventoCampo="setMunicipios" :ordenCampo="2" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="variables[0].municipio === undefined && submitted" class="error">{{
-                            mensaje_error }}</span> -->
                     </div>
                 </div>
                 <div class="row" v-if="tipo_cliente == 1">
@@ -303,25 +282,23 @@
                         <label class="form-label">AIU negociado: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="aiu_negociado" />
-                        <span id="validate" v-if="aiu_negociado == '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="aiu_negociado" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ejecutivo comercial: *" nombreItem="nom_ven"
                             :registros="ejecutivos_comerciales" :consulta="consulta_ejecutivo_comercial"
                             eventoCampo="getEjecutivos_comerciales" @getEjecutivos_comerciales="getEjecutivos_comerciales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="ejecutivo_comercial == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Observaciones a acuerdos
                             comerciales:
                         </label>
-                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
-                            @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="acuerdos_comerciales" /> -->
-                        <textarea name="" id="acuerdos_comerciales" rows="1" v-model="acuerdos_comerciales"
+                        <textarea name="" id="acuerdos_comerciales" class="form-control" rows="1"
+                            v-model="acuerdos_comerciales"
                             @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                 </div>
@@ -330,16 +307,12 @@
                         <SearchList nombreCampo="Jornada Laboral: *" nombreItem="nombre" :registros="jornadas_laborales"
                             :consulta="consulta_jornada_laboral" eventoCampo="getJornadasLaborales"
                             @getJornadasLaborales="getJornadasLaborales" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="jornada_laboral == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Rotación de personal *" nombreItem="nombre"
                             :consulta="consulta_rotacion_personal" :registros="rotaciones_personal"
                             eventoCampo="getRotacionesPersonal" @getRotacionesPersonal="getRotacionesPersonal"
                             ubicacion="ciudad nacimiento" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="rotacion_personal == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col">
                     </div>
@@ -353,8 +326,6 @@
                             <SearchList nombreCampo="Riesgo de la empresa: (ARL)" eventoCampo="getRiesgosLaborales"
                                 nombreItem="nombre" :registros="riesgos_laborales" :consulta="consulta_riesgo_cliente"
                                 @getRiesgosLaborales="getRiesgosLaborales" placeholder="Seleccionar" />
-                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                     </div>
                     <div class="row">
@@ -376,22 +347,19 @@
                         <div class="col-3">
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.cargo = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.cargo" />
-                            <span id="validate" v-if="item.cargo == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
+                                aria-describedby="emailHelp" v-model="item.cargo" required />
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
                         </div>
                         <ListaMultiple @setLista="setLista" :verLista="verLista" :index="index" tipolista="requisitos"
                             :elementoslist="requisitosList" :elementos="requisitos[index]" :hover="hover" />
                         <ListaMultiple :elementoslist="examenesList" :verLista="verLista" @setLista="setLista"
                             :index="index" tipolista="examenes" :elementos="examenes[index]" :hover="hover" />
-                        <!-- <span id="validate" v-if="item.riesgo === '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         <div class="col-2">
                             <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
                                 :registros="riesgos_laborales" @getRiesgosLaborales2="getRiesgosLaborales2"
                                 placeholder="Seleccionar" :consulta="consulta_riesgo_laboral[index]" />
-                            <span id="validate" v-if="item.riesgo == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(cargos, index)"></i>
@@ -412,8 +380,6 @@
                                 nombreItem="nombre" :disabled="true" :registros="riesgos_laborales"
                                 :consulta="consulta_riesgo_cliente" @getRiesgosLaborales="getRiesgosLaborales"
                                 placeholder="Seleccionar" />
-                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                     </div>
                     <div class="row" id="contenedor-select" v-for="item, index in cargos2" :key="item.id">
@@ -425,7 +391,7 @@
                             </div>
                             <div style="display: flex;">
                                 <div class="form-check m-2" v-for="item, index2 in tipo_cargos" :key="index2">
-                                    <input class="form-check-input" type="radio"
+                                    <input class="form-check-input" type="radio" required
                                         @click="getSubCategoriaCargo(item.id, index)" :value="item.id"
                                         v-model="tipo_cargo[index]" :name="'radio' + index" id="radio3">
                                     {{ item.nombre }}
@@ -440,42 +406,35 @@
                             <div class="col">
                                 <label for="exampleInputEmail1" class="form-label">Cargo:</label>
                             </div>
-                            <!-- <div class="col">
-                                <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
-                            </div> -->
                             <div class="col">
                                 <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
                             </div>
                         </div>
                         <div class="col">
-                            <!-- nombreCampo="Riesgo de la empresa: (ARL)" -->
                             <SearchList nombreItem="nombre" :registros="arry_subcategoria_cargos[index]"
                                 :consulta="consulta_subcategoria_cargos[index]" eventoCampo="getListaCargos" :index="index"
                                 @getListaCargos="getListaCargos" placeholder="Seleccionar" />
-                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                         <div class="col">
-                            <!-- nombreCampo="Riesgo de la empresa: (ARL)" -->
                             <SearchList nombreItem="nombre" :registros="array_lista_cargos[index]"
                                 :consulta="consulta_lista_cargos[index]" eventoCampo="getExamenesRecomendaciones"
                                 @getExamenesRecomendaciones="getExamenesRecomendaciones" :index="index"
                                 placeholder="Seleccionar" />
-                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                         <div class="col">
                             <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
                                 :registros="riesgos" @getRiesgosLaborales2="getRiesgosLaborales2" placeholder="Seleccionar"
                                 :consulta="consulta_riesgo_laboral[index]" />
-                            <span id="validate" v-if="item.riesgo == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                         <div class="row">
                             <label for="exampleInputEmail1" class="form-label">Funciones del cargo:</label>
                             <div class="col">
                                 <EditorTextoHtml :consulta="consulta_textohtml[index]" :index="index"
                                     @retornoTexto="retornoTexto" :showToolbar="true" />
+                            </div>
+                            <div class="col-1 trash">
+                                <i class="bi bi-trash-fill" v-if="index > 0"
+                                    @click="deleteDynamic(cargos2, index, 'identificador')"></i>
                             </div>
                         </div>
                         <div class="row">
@@ -497,9 +456,6 @@
                                     LABOR:</label>
                                 <span>{{ item.recomendacion2 }}</span>
                             </div>
-                            <div class="col-1 trash">
-                                <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(cargos2, index)"></i>
-                            </div>
                         </div>
                         <hr v-if="cargos2.length > 1">
                     </div>
@@ -517,31 +473,27 @@
                                 class="btn btn-sm ver"><i class="bi bi-eye"> ver</i></button></a>
                     </div>
                     <div class="col">
-                        <!-- <SearchList @getTipoArhivo="getTipoArhivo" eventoCampo="getTipoArhivo" nombreItem="nombre"
-                            :registros="fileInputsCount" :archivos="true" :index="index" @setTipoArchivo="setTipoArchivo"
-                            placeholder="Seleccione una opción" :consulta="consulta_file[index]" /> -->
                         <div class="mb-3">
                             <textarea class="form-control" id="exampleFormControlTextarea1" :disabled="true"
                                 v-model="item.nombre"></textarea>
                         </div>
-                        <span id="validate"
+                        <!-- <span id="validate"
                             v-if="file[index] == undefined && index != 0 && index != 3 && tipo_cliente == 1 && submitted"
-                            class="error">¡Por favor adjunte el archivo!</span>
-                        <span id="validate" v-if="file[index] == undefined && tipo_cliente == 2 && submitted"
-                            class="error">¡Por favor adjunte el archivo!</span>
+                            class="error">¡Por favor adjunte el archivo!</span> -->
                     </div>
                     <div class="col">
                         <div class="input-group">
                             <input type="file" class="form-control" :id="'seleccionArchivos' + index"
                                 :accept="fileInputsCount[index].tipo_archivo" @change="cargarArchivo($event, index)"
-                                aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                aria-describedby="inputGroupFileAddon04" aria-label="Upload"
+                                :required="item.nombre.includes('*') && item.ruta == undefined">
                             <button class="btn btn-outline-secondary" type="button" @click="deleteFile(index)"
                                 id="inputGroupFileAddon04">Quitar
                                 archivo</button>
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
                         </div>
-                        <!-- <span id="validate"
-                        v-if="file[index] === undefined && submitted"
-                        class="error">{{ mensaje_error }}</span> -->
                     </div>
                 </div>
             </div>
@@ -562,41 +514,38 @@
                                 @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                                 nombreItem="des_tip" :ordenCampo="2" :index="index" :registros="tiposIdentificacion"
                                 @setTipoIdentificacion="setTipoIdentificacion" placeholder="Seleccione una opción"
-                                :consulta="consulta_tipo_identificacion_ac[index]" />
-                            <span id="validate" v-if="item.tipo_identificacion_id == '' && submitted" class="error">{{
-                                mensaje_error }}</span>
+                                :consulta="consulta_tipo_identificacion_ac[index]" required />
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Identificación: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
-                                @input="item.identificacion = validarNumero(item.identificacion)" />
+                                @input="item.identificacion = validarNumero(item.identificacion)"
+                                :required="item.identificacion == '' && item.tipo_identificacion_id.trim() != '' && item.tipo_identificacion_id.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.identificacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{
-                                    mensaje_error }}</span>
+                                v-if="item.identificacion == '' && item.tipo_identificacion_id.trim() != '' && item.tipo_identificacion_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
-                        <!-- </div> -->
-                        <!-- <div class="row" style="margin-bottom: 30px;"> -->
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Socio/Accionista: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.socio = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.socio" />
+                                aria-describedby="emailHelp" v-model="item.socio" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.socio == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.socio == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != ''"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Porcentaje Participación (%):</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" maxlength="10" v-model="item.participacion" />
-                            <!-- @input="item.participacion = validarNumero(item.participacion)" -->
+                                aria-describedby="emailHelp" maxlength="10" v-model="item.participacion"
+                                :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.participacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.participacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != ''"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(accionistas, index)"></i>
@@ -616,40 +565,44 @@
                             <label for="exampleInputEmail1" class="form-label">Representante(s) Legal(es): *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.nombre = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.nombre" />
+                                aria-describedby="emailHelp" v-model="item.nombre"
+                                :required="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Tipo de Identificación: *"
                                 @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                                 nombreItem="des_tip" :ordenCampo="3" :index="index" :registros="tiposIdentificacion"
                                 @setTipoIdentificacion="setTipoIdentificacion" placeholder="Seleccione una opción"
-                                :consulta="consulta_tipo_identificacion_rl[index]" />
-                            <span id="validate" v-if="item.tipo_identificacion == '' && submitted" class="error">{{
-                                mensaje_error }}</span>
+                                :consulta="consulta_tipo_identificacion_rl[index]" required />
+                            <span id="validate" v-if="item.tipo_identificacion == ''" class="error">{{
+                                validaCamposDinamicos(index)
+                            }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Identificación:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
-                                @input="item.identificacion = validarNumero(item.identificacion)" />
+                                @input="item.identificacion = validarNumero(item.identificacion)"
+                                :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.identificacion === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
+                                v-if="item.identificacion == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
                                 class="error">{{
-                                    mensaje_error }}</span>
+                                    validaCamposDinamicos(index) }}</span><span v-else>{{ validaCamposDinamicos(index, 1)
+    }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Número celular:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" v-model="item.telefono"
-                                @input="item.telefono = validarNumero(item.telefono)" />
+                                @input="item.telefono = validarNumero(item.telefono)" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.telefono === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.telefono === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -661,16 +614,16 @@
                             <label for="exampleInputEmail1" class="form-label">correo electrónico</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.correo = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.correo" />
+                                aria-describedby="emailHelp" v-model="item.correo" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.correo === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.correo === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Pais de expedición: *" @getPaises="getPaises" eventoCampo="getPaises"
                                 nombreItem="nombre" :registros="paises" @getDepartamentos="getDepartamentos" :ordenCampo="3"
-                                placeholder="Seleccione una opción" :consulta="consulta_pais_rl[index]" />
+                                :index="index" placeholder="Seleccione una opción" :consulta="consulta_pais_rl[index]" />
 
                         </div>
                         <div class="col mb-3">
@@ -684,7 +637,7 @@
                                 @setMunicipios="setMunicipios" eventoCampo="setMunicipios" :ordenCampo="3" :index="index"
                                 placeholder="Seleccione una opción" :consulta="consulta_municipio_rl[index]" />
                             <span id="validate"
-                                v-if="item.municipio_id === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
+                                v-if="item.municipio_id === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
                                 class="error">{{ mensaje_error }}</span>
                         </div>
                     </div>
@@ -714,7 +667,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="row"> -->
                 <div class="row" v-if="junta_directiva == true">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Nombres y apellidos: *</label>
@@ -732,10 +684,6 @@
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="150" @input="item.nombre = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.nombre" />
-                            <span id="validate"
-                                v-if="item.nombre == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
                         </div>
                         <div class="col">
                             <SearchList @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
@@ -743,16 +691,11 @@
                                 :registros="tiposIdentificacion" :ordenCampo="4" :index="index"
                                 :consulta="consulta_tipo_identificacion_miembros_junta[index]"
                                 placeholder="Seleccione una opción" />
-                            <span id="validate" v-if="item.tipo_identificacion_id === '' && submitted" class="error">{{
-                                mensaje_error }}</span>
                         </div>
                         <div class="col">
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
                                 @input="item.identificacion = validarNumero(item.identificacion)" />
-                            <span id="validate"
-                                v-if="item.identificacion == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(miembros_Junta, index)"></i>
@@ -762,7 +705,6 @@
                             class="bi bi-plus-circle-fill"></i>
                         Agregar miembro junta directiva
                     </span>
-                    <!-- </div> -->
                 </div>
             </div>
             <h6 class="tituloseccion">1.5. Calidad tributaria</h6>
@@ -773,25 +715,20 @@
                             @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
                             :registros="afirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion" :ordenCampo="1"
                             :consulta="consulta_responsable_impuesto_ventas" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="responsable_impuesto_ventas == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Correo para factura electrónica: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="correo_factura_electronica = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="correo_factura_electronica" />
-                        <span id="validate"
-                            v-if="correo_factura_electronica === '' && responsable_impuesto_ventas == 1 && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="correo_factura_electronica" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Sucursal para facturación: *" eventoCampo="getSucursales"
                             @getSucursales="getSucursales" nombreItem="nom_suc" :registros="sucursales"
                             placeholder="Seleccione una opción" :consulta="consulta_sucursal_facturacion" />
-                        <span id="validate" v-if="sucursal === '' && responsable_impuesto_ventas == 1 && submitted"
-                            class="error">{{
-                                mensaje_error }}</span>
                     </div>
                 </div>
                 <div class="row" v-for="item, index in calidad_tributaria" :key="index">
@@ -801,22 +738,21 @@
                             @setAfirmacionNegacion="setAfirmacionNegacion" :orden-campo="2" :index="index"
                             :registros="afirmacionNegacion" placeholder="Seleccione una opción"
                             :consulta="consulta_calidad_tributaria[index]" />
-                        <span id="validate" v-if="item.opcion == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de resolución:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="item.numero_resolucion" />
-                        <span id="validate"
-                            v-if="item.numero_resolucion == '' && calidad_tributaria[index].opcion == 1 && submitted"
+                            aria-describedby="emailHelp" v-model="item.numero_resolucion"
+                            :required="item.numero_resolucion == '' && item.opcion == 1" />
+                        <span id="validate" v-if="item.numero_resolucion == '' && calidad_tributaria[index].opcion == 1"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Fecha</label>
                         <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="item.fecha" />
-                        <span id="validate" v-if="item.fecha == '' && calidad_tributaria[index].opcion == 1 && submitted"
+                            aria-describedby="emailHelp" v-model="item.fecha"
+                            :required="item.fecha == '' && item.opcion == 1" />
+                        <span id="validate" v-if="item.fecha == '' && calidad_tributaria[index].opcion == 1"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                 </div>
@@ -828,37 +764,37 @@
                         <label for="exampleInputEmail1" class="form-label">Nombre completo:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="nombre_completo_contador = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="nombre_completo_contador" />
+                            aria-describedby="emailHelp" v-model="nombre_completo_contador"
+                            :required="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
                             @setTipoIdentificacion="setTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                             :consulta="consulta_contador" nombreItem="des_tip" :ordenCampo="5"
-                            :registros="tiposIdentificacion" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_identificacion_contador == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            :registros="tiposIdentificacion" placeholder="Seleccione una opción"
+                            :required="tipo_identificacion_contador == ''" />
                     </div>
-                    <!-- </div>
-                <div class="row"> -->
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Identificación:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="identificacion_contador"
-                            @input="identificacion_contador = validarNumero(identificacion_contador)" />
+                            @input="identificacion_contador = validarNumero(identificacion_contador)"
+                            :required="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="telefono_contador"
-                            @input="telefono_contador = validarNumero(telefono_contador)" />
+                            @input="telefono_contador = validarNumero(telefono_contador)"
+                            :required="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                 </div>
@@ -872,27 +808,18 @@
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="nombre_completo_tesorero = formatInputUpperCase($event.target.value)"
                             aria-describedby="emailHelp" v-model="nombre_completo_tesorero" />
-                        <!-- <span id="validate"
-                            v-if="nombre_completo_tesorero == '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="telefono_tesorero"
                             @input="telefono_tesorero = validarNumero(telefono_tesorero)" />
-                        <!-- <span id="validate"
-                            v-if="telefono_tesorero == '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             @input="correo_tesorero = formatInputUpperCase($event.target.value)"
                             aria-describedby="emailHelp" v-model="correo_tesorero" />
-                        <!-- <span id="validate"
-                            v-if="correo_tesorero === '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                 </div>
             </div>
@@ -903,23 +830,28 @@
                         <label for="exampleInputEmail1" class="form-label">Ingreso Mensual: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="ingreso_mensual"
-                            @input="ingreso_mensual = validarNumero(ingreso_mensual)" />
-                        <span id="validate" v-if="ingreso_mensual === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="ingreso_mensual = validarNumero(ingreso_mensual)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Costos y Gastos Mensual: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="costos_gastos"
-                            @input="costos_gastos = validarNumero(costos_gastos)" />
-                        <span id="validate" v-if="costos_gastos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="costos_gastos = validarNumero(costos_gastos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Activos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="activos" @input="activos = validarNumero(activos)" />
-                        <span id="validate" v-if="activos === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="activos" @input="activos = validarNumero(activos)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -927,22 +859,27 @@
                         <label for="exampleInputEmail1" class="form-label">Otros Ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="otros_ingresos"
-                            @input="otros_ingresos = validarNumero(otros_ingresos)" />
-                        <span id="validate" v-if="otros_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="otros_ingresos = validarNumero(otros_ingresos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Detalle de otros ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="detalle_otros_ingresos" />
-                        <span id="validate" v-if="detalle_otros_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            aria-describedby="emailHelp" v-model="detalle_otros_ingresos" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Pasivos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="pasivos" @input="pasivos = validarNumero(pasivos)" />
-                        <span id="validate" v-if="pasivos === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="pasivos" @input="pasivos = validarNumero(pasivos)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -950,24 +887,28 @@
                         <label for="exampleInputEmail1" class="form-label">Total Ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="total_ingresos"
-                            @input="total_ingresos = validarNumero(total_ingresos)" />
-                        <span id="validate" v-if="total_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="total_ingresos = validarNumero(total_ingresos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Reintegro de costos y gastos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="reintegro_costos"
-                            @input="reintegro_costos = validarNumero(reintegro_costos)" />
-                        <span id="validate" v-if="reintegro_costos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="reintegro_costos = validarNumero(reintegro_costos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Patrimonio: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="patrimonio"
-                            @input="patrimonio = validarNumero(patrimonio)" />
-                        <span id="validate" v-if="patrimonio === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            @input="patrimonio = validarNumero(patrimonio)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -979,7 +920,7 @@
                             @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
                             :consulta="consulta_operacion_moneda_extranjera" :registros="afirmacionNegacion"
                             @setAfirmacionNegacion="setAfirmacionNegacion" :orden-campo="3" placeholder="Seleccionar" />
-                        <span id="validate" v-if="operaciones_modena_extranjera == '' && submitted" class="error">{{
+                        <span id="validate" v-if="operaciones_modena_extranjera == ''" class="error">{{
                             mensaje_error }}</span>
                     </div>
                     <div class="col">
@@ -988,8 +929,6 @@
                             eventoCampo="getTiposOperacionesInternacionales" nombreItem="nombre"
                             :consulta="consulta_operacion_internacional" :registros="tipos_operaciones_internacionales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_operacion_internacional == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                 </div>
             </div>
@@ -1001,27 +940,23 @@
                             <SearchList nombreCampo="Banco" @getBancos="getBancos" eventoCampo="getBancos"
                                 @setBanco="setBanco" :ordenCampo="1" :index="index" nombreItem="nom_ban" :registros="bancos"
                                 placeholder="Seleccione una opción" :consulta="consulta_banco_rb[index]" />
-                            <span id="validate" v-if="referencias_bancarias[index].banco_id == '' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.numero_cuenta"
-                                @input="item.numero_cuenta = validarNumero(item.numero_cuenta)" />
+                                @input="item.numero_cuenta = validarNumero(item.numero_cuenta)"
+                                :required="item.numero_cuenta == '' && item.banco_id != '' && item.banco_id.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.numero_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.numero_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Tipo cuenta" @getTipoCuentaBancos="getTipoCuentaBancos"
                                 @setTipoCuentaBancos="setTipoCuentaBancos" eventoCampo="getTipoCuentaBancos" :ordenCampo="1"
                                 :index="index" nombreItem="nombre" :registros="tipos_cuenta_bancos"
                                 placeholder="Seleccione una opción" :consulta="consulta_tipo_cuenta_banco_rb[index]" />
-                            <span id="validate"
-                                v-if="referencias_bancarias[index].tipo_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -1033,31 +968,31 @@
                             <label for="exampleInputEmail1" class="form-label">Sucursal:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.sucursal = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.sucursal" />
+                                aria-describedby="emailHelp" v-model="item.sucursal" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.sucursal == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.sucursal == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.telefono"
-                                @input="item.telefono = validarNumero(item.telefono)" />
+                                @input="item.telefono = validarNumero(item.telefono)" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.telefono == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.telefono == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Contacto:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.contacto = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.contacto" />
+                                aria-describedby="emailHelp" v-model="item.contacto" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.contacto == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.contacto == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                     </div>
                 </div>
@@ -1075,24 +1010,18 @@
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="200" @input="item.nombre = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.nombre" />
-                            <!-- <span id="validate" v-if="item.nombre == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Contacto:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.contacto = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.contacto" />
-                            <!-- <span id="validate" v-if="item.contacto == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.telefono"
                                 @input="item.telefono = validarNumero(item.telefono)" />
-                            <!-- <span id="validate" v-if="item.telefono == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -1148,38 +1077,39 @@
                         <label for="exampleInputEmail1" class="form-label">Nombres y apelldos:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="item.nombre = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
-                            v-model="item.nombre" />
+                            v-model="item.nombre"
+                            :required="item.nombre == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0'" />
                         <span id="validate"
-                            v-if="item.nombre == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            v-if="item.nombre == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
                             @setTipoIdentificacion="setTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                             nombreItem="des_tip" :ordenCampo="6" :index="index" :registros="tiposIdentificacion"
                             placeholder="Seleccione una opción" :consulta="consultas_personas_expuestas[index]" />
-                        <span id="validate" v-if="personas_expuestas[index].tipo_identificacion_id == '' && submitted"
-                            class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de identificacion:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="item.identificacion"
-                            @input="item.identificacion = validarNumero(item.identificacion)" />
+                            @input="item.identificacion = validarNumero(item.identificacion)"
+                            :required="campo_dinamico[index]" />
                         <span id="validate"
-                            v-if="item.identificacion == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error
-                            }}</span>
+                            v-if="item.identificacion == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Parentesco:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
                             @input="item.parentesco = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="item.parentesco" />
+                            aria-describedby="emailHelp" v-model="item.parentesco" :required="campo_dinamico[index]" />
                         <span id="validate"
-                            v-if="item.parentesco == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error
-                            }}</span>
+                            v-if="item.parentesco == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col-1 trash">
                         <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(personas_expuestas, index)"></i>
@@ -1215,8 +1145,6 @@
                         <SearchList nombreCampo="Seleccione una opción" @getTipoOrigenFondos="getTipoOrigenFondos"
                             eventoCampo="getTipoOrigenFondos" nombreItem="nombre" :registros="tipos_origen_fondos"
                             placeholder="Origen de fondos" :consulta="consulta_origen_fondos" />
-                        <span id="validate" v-if="tipo_origen_fondo == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Otra ¿Cuál?:</label>
@@ -1246,16 +1174,12 @@
                             @setTipoOrigenMedios="setTipoOrigenMedios" nombreItem="nombre" :ordenCampo="1"
                             :registros="tipos_origenes_medios" placeholder="seleccione una opción"
                             :consulta="consulta_origen_medios1" />
-                        <span id="validate" v-if="tipo_origen_medios == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col">
                         <SearchList @getTipoOrigenMedios="getTipoOrigenMedios" eventoCampo="getTipoOrigenMedios"
                             @setTipoOrigenMedios="setTipoOrigenMedios" nombreItem="nombre" :ordenCampo="2"
                             :registros="tipos_origenes_medios" placeholder="seleccione una opción"
                             :consulta="consulta_origen_medios2" />
-                        <span id="validate" v-if="otro_tipo_origen_medios == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <ul>
                         <li>
@@ -1267,8 +1191,6 @@
                             eventoCampo="getAfirmacionNegacion" :registros="afirmacionNegacion"
                             @setAfirmacionNegacion="setAfirmacionNegacion" :ordenCampo="4"
                             placeholder="Seleccione una opción" :consulta="consulta_origen_manejo_efectivo" />
-                        <span id="validate" v-if="alto_manejo_efectivo == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <p>En nombre propio y/o de mi representado, declaro que no estoy impedido para realizar cualquier tipo
                         de operación y que conozco y acepto las normas que regulan el comercio colombiano y me obligo a
@@ -1365,9 +1287,9 @@
                 </div>
             </div>
             <div class="col-3" v-if="hide_bottons">
-                <SearchList nombreCampo="Registros guardados" nombreItem="nombre" :registros="razon_social_cliente"
-                    consulta="" eventoCampo="setFormularioGuardado" @setFormularioGuardado="setFormularioGuardado"
-                    placeholder="Seleccionar" />
+                <SearchList nombreCampo="Registros guardados" :valida_campo="false" nombreItem="nombre"
+                    :registros="razon_social_cliente" consulta="" eventoCampo="setFormularioGuardado"
+                    @setFormularioGuardado="setFormularioGuardado" placeholder="Seleccionar" />
             </div>
             <div class="row">
                 <div class="col">
@@ -1376,7 +1298,7 @@
                 </div>
                 <div class="col">
                     <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                        type="submit" style="margin:30px">Guardar</button>
+                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
                 </div>
                 <div v-if="hide_bottons" class="col" style="margin:30px">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -1391,7 +1313,6 @@
                                 <li v-for="item, index in razon_social_cliente" :key="index"><a class="dropdown-item"
                                         style="cursor:pointer" @click="eliminarItem(item)">{{
                                             item.nombre }}</a></li>
-                                <!-- <li><a class="dropdown-item" href="#">Dropdown link</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -1616,7 +1537,6 @@ export default {
             lista_recomendaciones: [],
             array_lista_recomendaciones: [],
             categoria_cargo_id: '',
-            // consulta_cargos:[]
             consulta_subcategoria_cargos: [],
             consulta_lista_cargos: [],
             consulta_textohtml: [],
@@ -1624,11 +1544,27 @@ export default {
             tipo_cargos: [],
             formularios_guardados: [],
             razon_social_cliente: [],
-            hide_bottons: true
-
+            hide_bottons: true,
+            campo_dinamico: [],
+            cargos_id_: [],
+            deshabilitar_boton: false
         }
     },
     computed: {
+        errorMessages() {
+            return this.items.map(item => {
+                if (
+                    item.socio === '' &&
+                    item.tipo_identificacion_id.trim() !== '0' &&
+                    item.tipo_identificacion_id.trim() !== '' &&
+                    this.submitted
+                ) {
+                    return 'Mensaje de error: La condición no se cumple';
+                } else {
+                    return ''; // No hay error
+                }
+            });
+        }
 
     },
     watch: {
@@ -1681,6 +1617,14 @@ export default {
         }
     },
     methods: {
+        validaCamposDinamicos(index, bandera = null) {
+            if (bandera != null) {
+                this.campo_dinamico[index] = false
+                return ''
+            }
+            this.campo_dinamico[index] = true
+            return '¡Este campo debe ser diligenciado!'
+        },
         setLabelPais(item = null, campo = null, index = null) {
             if (item != null) {
                 switch (campo) {
@@ -1734,12 +1678,14 @@ export default {
         convinacionAutoRelleno(event) {
             if (event.ctrlKey && event.altKey && event.key >= '1' && event.key <= '9') {
                 event.preventDefault();
+                this.limpiarformulario()
                 const numero = parseInt(event.key);
                 this.setFormularioGuardado(null, numero)
             }
         },
         setFormularioGuardado(item = null, numero) {
             var self = this
+            this.limpiarformulario()
             if (item != null) {
                 this.formularios_guardados.forEach(function (item2) {
                     if (item2.razon_social == item.nombre) {
@@ -1986,7 +1932,7 @@ export default {
             }
         },
         getCliente(id, tipo_id) {
-            if (id.trim() != '') {
+            if (id != null && id.trim() != '') {
                 let self = this;
                 let config = this.configHeader();
                 return axios
@@ -2055,7 +2001,7 @@ export default {
                 self.generarPDF()
                 self.hide_bottons = true
             }, "10");
-         
+
         },
         generarPDF() {
             const elemento = document.getElementById('contenedor-formulario');
@@ -2195,7 +2141,22 @@ export default {
                 this.accionistas.push({ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' })
             }
         },
-        deleteDynamic(array, index) {
+        deleteDynamic(array, index, identificador = null) {
+            if (identificador != null) {
+                this.tipo_cargo.splice(index, 1)
+                this.consulta_subcategoria_cargos[index] = ' '
+                this.consulta_lista_cargos[index] = ' '
+                this.consulta_textohtml[index] = ' '
+                this.cargos2[index].riesgo_laboral_id = ''
+                this.arry_subcategoria_cargos.splice(index, 1)
+                this.array_lista_cargos.splice(index, 1)
+                this.consulta_riesgo_laboral.splice(index, 1)
+                this.consulta_textohtml.splice(index, 1)
+                this.consulta_lista_cargos.splice(index, 1)
+                this.consulta_subcategoria_cargos.splice(index, 1)
+                this.array_lista_examenes.splice(index, 1)
+
+            }
             array.splice(index, 1)
         },
         agregarRepresentanteLegal() {
@@ -2901,7 +2862,7 @@ export default {
             this.jornada_laboral = ''
             this.consulta_rotacion_personal = ''
             this.rotaciones_personal = []
-            this.riesgos_laborales = []
+            // this.riesgos_laborales = []
             this.consulta_riesgo_laboral = []
             this.riesgo_laboral = ''
             this.consulta_riesgo_cliente = ''
@@ -3366,14 +3327,24 @@ export default {
 
         },
         save() {
+            let self = this;
             this.submitted = true;
+            this.deshabilitar_boton = true;
+            setTimeout(() => {
+                this.deshabilitar_boton = false;
+            }, 3000);
+
+            this.cargos2.forEach(function (item, index) {
+                if (self.cargos_id_[index] != undefined) {
+                    self.cargos2[index].cargo = self.cargos_id_[index]
+                }
+            })
 
             if (this.valida_campos()) {
                 return
             }
 
             try {
-                let self = this;
                 this.crearCliente()
                 let config = this.configHeader();
 
@@ -3593,84 +3564,32 @@ export default {
             this.consulta_pais_prestacion_servicio = item.consulta_pais_prestacion_servicio
             this.consulta_departamento_prestacion_servicio = item.consulta_departamento_prestacion_servicio
             this.consulta_municipio_prestacion_servicio = item.consulta_municipio_prestacion_servicio
-
-            // this.operacion = item.operacion
-            // this.tipo_persona = item.tipo_persona
-
+            this.consulta_pais_rl = item.consulta_pais_rl
+            this.consulta_departamento_rl = item.consulta_departamento_rl
+            this.consulta_municipio_rl = item.consulta_municipio_rl
             this.operacion = item.operacion
             this.tipo_persona = item.tipo_persona
-            // this.digito_verificacion = item.digito_verificacion
-            // this.razon_social = item.
             this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
             this.tipo_identificacion = item.tipo_identificacion
-            // this.numero_identificacion = item
-            // this.fecha_expedicion = item
-            // this.contratacion_directa = item
-            // this.atraccion_seleccion = item
-            // this.nit = item
-            // this.fecha_constitucion = item
             this.actividad_ciiu = item.actividad_ciiu
             this.codigo_ciiu_id = item.codigo_ciiu_id
             this.estrato = item.estrato
             this.municipio = item.municipio
-            // this.direccion_empresa = item
-            // this.contacto_empresa = item
-            // this.correo_electronico_empresa = item
-            // this.telefono_empresa = item
-            // this.celular_empresa = item
             this.sociedad_comercial = item.sociedad_comercial
             this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
-            // this.otra_cual = item
-            // this.acuerdo_comercial = item
-            // this.aiu_negociado = item
-            // this.plazo_pago = item
             this.ejecutivo_comercial = item.vendedor
-            // this.empleados_empresa = item
             this.jornada_laboral = item.jornada_laboral
             this.rotacion_personal = item.rotacion_personal
-            // this.riesgo_laboral = item
-            // this.junta_directiva = item
             this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
-            // this.correo_factura_electronica = item
             this.sucursal = item.sucursal_facturacion
-            // this.declaraciones_autorizaciones = item
-            // this.tratamiento_datos_personales = item
             this.tipo_operacion_internacional = item.tipo_operacion_internacional
             this.operaciones_modena_extranjera = item.operaciones_internacionales
             this.tipo_origen_fondo = item.tipo_origen_fondo
             this.tipo_origen_medios = item.tipo_origen_medios
-            // this.otro_tipo_origen_fondos = item.
             this.otro_tipo_origen_medios = item.otro_tipo_origen_medios
             this.alto_manejo_efectivo = item.alto_manejo_efectivo
-            // this.nombre_completo_contador = item
             this.tipo_identificacion_contador = item.tipo_identificacion_contador
-            // this.identificacion_contador = item
-            // this.telefono_contador = item
-            // this.nombre_completo_tesorero = item
-            // this.telefono_tesorero = item
-            // this.correo_tesorero = item
-            // this.ingreso_mensual = item
-            // this.otros_ingresos = item
-            // this.total_ingresos = item
-            // this.costos_gastos = item
-            // this.detalle_otros_ingresos = item
-            // this.reintegro_costos = item
-            // this.activos = item
-            // this.pasivos = item
-            // this.patrimonio = item
-            // this.tipo_cliente = item
-            // this.tipo_proveedor = item
             this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
-
-            // this.cargos = item
-            // this.cargos2 = item
-            // this.accionistas = item
-            // this.representantes_legales = item
-            // this.miembros_Junta = item
-            // this.calidad_tributaria = item
-            // this.referencias_bancarias = item
-            // this.referencias_comerciales = item
-            // this.personas_expuestas = item
 
 
             if (item.tipo_persona == 1) {
@@ -3699,9 +3618,11 @@ export default {
                     this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
                     this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
                     this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                    // this.consulta_lista_cargos[i] = item.cargos2[i].cargo
                     this.consulta_lista_cargos[i] = item.cargos2[i].cargo
                     // this.consulta_lista_cargos[i] = item.cargos2[i].cargo
-                    this.cargos2[i].cargo = parseInt(item.cargos2[i].cargo_id)
+                    // this.cargos2[i].cargo = parseInt(item.cargos2[i].cargo_id)
+                    this.cargos_id_[i] = parseInt(item.cargos2[i].cargo_id)
                     this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
                     this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
                     this.array_lista_examenes[i] = item.cargos2[i].examenes
@@ -3731,21 +3652,28 @@ export default {
 
             self.personas_expuestas = item.personas_expuestas
 
+            self.miembros_Junta = item.miembros_Junta
+
+            item.miembros_Junta.forEach(function (item, index) {
+                self.consulta_tipo_identificacion_miembros_junta[index] = item.des_tip
+            })
+
+
             item.consultas_personas_expuestas.forEach(function (item) {
                 self.consultas_personas_expuestas.push(item)
             })
 
-            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
             this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].opcion
             this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
             this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha
 
-            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
             this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].opcion
             this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
             this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha
 
-            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
             this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].opcion
             this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
             this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha
@@ -3936,17 +3864,17 @@ export default {
                 self.consultas_personas_expuestas.push(item.des_tip)
             })
 
-            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : item.calidad_tributaria[0].gran_contribuyente == '0' ? 'No' : ''
             this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].gran_contribuyente
             this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].resolucion_gran_contribuyente
             this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha_gran_contribuyente
 
-            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : item.calidad_tributaria[0].auto_retenedor == '0' ? 'No' : ''
             this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].auto_retenedor
             this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].resolucion_auto_retenedor
             this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha_auto_retenedor
 
-            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : item.calidad_tributaria[0].exento_impuesto_rent == '0' ? 'No' : ''
             this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].exento_impuesto_rent
             this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].resolucion_exento_impuesto_rent
             this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha_exento_impuesto_rent
@@ -4088,9 +4016,10 @@ ul li {
 }
 
 #validate {
-    color: red;
-    font-size: 0.7rem;
+    color: rgb(211, 5, 5);
+    font-size: 0.9rem;
     float: left;
+    margin-top: 3px;
 }
 
 .error {
@@ -4102,8 +4031,8 @@ ul li {
     width: 100%;
     height: 37px;
     border-radius: 5px;
-    border-color: rgb(191, 199, 199);
-    outline: none;
+    /* border-color: rgb(191, 199, 199); */
+    /* outline: none; */
     padding: 5px;
 }
 
