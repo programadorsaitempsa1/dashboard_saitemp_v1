@@ -578,9 +578,6 @@
                                 nombreItem="des_tip" :ordenCampo="3" :index="index" :registros="tiposIdentificacion"
                                 @setTipoIdentificacion="setTipoIdentificacion" placeholder="Seleccione una opción"
                                 :consulta="consulta_tipo_identificacion_rl[index]" required />
-                            <span id="validate" v-if="item.tipo_identificacion == ''" class="error">{{
-                                validaCamposDinamicos(index)
-                            }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Identificación:</label>
@@ -1297,7 +1294,7 @@
                         type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
                 </div>
                 <div class="col">
-                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success" 
                         :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
                 </div>
                 <div v-if="hide_bottons" class="col" style="margin:30px">
@@ -1432,7 +1429,7 @@ export default {
             riesgo_laboral: '',
             consulta_riesgo_cliente: '',
             cargos: [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }],
-            cargos2: [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }],
+            cargos2: [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }],
             fileInputsCount: [],
             consulta_tipo_identificacion_ac: [],
             accionistas: [{ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' }],
@@ -1726,7 +1723,6 @@ export default {
                 var bandera = 0
                 var posicion = 0
                 self.formularios_guardados.forEach(function (item, index) {
-                    // if (item.nit == self.registroCliente.nit && item.numero_identificacion == self.registroCliente.numero_identificacion) {
                     if (item.razon_social == self.registroCliente.razon_social) {
                         bandera++
                         posicion = index
@@ -1837,7 +1833,7 @@ export default {
             this.cargos2.forEach(function (item, index) {
                 item.tipo_cargo = self.tipo_cargo[index] == 1 ? 'Administrativo' : 'Operativo'
                 item.tipo_cargo_id = self.tipo_cargo[index]
-                item.cargo_id = self.cargos2[index].cargo
+                item.cargo_id = self.cargos2[index].cargo_id
                 item.cargo = self.consulta_lista_cargos[index]
                 item.riesgo_laboral = self.consulta_riesgo_laboral[index]
                 item.categoria = self.consulta_subcategoria_cargos[index]
@@ -1859,10 +1855,10 @@ export default {
         },
         getSubCategoriaCargo(id, index = null) {
             if (index != null) {
-                if (this.cargos2[index].cargo != '') {
+                if (this.cargos2[index].cargo_id != '') {
                     this.consulta_subcategoria_cargos[index] = ' '
                     this.consulta_lista_cargos[index] = ' '
-                    this.cargos2[index].cargo = ''
+                    this.cargos2[index].cargo_id = ''
                 }
 
 
@@ -1897,7 +1893,7 @@ export default {
         },
         getExamenesRecomendaciones(item = null, index = null) {
             if (index != null) {
-                this.cargos2[index].cargo = item.id
+                this.cargos2[index].cargo_id = item.id
                 this.consulta_lista_cargos[index] = item.nombre
             }
             this.getListaRecomendaciones(index)
@@ -1905,7 +1901,6 @@ export default {
         },
         getListaExamenes(index = null) {
             if (index != null) {
-                // this.cargos2[index].cargo = item.id
                 let self = this;
                 let config = this.configHeader();
                 axios
@@ -1919,7 +1914,6 @@ export default {
         },
         getListaRecomendaciones(index = null) {
             if (index != null) {
-                // this.cargos2[index].cargo = item.id
                 let self = this;
                 let config = this.configHeader();
                 axios
@@ -2133,7 +2127,7 @@ export default {
                 this.cargos.push({ cargo: '', requisitos: [], examenes: [], riesgo: '' })
             }
             if (this.cargos2.length <= 9) {
-                this.cargos2.push({ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' })
+                this.cargos2.push({ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' })
             }
         },
         agregarAccionista() {
@@ -2155,7 +2149,7 @@ export default {
                 this.consulta_lista_cargos.splice(index, 1)
                 this.consulta_subcategoria_cargos.splice(index, 1)
                 this.array_lista_examenes.splice(index, 1)
-
+             
             }
             array.splice(index, 1)
         },
@@ -2772,13 +2766,13 @@ export default {
         },
         limpiarformulario() {
             this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }]
-            this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
             for (let i = 0; i < this.cargos2.length; i++) {
                 this.tipo_cargo[i] = ''
                 this.categoria_cargo_id = ''
                 this.consulta_subcategoria_cargos[i] = ''
                 this.consulta_lista_cargos[i] = ''
-                this.cargos2[i].cargo = ''
+                this.cargos2[i].cargo_id = ''
                 this.consulta_textohtml[i] = ''
                 this.consulta_riesgo_laboral[i] = ''
                 this.array_lista_examenes[i] = []
@@ -3085,14 +3079,14 @@ export default {
             }
 
             if (this.tipo_cliente != 2 && this.cargos[0].cargo == '') {
-                if (this.cargos2[0].cargo == '' || this.cargos2[0].riesgo_laboral_id == '') {
+                if (this.cargos2[0].cargo_id == '' || this.cargos2[0].riesgo_laboral_id == '') {
                     this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
                     return true
                 }
 
                 var contador = 0
                 this.cargos2.forEach(function (item) {
-                    if (item.cargo == '' || item.riesgo_laboral_id == '') {
+                    if (item.cargo_id == '' || item.riesgo_laboral_id == '') {
                         contador++
                     }
 
@@ -3334,12 +3328,6 @@ export default {
                 this.deshabilitar_boton = false;
             }, 3000);
 
-            this.cargos2.forEach(function (item, index) {
-                if (self.cargos_id_[index] != undefined) {
-                    self.cargos2[index].cargo = self.cargos_id_[index]
-                }
-            })
-
             if (this.valida_campos()) {
                 return
             }
@@ -3477,7 +3465,7 @@ export default {
             this.cliente_existe = false
             if (item.numero_identificacion != '') {
                 this.getCliente(item.numero_identificacion, 1)
-            } else if (item.nit != '') {
+            }if (item.nit != '') {
                 this.getCliente(item.nit, 2)
             }
             if (item.tipo_cliente_id != '') {
@@ -3618,18 +3606,14 @@ export default {
                     this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
                     this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
                     this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
-                    // this.consulta_lista_cargos[i] = item.cargos2[i].cargo
                     this.consulta_lista_cargos[i] = item.cargos2[i].cargo
-                    // this.consulta_lista_cargos[i] = item.cargos2[i].cargo
-                    // this.cargos2[i].cargo = parseInt(item.cargos2[i].cargo_id)
-                    this.cargos_id_[i] = parseInt(item.cargos2[i].cargo_id)
                     this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
                     this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
                     this.array_lista_examenes[i] = item.cargos2[i].examenes
                     this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
                 }
             } else {
-                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+                this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
             }
 
             this.representantes_legales = item.representantes_legales
@@ -3798,8 +3782,8 @@ export default {
                         self.file.push(archivo);
                     })
                     .catch(error => {
-                        // Ocurrió un error durante la conversión
-                        console.error('Error al convertir el archivo:', error);
+                        this.showAlert('Error al convertir el archivo:', 'error')
+                        console.log(error)
                     });
             })
 
@@ -3822,14 +3806,14 @@ export default {
                     this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
                     this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
                     this.consulta_lista_cargos[i] = item.cargos2[i].cargo
-                    this.cargos2[i].cargo = item.cargos2[i].id_cargo
+                    this.cargos2[i].cargo_id = item.cargos2[i].id_cargo
                     this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
                     this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
                     this.array_lista_examenes[i] = item.cargos2[i].examenes
                     this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
                 }
             } else {
-                this.cargos2 = [{ cargo: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+                this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
             }
             item.documentos_adjuntos.forEach(function (item) {
                 self.id_archivo.push(item.tipo_documento_id)
