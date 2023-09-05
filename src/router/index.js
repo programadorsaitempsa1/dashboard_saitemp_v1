@@ -41,6 +41,8 @@ import FormularioRegistro from "../components/FormularioRegistro.vue";
 import NovedadesNomina from "../components/NovedadesNomina.vue";
 import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue";
 import ConsultaNN from "../components/ConsultaNN.vue";
+import GestionCliente from "../components/GestionCliente.vue";
+import FormularioSupervision from "../components/FormularioSupervision.vue";
 
 
 Vue.use(VueRouter);
@@ -245,6 +247,16 @@ const routes = [
         path: "correo-novedades-nomina",
         name: "correo-novedades-nomina",
         component: ConsultaNN,
+      },
+      {
+        path: "estados-cliente",
+        name: "estados-cliente",
+        component: GestionCliente,
+      },
+      {
+        path: "formulario-supervision",
+        name: "formulario-supervision",
+        component: FormularioSupervision,
       },
     ],
   },

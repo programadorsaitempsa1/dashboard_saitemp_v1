@@ -1682,8 +1682,8 @@ export default {
         },
         setFormularioGuardado(item = null, numero) {
             var self = this
-            this.limpiarformulario()
             if (item != null) {
+                this.limpiarformulario()
                 this.formularios_guardados.forEach(function (item2) {
                     if (item2.razon_social == item.nombre) {
                         self.llenarFormularioGuardado(item2)
@@ -2768,15 +2768,24 @@ export default {
             this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }]
             this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
             for (let i = 0; i < this.cargos2.length; i++) {
-                this.tipo_cargo[i] = ''
+                // this.tipo_cargo[i] = ''
+                // this.categoria_cargo_id = ''
+                // this.consulta_subcategoria_cargos[i] = ''
+                // this.consulta_lista_cargos[i] = ''
+                // this.cargos2[i].cargo_id = ''
+                // this.consulta_textohtml[i] = ''
+                // this.consulta_riesgo_laboral[i] = ''
+                // this.array_lista_examenes[i] = []
+                // this.array_lista_recomendaciones[i] = []
+                this.tipo_cargo.splice(i,1)
                 this.categoria_cargo_id = ''
-                this.consulta_subcategoria_cargos[i] = ''
-                this.consulta_lista_cargos[i] = ''
+                this.consulta_subcategoria_cargos.splice(i,1)
+                this.consulta_lista_cargos.splice(i,1)
                 this.cargos2[i].cargo_id = ''
-                this.consulta_textohtml[i] = ''
-                this.consulta_riesgo_laboral[i] = ''
-                this.array_lista_examenes[i] = []
-                this.array_lista_recomendaciones[i] = []
+                this.consulta_textohtml.splice(i,1)
+                this.consulta_riesgo_laboral.splice(i,1)
+                this.array_lista_examenes.splice(i,1)
+                this.array_lista_recomendaciones.splice(i,1)
             }
             this.tipo_cliente = ''
             this.cliente = false
