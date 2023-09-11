@@ -43,6 +43,7 @@ import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue
 import ConsultaNN from "../components/ConsultaNN.vue";
 import GestionCliente from "../components/GestionCliente.vue";
 import FormularioSupervision from "../components/FormularioSupervision.vue";
+import MapaVue from "../components/MapaVue.vue";
 
 
 Vue.use(VueRouter);
@@ -254,9 +255,14 @@ const routes = [
         component: GestionCliente,
       },
       {
-        path: "formulario-supervision",
+        path: "formulario-supervision/:id?",
         name: "formulario-supervision",
         component: FormularioSupervision,
+      },
+      {
+        path: "mapa",
+        name: "mapa",
+        component: MapaVue,
       },
     ],
   },
