@@ -101,7 +101,7 @@ export default {
                 { titulo1: 'Departamento:', respuesta1: ' Antioquia', titulo2: 'Ciudad:', respuesta2: ' Medellín' },
                 { titulo1: 'Dirección:', respuesta1: ' Calle 51 N° 49 – 11 Centro', titulo2: 'Oficina:', respuesta2: ' Edificio Fabricato Oficina 1005' },
                 { titulo1: 'Nombre de contacto:', respuesta1: ' ANDRES CORREA PINEDA', titulo2: 'Celular:', respuesta2: ' 313 302 49 26' },
-                { titulo1: 'E-mail:', respuesta1: '' },
+                { titulo1: 'E-mail:', respuesta1: ' procesoscomerciales@saitempsa.com' },
             ]
             this.llenarCampos(this.form2)
         },
@@ -148,7 +148,7 @@ export default {
         seccion2() { //titulos intermedios del documento
             this.titulos = [
                 { nombre: 'EMPRESA DE SERVICIOS TEMPORALES (EST):', posicion: 7 },
-                { nombre: 'EMPRESA USUARIA (EU) Ref:'+this.id, posicion: 1 },
+                { nombre: 'EMPRESA USUARIA (EU) Radicado:'+this.id, posicion: 1 },
             ]
             this.llenarTitulos(this.titulos)
         },

@@ -10,24 +10,24 @@
             <p v-if="geolocalizacion">Latitud: {{ geolocalizacion.latitud }}, Longitud: {{ geolocalizacion.longitud }}</p>
             <p v-if="error">Error: {{ errorMensaje }}</p>
         </div> -->
-            <form class="was-validated">
+            <form class="was-validated" @submit.prevent="save()">
                 <div id="seccion">
                     <div class="row">
-                        <div class="col-3">
+                        <div class="col-sm-12 col-md-3">
                             <label class="form-label">Fecha y hora:</label>
                             <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInput1"
-                                maxlength="20" aria-describedby="emailHelp" v-model="fecha" disabled />
+                                aria-describedby="emailHelp" v-model="fecha" disabled />
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col mb-3">
+                        <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Supervisor encargado:</label>
-                            <input type="text" class="form-control" autocomplete="off" id="exampleInput2" maxlength="20"
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput2"
                                 aria-describedby="emailHelp" v-model="supervisor" disabled />
                         </div>
-                        <div class="col mb-3">
+                        <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Persona contactada: *</label>
-                            <input type="text" class="form-control" autocomplete="off" id="exampleInput3" maxlength="20"
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput3"
                                 aria-describedby="emailHelp" v-model="contacto" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
@@ -35,14 +35,14 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6 mb-3">
+                        <div class="col-sm-12 col-md-6 mb-3">
                             <SearchTable nombreCampo="Cliente *" eventoCampo="getCliente" @getCliente="getCliente"
                                 endpoint="clientesalinstante" :consulta="consulta_cliente" :nombreItem="campos_cliente"
                                 :datos="clientes" placeholder="Seleccione una opción" />
                         </div>
-                        <div class="col mb-3">
+                        <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Dirección: *</label>
-                            <input type="text" class="form-control" autocomplete="off" id="exampleInput4" maxlength="20"
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput4"
                                 aria-describedby="emailHelp" v-model="direccion" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
@@ -50,17 +50,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <!-- <div class="col-sm-12 col-md-4">
                             <SearchList nombreCampo="Pais: *" @getPaises="getPaises" eventoCampo="getPaises"
                                 nombreItem="nombre" :consulta="consulta_pais" :registros="paises" :ordenCampo="1"
                                 @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
-                        </div>
-                        <div class="col">
+                        </div> -->
+                        <div class="col-sm-12 col-md-6">
                             <SearchList nombreCampo="Departamento: *" nombreItem="nombre" eventoCampo="getDepartamentos"
                                 :consulta="consulta_departamento" :registros="departamentos" :ordenCampo="1"
                                 @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
                         </div>
-                        <div class="col">
+                        <div class="col-sm-12 col-md-6">
                             <SearchList nombreCampo="Ciudad: *" nombreItem="nombre" :registros="municipios"
                                 :consulta="consulta_municipio" @setMunicipios="setMunicipios" eventoCampo="setMunicipios"
                                 :ordenCampo="1" placeholder="Seleccione una opción" />
@@ -70,10 +70,10 @@
                         <label class="form-check-label" for="flexSwitchCheckChecked">Conceptos</label>
                         <div class="row" style=" display: flex; align-items: center;" id="label"
                             v-for="item, index in conceptos" :key="index">
-                            <div class="col-4">
+                            <div class="col-sm-4 col-md-4">
                                 <label class="form-check-label" for="flexSwitchCheckChecked">{{ item.nombre }}</label>
                             </div>
-                            <div class="col-8" style="display: flex; justify-content: space-between;">
+                            <div class="col-sm-8 col-md-8 radios">
                                 <div class="form-check m-2" v-for="item2, index2 in estados_concepto" :key="index2">
                                     <input class="form-check-input" :ref="'checkbox' + index + index2" type="radio"
                                         @click="validaRadio(item, item2, index)" :name="'radio' + index"
@@ -82,32 +82,31 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" v-for="item, index in observaciones" :key="item.id">
-                            <!-- <div>
-                                <div class="imagen-observacion"><img :src="this.URL_API + item.imagen_observacion" alt=""></div>
-                                <textarea name="" id="" cols="30" rows="10" v-model="item.observacion"></textarea>
-                            </div> -->
-                            <div class="mb-3"  v-if="$route.params.id == undefined">
+                        <div class="row obs" v-for="item, index in observaciones" :key="item.id">
+                            <div class="mb-3" v-if="$route.params.id == undefined">
                                 <label for="formFileMultiple" class="form-label">Adjuntar imágenes: * </label>
                                 <div class="input-group mb-3">
                                     <input class="form-control" type="file" accept="image/*"
-                                        @change="cargarArchivo($event, index)" id="formFileMultiple" multiple>
+                                        @change="cargarArchivo($event, index)" id="formFileMultiple" multiple required>
                                     <span style="cursor: pointer" class="input-group-text" @click="quitarAdjuntos(index)"
                                         id="basic-addon1">Quitar imágenes</span>
                                 </div>
                             </div>
                             <div class="botones" v-for="item2, index2 in observaciones[index].file" :key="index2">
-                                <div  v-if="$route.params.id != undefined" class="imagen-observacion"><img :src="item2" alt=""> <div v-html="item.body"></div></div>
+                                <div v-if="$route.params.id != undefined" class="imagen-observacion"><img :src="item2"
+                                        alt="">
+                                    <div v-html="item.body"></div>
+                                </div>
                                 <div v-else class="btn-group" role="group" aria-label="Basic example">
                                     <button type="button" class="btn adjunto"><i class="bi bi-file-earmark-check"></i>
-                                        {{ item2.name
+                                        {{ item2.name | truncate(10, '...')
                                         }} {{ formatearPesoArchivo(item2.size) }}</button>
                                     <button type="button" @click="item['file'].splice(index2, 1)" class="btn btn-success"><i
                                             class="bi bi-x"></i></button>
                                 </div>
                             </div>
-                            <div class="row" v-if="$route.params.id == undefined">
-                                <div class="mb-3">
+                            <div class="row editor" v-if="$route.params.id == undefined">
+                                <div class="mb-3 ">
                                     <label for="exampleInputEmail1" class="form-label">Observaciones: </label>
                                     <br>
                                     <br>
@@ -120,65 +119,60 @@
                                     @click="deleteDynamic(observaciones, index, 'identificador')"></i>
                             </div>
                         </div>
-                        <span v-if="$route.params.id == undefined" id="clasificador" @click="agregarObservacion()" style="cursor: pointer"><i
-                                class="bi bi-plus-circle-fill"></i>
+                        <span v-if="$route.params.id == undefined" id="clasificador" @click="agregarObservacion()"
+                            style="cursor: pointer"><i class="bi bi-plus-circle-fill"></i>
                             Agregar observacion
                         </span>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Firma *:</label>
+                        <div v-if="$route.params.id != undefined" class="imagen_firma"><img :src="imagen_firma_supervisor"
+                                alt=""></div>
+                        <div v-else class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-pen" style="cursor:pointer"
+                                    @click="signature('firma_supervisor')"></i></span>
+                            <input type="password" disabled class="form-control" placeholder="" aria-label="firma"
+                                v-model="firma_supervisor" aria-describedby="basic-addon1">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-x-circle"
+                                    style="cursor:pointer" @click="firma_supervisor = ''"></i></span>
+                        </div>
+                        <FirmaDigital class="tochpad" v-if="show_pad1" @firma="firma" :signed="signed" />
+                        <div>
+                            <label class="form-label">Nombre y firma supervisor encargado:</label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput5"
+                                aria-describedby="emailHelp" v-model="supervisor" disabled />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Firma *:</label>
+                        <div v-if="$route.params.id != undefined" class="imagen_firma"><img
+                                :src="imagen_firma_persona_contactada" alt=""></div>
+                        <div v-else class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-pen" style="cursor:pointer"
+                                    @click="signature('firma_persona_contactada')"></i></span>
+                            <input type="password" disabled class="form-control" placeholder="" aria-label="firma"
+                                v-model="firma_persona_contactada" aria-describedby="basic-addon1">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-x-circle"
+                                    style="cursor:pointer" @click="firma_persona_contactada = ''"></i></span>
+                        </div>
+                        <FirmaDigital class="tochpad" v-if="show_pad2" @firma="firma" :signed="signed" />
+                        <div>
+                            <label class="form-label">Nombre y firma persona contactada:</label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput6"
+                                aria-describedby="emailHelp" v-model="contacto" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row" v-if="$route.params.id == undefined">
+                    <div class="col-md-4 col-sm-6">
+                        <button type="submit" class="btn btn-success">
+                            Guardar formulario
+                        </button>
+                    </div>
+                </div>
             </form>
-            <div class="row">
-                <div class="col">
-                    <label for="exampleFormControlInput1" class="form-label">Firma:</label>
-                    <div v-if="$route.params.id != undefined" class="imagen_firma"><img :src="imagen_firma_supervisor"
-                            alt=""></div>
-                    <div v-else class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-pen" style="cursor:pointer"
-                                @click="signature('firma_supervisor')"></i></span>
-                        <input type="password" disabled class="form-control" placeholder="" aria-label="firma"
-                            v-model="firma_supervisor" aria-describedby="basic-addon1">
-                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-x-circle" style="cursor:pointer"
-                                @click="firma_supervisor = ''"></i></span>
-                    </div>
-                    <FirmaDigital v-if="show_pad1" @firma="firma" :signed="signed" />
-                </div>
-                <div class="col">
-                    <label for="exampleFormControlInput1" class="form-label">Firma:</label>
-                    <div v-if="$route.params.id != undefined" class="imagen_firma"><img
-                            :src="imagen_firma_persona_contactada" alt=""></div>
-                    <div v-else class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-pen" style="cursor:pointer"
-                                @click="signature('firma_persona_contactada')"></i></span>
-                        <input type="password" disabled class="form-control" placeholder="" aria-label="firma"
-                            v-model="firma_persona_contactada" aria-describedby="basic-addon1">
-                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-x-circle" style="cursor:pointer"
-                                @click="firma_persona_contactada = ''"></i></span>
-                    </div>
-                    <FirmaDigital v-if="show_pad2" @firma="firma" :signed="signed" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col mb-3">
-                    <label class="form-label">Nombre y firma supervisor encargado:</label>
-                    <input type="text" class="form-control" autocomplete="off" id="exampleInput5" maxlength="20"
-                        aria-describedby="emailHelp" v-model="supervisor" disabled />
-                </div>
-                <div class="col mb-3">
-                    <label class="form-label">Nombre y firma persona contactada: *</label>
-                    <input type="text" class="form-control" autocomplete="off" id="exampleInput6" maxlength="20"
-                        aria-describedby="emailHelp" v-model="contacto" disabled />
-                    <div class="invalid-feedback">
-                        {{ mensaje_error }}
-                    </div>
-                </div>
-            </div>
-            <div class="row" v-if="$route.params.id == undefined">
-                <div class="col-4">
-                    <button type="submit" class="btn btn-success" @click="save()">
-                        Guardar formulario
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -250,12 +244,22 @@ export default {
     mounted() {
 
     },
+    filters: {
+        truncate(text, length, suffix) {
+            if (text.length > length) {
+                return text.substring(0, length) + suffix;
+            } else {
+                return text;
+            }
+        }
+    },
     created() {
         this.getCliente()
         this.setSupervisor()
         this.obtenerFechaHoraActual()
         this.getConceptos()
         this.getEstadosConcepto()
+        this.getDepartamentos(43)
 
         if (this.$route.params.id != undefined) {
             this.loading = true
@@ -280,15 +284,12 @@ export default {
             formulario.append('ciudad', this.municipio)
             formulario.append('firma_supervisor', this.archivo_firma_supervisor)
             formulario.append('firma_persona_contactada', this.archivo_firma_persona_contactada)
-            // console.log(formulario)
             this.concepto_estado_formulario.forEach(function (item) {
                 formulario.append('concepto_estado[]', item.concepto + '*' + item.estado)
             })
             this.observaciones.forEach(function (item, index) {
-                // console.log(item.body)
                 formulario.append('imagen[' + index + '][0]', item.body)
                 item.file.forEach(function (item2, index2) {
-                    // console.log(item2)
                     formulario.append('imagen[' + index + '][' + (index2 + 1) + ']', item2)
                 })
             })
@@ -297,9 +298,7 @@ export default {
             axios
                 .post(self.URL_API + "api/v1/formulariosupervision", formulario, config)
                 .then(function (result) {
-                    // self.clientes = result.data
-                    console.log(result.data)
-
+                    self.showAlert(result.data.message, result.data.status);
                 });
 
         },
@@ -405,12 +404,12 @@ export default {
                     });
             }
         },
-        getDepartamentos(item) {
+        getDepartamentos(id) {
             let self = this;
             // this.setLabelPais(item, ordenCampo, index)
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/departamentos/" + item.id, config)
+                .get(self.URL_API + "api/v1/departamentos/" + id, config)
                 .then(function (result) {
                     self.departamentos = result.data
                 });
@@ -441,9 +440,6 @@ export default {
                         };
                         this.errorMensaje = '';
                     },
-                    // error => {
-                    //     this.errorMensaje = 'No se pudo obtener la geolocalización.';
-                    // }
                 );
             } else {
                 this.errorMensaje = 'Geolocalización no compatible con este navegador.';
@@ -501,7 +497,6 @@ export default {
         },
         llenarFormulario(item) {
             var self = this
-            // console.log(item)
             this.fecha = item.fecha_hora
             this.Supervisor = item.supervisor
             this.contacto = item.persona_contactada
@@ -514,25 +509,9 @@ export default {
             this.consulta_departamento = item.departamento
             this.consulta_municipio = item.municipio
 
-            // this.observaciones = item.observacion
-
-            // this.$refs.checkbox.checked = !this.isChecked;
-            // this.$refs.checkbox00[0].checked = true
-            // this.$refs.checkbox202[0].checked = true
-            // item.conceptos.forEach(function (item) {
-            //     console.log(item)
-            // })
-            // for (let i = 0; i < this.conceptos.length; i++) {
-            //     for (let j = 0; j < this.estados_concepto.length; j++) {
-            //         console.log(this.$refs.checkbox00)
-
-            //     }
-            // }
             for (let i = 0; i < this.conceptos.length; i++) {
                 for (let j = 0; j < this.estados_concepto.length; j++) {
                     const refName = `checkbox${i.toString()}${j.toString()}`;
-                    // console.log(item.conceptos[i].estado_concepto_id)
-                    // console.log(this.$refs[refName]);
                     if (item.conceptos[i].estado_concepto_id - 1 == j) {
                         this.$refs[refName][0].checked = true
                     }
@@ -549,6 +528,15 @@ export default {
                 }
                 self.observaciones[posicion_observacion].file.push(self.URL_API + item.imagen_observacion)
 
+            })
+        },
+        showAlert(mensaje, icono) {
+            this.$swal({
+                position: 'top',
+                icon: icono,
+                title: mensaje,
+                showConfirmButton: false,
+                timer: 1500,
             })
         },
         configHeader() {
@@ -577,6 +565,10 @@ export default {
     width: 100%;
 }
 
+.btn-group {
+    overflow: auto;
+}
+
 .bi bi-x {
     margin: 20px 0px 20px 0px;
     max-width: 400px;
@@ -588,6 +580,7 @@ export default {
     width: 99%;
 
 }
+
 
 .botones {
     padding: 5px;
@@ -620,7 +613,8 @@ label {
 .imagen_firma img {
     width: 40%;
 }
-.imagen-observacion{
+
+.imagen-observacion {
     /* width: 30px; */
     border: solid #D5DBDB 0.5px;
     border-radius: 5%;
@@ -628,9 +622,48 @@ label {
     margin: auto;
     width: 70%;
 }
-.imagen-observacion img{
+
+.imagen-observacion img {
     width: 100%;
     border-radius: 5%;
+}
+
+.tochpad {
+    width: 100%;
+}
+
+.obs{
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+
+.editor{
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+
+@media screen and (min-width: 1000px) {
+    .radios {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .container {
+        width: 100%;
+    }
+
+}
+
+@media screen and (max-width: 1000px) {
+    #seccion {
+        padding: 0px;
+        border: none;
+    }
+    .card {
+        margin: 0px;
+    }
 }
 
 

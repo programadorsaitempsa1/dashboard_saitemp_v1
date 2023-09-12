@@ -44,6 +44,7 @@ import ConsultaNN from "../components/ConsultaNN.vue";
 import GestionCliente from "../components/GestionCliente.vue";
 import FormularioSupervision from "../components/FormularioSupervision.vue";
 import MapaVue from "../components/MapaVue.vue";
+import ClienteSupervision from "../components/ClienteSupervision.vue";
 
 
 Vue.use(VueRouter);
@@ -263,6 +264,11 @@ const routes = [
         path: "mapa",
         name: "mapa",
         component: MapaVue,
+      },
+      {
+        path: "cliente-supervision",
+        name: "cliente-supervision",
+        component: ClienteSupervision,
       },
     ],
   },

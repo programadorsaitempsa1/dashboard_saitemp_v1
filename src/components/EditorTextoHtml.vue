@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div>
         <vue-editor v-model="content" :editor-toolbar="showToolbar ? toolbarOptions : []"></vue-editor>
     </div>
 </template>
