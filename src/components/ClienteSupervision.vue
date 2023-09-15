@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <h2>Clientes supervisión</h2>
+      <h2>Registro de supervisión</h2>
       <Tabla :datos="datos" :tabla="tabla"  :userlogued="userlogued" :endpoint="endpoint" :listas="listas" :endpointexport="endpointexport" />
   </div>
 </template>
@@ -30,6 +30,7 @@ export default {
         { nombre: "Dirección", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Ciudad", orden: "DESC", tipo: "texto", calculado: 'false' }, 
         { nombre: "Departamento", orden: "DESC", tipo: "texto", calculado: 'true' },
+        { nombre: "Descripción", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Supervisor", orden: "DESC", tipo: "texto", calculado: 'false' },
       ],
       ejecutivos_comerciales:[],

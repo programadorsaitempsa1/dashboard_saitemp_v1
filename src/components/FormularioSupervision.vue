@@ -13,10 +13,15 @@
             <form class="was-validated" @submit.prevent="save()">
                 <div id="seccion">
                     <div class="row">
-                        <div class="col-sm-12 col-md-3">
+                        <div class="col-sm-12 col-md-6">
                             <label class="form-label">Fecha y hora:</label>
                             <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInput1"
                                 aria-describedby="emailHelp" v-model="fecha" disabled />
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <label class="form-label">Asunto:</label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInput1"
+                                aria-describedby="emailHelp" v-model="descripcion" required/>
                         </div>
                     </div>
                     <div class="row">
@@ -231,6 +236,7 @@ export default {
             loading: false,
             imagen_firma_supervisor: '',
             imagen_firma_persona_contactada: '',
+            descripcion:'',
 
 
         }
@@ -282,6 +288,7 @@ export default {
             formulario.append('cliente', this.codigo_cliente)
             formulario.append('direccion', this.direccion)
             formulario.append('ciudad', this.municipio)
+            formulario.append('descripcion', this.descripcion)
             formulario.append('firma_supervisor', this.archivo_firma_supervisor)
             formulario.append('firma_persona_contactada', this.archivo_firma_persona_contactada)
             this.concepto_estado_formulario.forEach(function (item) {
@@ -500,6 +507,7 @@ export default {
             this.fecha = item.fecha_hora
             this.Supervisor = item.supervisor
             this.contacto = item.persona_contactada
+            this.descripcion = item.descripcion
             this.direccion = item.direccion
             this.consulta_cliente = item.nombre_cliente
             this.codigo_cliente = item.cod_cli
