@@ -93,10 +93,12 @@
 <script>
 /* eslint-disable */
 import axios from "axios";
+import {Token} from '../Mixins/Token'
 export default {
   components: {
     name: 'Navbar',
   },
+  mixins:[Token],
   data() {
     return {
       username: "",
@@ -243,14 +245,6 @@ export default {
     //         self.getLogoPagina()
     //       });
     //   },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
-    },
     asideExpand() {
       this.expand = !this.expand;
     },

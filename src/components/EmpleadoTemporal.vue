@@ -699,12 +699,14 @@
 import axios from 'axios';
 import SearchList from './SearchList.vue';
 import SearchTable from './SearchTable.vue';
+import {Token} from '../Mixins/Token'
 
 export default {
     components: {
         SearchList,
         SearchTable
     },
+    mixins:[Token],
     props: {
         menu: []
     },
@@ -1383,23 +1385,6 @@ export default {
                     this.showAlert('Accion cancelada', 'info')
                 }
             })
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

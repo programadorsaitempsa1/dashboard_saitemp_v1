@@ -1,8 +1,6 @@
 <template>
     <div class="container" id="contenedor-formulario">
-        <div v-if="loading" class="loading">
-            <div class="loader" id="loader">Loading...</div>
-        </div>
+        <Loading :loading="loading" />
         <div class="row">
             <div class="col-2">
                 <img style="width: 80%;" src="@/assets/logo1.png" alt="">
@@ -1325,6 +1323,10 @@ import axios from 'axios';
 import SearchList from './SearchList.vue';
 import SearchTable from './SearchTable.vue';
 import ListaMultiple from './ListaMultiple.vue';
+import Loading from './Loading.vue';
+import { Scroll } from '../Mixins/Scroll.js';
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import EditorTextoHtml from './EditorTextoHtml.vue';
@@ -1335,9 +1337,10 @@ export default {
         SearchList,
         SearchTable,
         ListaMultiple,
-        EditorTextoHtml
+        EditorTextoHtml,
+        Loading
     },
-    mixins: [],
+    mixins: [Scroll,Alerts,Token],
     props: {
         userlogued: {
             default: '',
@@ -1592,14 +1595,10 @@ export default {
         this.getExamenes()
         this.getRequsitos()
         this.fileInputsCountCopia = [...this.fileInputsCount]
+        this.scrollTop()
         if (this.$route.params.id != undefined && this.$route.path != '/formularioregistro') {
             this.loading = true
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-            });
-            document.body.style.overflow = 'hidden';
+           this.scrollTop(true)
             this.consultaFormulario(this.$route.params.id)
         }
         this.getRiesgosLaborales()
@@ -3884,23 +3883,7 @@ export default {
             this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
 
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: icono == 'error' ? 3000 : 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
+       
     }
 };
 </script>
@@ -4028,106 +4011,6 @@ ul li {
     /* outline: none; */
     padding: 5px;
 }
-
-/* Loading */
-.loading {
-    background-color: rgba(252, 252, 252, 0.63);
-    position: fixed;
-    width: 100%;
-    height: 1000px;
-    /* top: 0%; */
-    left: 0%;
-    z-index: 200;
-}
-
-.loader {
-    font-size: 15px;
-    margin: 20% auto;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    position: relative;
-    text-indent: -9999em;
-    -webkit-animation: load4 1.3s infinite linear;
-    animation: load4 1.3s infinite linear;
-    z-index: 500;
-}
-
-
-@-webkit-keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-}
-
-@keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-
-}
-
-/* Fin loading */
 
 .lista-multiple {
     border: 0.7px rgba(207, 205, 205, 0.815) solid;

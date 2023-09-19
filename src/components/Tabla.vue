@@ -1,8 +1,6 @@
 <template>
     <div id="container2">
-        <div v-if="loading" class="loading">
-            <div class="loader" id="loader">Loading...</div>
-        </div>
+        <Loading :loading="loading" />
         <div class="row" id="container" style="float: left; clear: both; color: #d06519">
             <div class="col-xs-12 col-md-12">
                 <h5 v-if="!sin_registros">
@@ -243,11 +241,16 @@
 import axios from 'axios'
 import Modal from './Modal.vue'
 import ConsultaContrato from './ConsultaContrato.vue'
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
+import Loading from './Loading.vue'
 export default {
     components:{
         Modal,
-        ConsultaContrato
+        ConsultaContrato,
+        Loading
     },
+    mixins: [Token, Alerts],
     props: {
         tabla: [],
         datos: [],
@@ -675,23 +678,6 @@ export default {
                 this.$emit('check', this.check)
             }
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: "top",
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
         VerRegistro(item){
             if(!isNaN(this.search)){
                 this.$router.push({ name: 'empleado', params: { id: this.search.trim() }})
@@ -817,102 +803,4 @@ a{
     color: white;
     text-decoration: none;
 }
-/* Loading */
-.loading {
-    background-color: rgba(252, 252, 252, 0.63);
-    position: fixed;
-    width: 100%;
-    height: 1000px;
-    /* top: 0%; */
-    left: 0%;
-    top:0%;
-    z-index: 200;
-}
-
-.loader {
-    font-size: 15px;
-    margin: 20% auto;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    position: relative;
-    text-indent: -9999em;
-    -webkit-animation: load4 1.3s infinite linear;
-    animation: load4 1.3s infinite linear;
-    z-index: 500;
-}
-
-@-webkit-keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-}
-
-@keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-
-}
-/* Fin loading */
 </style>

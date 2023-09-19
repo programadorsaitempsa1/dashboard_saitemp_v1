@@ -7,14 +7,15 @@
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue';
+import { Token } from '../Mixins/Token.js';
 export default {
     name: '',
     components: {
         Tabla,
     },
-    mixins: [],
+    mixins: [Token],
     props: {
-
+        userlogued:{}
     },
     data() {
         return {
@@ -52,17 +53,8 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/consultacorreo/"+this.cantidad, config)
                 .then(function (result) {
-                    console.log(result)
                     self.datos = result
                 });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };

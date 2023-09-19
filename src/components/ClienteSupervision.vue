@@ -1,20 +1,22 @@
 <template>
-    <div class="container">
-      <h2>Registro de supervisión</h2>
-      <Tabla :datos="datos" :tabla="tabla"  :userlogued="userlogued" :endpoint="endpoint" :listas="listas" :endpointexport="endpointexport" />
+  <div class="container">
+    <h2>Registro de supervisión</h2>
+    <Tabla :datos="datos" :tabla="tabla" :userlogued="userlogued" :endpoint="endpoint" :listas="listas"
+      :endpointexport="endpointexport" />
   </div>
 </template>
 <script>
 import Tabla from './Tabla.vue'
 import axios from 'axios'
+import { Token } from '../Mixins/Token.js';
 export default {
 
   components: {
     Tabla
   },
-  mixins: [],
+  mixins: [Token],
   props: {
-    userlogued:{}
+    userlogued: {}
   },
   data() {
     return {
@@ -28,13 +30,13 @@ export default {
         { nombre: "Nombre / Razón social", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Nit", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Dirección", orden: "DESC", tipo: "texto", calculado: 'false' },
-        { nombre: "Ciudad", orden: "DESC", tipo: "texto", calculado: 'false' }, 
+        { nombre: "Ciudad", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Departamento", orden: "DESC", tipo: "texto", calculado: 'true' },
         { nombre: "Descripción", orden: "DESC", tipo: "texto", calculado: 'false' },
         { nombre: "Supervisor", orden: "DESC", tipo: "texto", calculado: 'false' },
       ],
-      ejecutivos_comerciales:[],
-      listas:[],
+      ejecutivos_comerciales: [],
+      listas: [],
     }
   },
   computed: {
@@ -76,23 +78,15 @@ export default {
         .get(self.URL_API + "api/v1/ejecutivocomerciallista", config)
         .then(function (result) {
           self.ejecutivos_comerciales = result.data
-          self.listas.splice(4,0,result.data)
+          self.listas.splice(4, 0, result.data)
         });
-    },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
     },
   }
 };
 </script>
 <style >
 h2 {
-    font-family: "Montserrat", sans-serif;
-    margin: 20px 0px 20px 0px;
+  font-family: "Montserrat", sans-serif;
+  margin: 20px 0px 20px 0px;
 }
 </style>

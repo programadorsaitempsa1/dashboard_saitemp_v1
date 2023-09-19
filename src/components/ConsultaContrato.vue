@@ -9,12 +9,13 @@
 import axios from 'axios'
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import {Token} from '../Mixins/Token'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
     name: '',
     components: {
     },
-    mixins: [],
+    mixins: [Token],
     props: {
         item: {},
     },
@@ -40,14 +41,6 @@ export default {
 
     },
     methods: {
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
         consulta() {
             let self = this
             this.form1 = [

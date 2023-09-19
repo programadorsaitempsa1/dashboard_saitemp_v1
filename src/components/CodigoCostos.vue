@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <div class="container">
             <h2>Categoría item de costo</h2>
@@ -189,4 +189,4 @@ span {
 .col {
     margin-bottom: 20px;
 }
-</style>
+</style> -->

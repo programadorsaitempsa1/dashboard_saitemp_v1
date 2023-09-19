@@ -25,10 +25,12 @@
 </template>
 <script>
 import axios from 'axios'
+import { Alerts } from '../Mixins/Alerts.js';
 export default {
     props: {
         endpoint: {}
     },
+    mixins: [Alerts],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -73,15 +75,6 @@ export default {
         deleteFile() {
             document.getElementById("seleccionArchivos").value = "";
             self.file = null;
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: "top",
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: icono == "error" ? 3500 : 1500,
-            });
         },
         showAlert2(mensaje) {
             this.$swal({

@@ -28,12 +28,13 @@
 import axios from 'axios'
 import Tabla from './Tabla.vue'
 import SearchList from './SearchList.vue';
+import {Token} from '../Mixins/Token'
 export default {
     components: {
         Tabla,
         SearchList,
     },
-    mixins: [],
+    mixins: [Token],
     props: {
 
     },
@@ -116,14 +117,6 @@ export default {
                 this.subcategory_reports_cod = item.cod_cat.trim();
                 this.getReports();
             }
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <div class="container">
             <h2>Administrar subregiones</h2>
@@ -273,14 +273,6 @@ export default {
                 timer: 1500,
             })
         },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
     },
 };
 </script>
@@ -356,4 +348,4 @@ span{
     height: 37px;
 }
 /* Fin select con filtro personalizado */
-</style>
+</style> -->

@@ -21,11 +21,12 @@
 <script>
 import axios from 'axios'
 import GraficoCircular from "./GraficoCircular.vue";
+import {Token} from '../Mixins/Token'
 export default {
     components: {
         GraficoCircular
     },
-    mixins: [],
+    mixins: [Token],
     props: {
 
     },
@@ -117,14 +118,6 @@ export default {
                 .then(function (result) {
                     self.items.push({ percentaje: result.data, label: 'Retiros mes anterior' })
                 });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };

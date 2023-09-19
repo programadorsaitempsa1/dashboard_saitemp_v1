@@ -1,8 +1,6 @@
 <template>
     <div class="container">
-        <div v-if="loading" class="loading">
-            <div class="loader" id="loader">Loading...</div>
-        </div>
+        <Loading :loading="loading" />
         <h2>Formulario de supervisión</h2>
         <div class="card col-xs-12 col-md-6">
             <!-- <div>
@@ -21,7 +19,7 @@
                         <div class="col-sm-12 col-md-6">
                             <label class="form-label">Asunto:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInput1"
-                                aria-describedby="emailHelp" v-model="descripcion" required/>
+                                @input="descripcion = formatInput($event.target.value)" v-model="descripcion" required />
                         </div>
                     </div>
                     <div class="row">
@@ -33,7 +31,8 @@
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Persona contactada: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInput3"
-                                aria-describedby="emailHelp" v-model="contacto" required />
+                                @input="contacto = formatInputCamelCase($event.target.value)" aria-describedby="emailHelp"
+                                v-model="contacto" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
@@ -42,24 +41,20 @@
                     <div class="row">
                         <div class="col-sm-12 col-md-6 mb-3">
                             <SearchTable nombreCampo="Cliente *" eventoCampo="getCliente" @getCliente="getCliente"
-                                endpoint="clientesalinstante" :consulta="consulta_cliente" :nombreItem="campos_cliente"
-                                :datos="clientes" placeholder="Seleccione una opción" />
+                                endpoint="clientesalinstante/filter" :consulta="consulta_cliente"
+                                :nombreItem="campos_cliente" :datos="clientes" placeholder="Seleccione una opción" />
                         </div>
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Dirección: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInput4"
-                                aria-describedby="emailHelp" v-model="direccion" required />
+                                @input="direccion = formatInputUpperCase($event.target.value)" 
+                                v-model="direccion" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <!-- <div class="col-sm-12 col-md-4">
-                            <SearchList nombreCampo="Pais: *" @getPaises="getPaises" eventoCampo="getPaises"
-                                nombreItem="nombre" :consulta="consulta_pais" :registros="paises" :ordenCampo="1"
-                                @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
-                        </div> -->
                         <div class="col-sm-12 col-md-6">
                             <SearchList nombreCampo="Departamento: *" nombreItem="nombre" eventoCampo="getDepartamentos"
                                 :consulta="consulta_departamento" :registros="departamentos" :ordenCampo="1"
@@ -187,14 +182,19 @@ import axios from 'axios'
 import SearchTable from './SearchTable.vue'
 import SearchList from './SearchList.vue'
 import FirmaDigital from './FirmaDigital.vue'
+import Loading from './Loading.vue'
+import { Token } from '../Mixins/Token.js';
+import { Alerts } from '../Mixins/Alerts.js';
+import { Scroll } from '../Mixins/Scroll.js';
 export default {
     components: {
         EditorTextoHtml,
         SearchTable,
         SearchList,
-        FirmaDigital
+        FirmaDigital,
+        Loading
     },
-    mixins: [],
+    mixins: [Token, Alerts, Scroll],
     props: {
         userlogued: {}
     },
@@ -236,7 +236,7 @@ export default {
             loading: false,
             imagen_firma_supervisor: '',
             imagen_firma_persona_contactada: '',
-            descripcion:'',
+            descripcion: '',
 
 
         }
@@ -266,21 +266,32 @@ export default {
         this.getConceptos()
         this.getEstadosConcepto()
         this.getDepartamentos(43)
-
+        this.loading = true
+        this.scrollTop(true)
         if (this.$route.params.id != undefined) {
-            this.loading = true
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-            });
-            document.body.style.overflow = 'hidden';
             this.consultaFormulario(this.$route.params.id)
         }
 
     },
     methods: {
+        formatInput(value) {
+            const formattedValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+            return formattedValue;
+
+        },
+        formatInputCamelCase(value) {
+            return value
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        },
+        formatInputUpperCase(value) {
+            const formattedValue = value.toUpperCase();
+            return formattedValue;
+        },
         save() {
+            this.scrollTop()
+            this.loading = true
             const formulario = new FormData()
             formulario.append('fecha_hora', this.fecha)
             formulario.append('supervisor', this.userlogued.usuario_id)
@@ -305,6 +316,7 @@ export default {
             axios
                 .post(self.URL_API + "api/v1/formulariosupervision", formulario, config)
                 .then(function (result) {
+                    self.loading = false
                     self.showAlert(result.data.message, result.data.status);
                 });
 
@@ -388,6 +400,8 @@ export default {
                 .then(function (result) {
                     self.conceptos = result.data
                     self.concepto_estado_formulario = new Array(self.conceptos.length)
+                    self.loading = false
+                    self.scrollAuto()
                 });
         },
         getEstadosConcepto() {
@@ -499,7 +513,7 @@ export default {
                 .then(function (result) {
                     self.llenarFormulario(result.data)
                     self.loading = false
-                    document.body.style.overflow = 'auto';
+                    self.scrollAuto()
                 });
         },
         llenarFormulario(item) {
@@ -530,30 +544,12 @@ export default {
             var posicion_observacion = 0
             item.observaciones.forEach(function (item) {
                 if (observacion != item.observacion) {
-                    console.log(item.observacion)
                     observacion = item.observacion
                     self.observaciones.splice(posicion_observacion, 0, { body: item.observacion, file: [] })
                 }
                 self.observaciones[posicion_observacion].file.push(self.URL_API + item.imagen_observacion)
 
             })
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };
@@ -640,13 +636,13 @@ label {
     width: 100%;
 }
 
-.obs{
+.obs {
     width: 100%;
     padding: 0px;
     margin: 0px;
 }
 
-.editor{
+.editor {
     width: 100%;
     padding: 0px;
     margin: 0px;
@@ -669,109 +665,9 @@ label {
         padding: 0px;
         border: none;
     }
+
     .card {
         margin: 0px;
     }
 }
-
-
-/* Loading */
-.loading {
-    background-color: rgba(252, 252, 252, 0.63);
-    position: fixed;
-    width: 100%;
-    height: 1000px;
-    /* top: 0%; */
-    left: 0%;
-    z-index: 200;
-}
-
-.loader {
-    font-size: 15px;
-    margin: 20% auto;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    position: relative;
-    text-indent: -9999em;
-    -webkit-animation: load4 1.3s infinite linear;
-    animation: load4 1.3s infinite linear;
-    z-index: 500;
-}
-
-
-@-webkit-keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-}
-
-@keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-
-}
-
-/* Fin loading */
 </style>

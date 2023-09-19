@@ -100,6 +100,8 @@
 
 import axios from "axios";
 import PiePagina from "./PiePagina.vue";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 
 export default {
   props: {
@@ -108,6 +110,7 @@ export default {
   components: {
     PiePagina,
   },
+  mixins: [Token, Alerts],
   data() {
     return {
       users: [],
@@ -232,23 +235,6 @@ export default {
             localStorage.removeItem("access_token");
           }
         });
-    },
-    showAlert(mensaje, icono) {
-      this.$swal({
-        position: "top",
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
     },
   },
 };

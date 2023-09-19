@@ -105,7 +105,9 @@
 import axios from "axios";
 import FirmaDigital from "./FirmaDigital.vue"; // Para la generación de la firma digital se hace uso de la librería vue signature pdf url: https://www.npmjs.com/package/vue-signature-pad
 import Tabla from './Tabla.vue';
+import {Token} from '../Mixins/Token'
 export default {
+    mixins:[Token],
     components: {
         FirmaDigital,
         Tabla,
@@ -370,23 +372,6 @@ export default {
                 .then(function (buf) {
                     return new File([buf], filename, { type: mimeType });
                 });
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: "top",
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

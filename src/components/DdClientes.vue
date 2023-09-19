@@ -7,12 +7,13 @@
 <script>
 import Tabla from './Tabla.vue'
 import axios from 'axios'
+import {Token} from '../Mixins/Token.js'
 export default {
 
   components: {
     Tabla
   },
-  mixins: [],
+  mixins: [Token],
   props: {
     userlogued:{}
   },
@@ -77,14 +78,6 @@ export default {
           self.ejecutivos_comerciales = result.data
           self.listas.splice(4,0,result.data)
         });
-    },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
     },
   }
 };
