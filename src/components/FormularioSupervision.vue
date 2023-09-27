@@ -290,6 +290,9 @@ export default {
             return formattedValue;
         },
         save() {
+            if (this.validaFirmas()) {
+                return
+            }
             this.scrollTop()
             this.loading = true
             const formulario = new FormData()
@@ -379,6 +382,16 @@ export default {
         validaRadio(item, item2, index) {
             this.concepto_estado_formulario.splice(index, 1, { concepto: item.concepto_id, estado: item2.id })
         },
+        validaFirmas(){
+           if(this.firma_supervisor == ''){
+            this.showAlert('Error, debe diligenciar la firma del supervisor encargado.', 'error')
+                return true
+           }
+           if(this.firma_persona_contactada == ''){
+            this.showAlert('Error, debe diligenciar la firma de la persona contactada.', 'error')
+                return true
+           }
+        }, 
         getCliente(item = null) {
             if (item != null) {
                 this.codigo_cliente = item.split(" ")[0]
