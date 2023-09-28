@@ -2,12 +2,8 @@
     <div class="container">
         <Loading :loading="loading" />
         <h2>Formulario de supervisión</h2>
+        <NotificacionesSocket />
         <div class="card col-xs-12 col-md-6">
-            <!-- <div>
-            <button @click="obtenerGeolocalizacion">Obtener Geolocalización</button>
-            <p v-if="geolocalizacion">Latitud: {{ geolocalizacion.latitud }}, Longitud: {{ geolocalizacion.longitud }}</p>
-            <p v-if="error">Error: {{ errorMensaje }}</p>
-        </div> -->
             <form class="was-validated" @submit.prevent="save()">
                 <div id="seccion">
                     <div class="row">
@@ -47,8 +43,8 @@
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Dirección: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInput4"
-                                @input="direccion = formatInputUpperCase($event.target.value)" 
-                                v-model="direccion" required />
+                                @input="direccion = formatInputUpperCase($event.target.value)" v-model="direccion"
+                                required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
@@ -80,6 +76,24 @@
                                         :id="'radio' + index + index2" required>
                                     {{ item2.estado_concepto }}
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Elemtos de proteccion personal -->
+                        <div class="row" style=" display: flex; align-items: center;" id="label"
+                            v-for="item, index in elementos_p_p" :key="index">
+                            <div class="col-sm-4 col-md-4">
+                                <label class="form-check-label" for="flexSwitchCheckChecked">{{ item.nombre }}</label>
+                            </div>
+                            <div class="col-sm-4 col-md-4 radios">
+                                <div class="form-check m-2" v-for="item2, index2 in estados_epp" :key="index2">
+                                    <input class="form-check-input" :ref="'checkbox' + index + index2" type="radio"
+                                        @click="validaRadio(item, item2, index)" :name="'radio' + index"
+                                        :id="'radio' + index + index2" required>
+                                    {{ item2.estado_concepto }}
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-4">
+                                <textarea name="" id="" placeholder="Observaciones"></textarea>
                             </div>
                         </div>
                         <div class="row obs" v-for="item, index in observaciones" :key="item.id">
@@ -182,6 +196,7 @@ import axios from 'axios'
 import SearchTable from './SearchTable.vue'
 import SearchList from './SearchList.vue'
 import FirmaDigital from './FirmaDigital.vue'
+import NotificacionesSocket from './NotificacionSocket.vue'
 import Loading from './Loading.vue'
 import { Token } from '../Mixins/Token.js';
 import { Alerts } from '../Mixins/Alerts.js';
@@ -192,7 +207,8 @@ export default {
         SearchTable,
         SearchList,
         FirmaDigital,
-        Loading
+        Loading,
+        NotificacionesSocket
     },
     mixins: [Token, Alerts, Scroll],
     props: {
@@ -237,8 +253,9 @@ export default {
             imagen_firma_supervisor: '',
             imagen_firma_persona_contactada: '',
             descripcion: '',
-
-
+            elementos_p_p: [],
+            elementos_pp_formulario: [],
+            estados_epp: []
         }
     },
     computed: {
@@ -264,6 +281,8 @@ export default {
         this.setSupervisor()
         this.obtenerFechaHoraActual()
         this.getConceptos()
+        this.getElementosPP()
+        this.getEstadosEPP()
         this.getEstadosConcepto()
         this.getDepartamentos(43)
         this.loading = true
@@ -382,16 +401,16 @@ export default {
         validaRadio(item, item2, index) {
             this.concepto_estado_formulario.splice(index, 1, { concepto: item.concepto_id, estado: item2.id })
         },
-        validaFirmas(){
-           if(this.firma_supervisor == ''){
-            this.showAlert('Error, debe diligenciar la firma del supervisor encargado.', 'error')
+        validaFirmas() {
+            if (this.firma_supervisor == '') {
+                this.showAlert('Error, debe diligenciar la firma del supervisor encargado.', 'error')
                 return true
-           }
-           if(this.firma_persona_contactada == ''){
-            this.showAlert('Error, debe diligenciar la firma de la persona contactada.', 'error')
+            }
+            if (this.firma_persona_contactada == '') {
+                this.showAlert('Error, debe diligenciar la firma de la persona contactada.', 'error')
                 return true
-           }
-        }, 
+            }
+        },
         getCliente(item = null) {
             if (item != null) {
                 this.codigo_cliente = item.split(" ")[0]
@@ -417,6 +436,18 @@ export default {
                     self.scrollAuto()
                 });
         },
+        getElementosPP() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/lementospp", config)
+                .then(function (result) {
+                    self.elementos_p_p = result.data
+                    self.elementos_pp_formulario = new Array(self.conceptos.length)
+                    self.loading = false
+                    self.scrollAuto()
+                });
+        },
         getEstadosConcepto() {
             let self = this;
             let config = this.configHeader();
@@ -424,6 +455,16 @@ export default {
                 .get(self.URL_API + "api/v1/estadosconceptoformulario", config)
                 .then(function (result) {
                     self.estados_concepto = result.data
+
+                });
+        },
+        getEstadosEPP() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/estadoseppformulario", config)
+                .then(function (result) {
+                    self.estados_epp = result.data
 
                 });
         },
@@ -573,6 +614,28 @@ export default {
     padding: 30px;
     border-radius: 10px;
 }
+
+/* .notificacion {
+    position: absolute;
+    top: 90px;
+    padding: 15px;
+    right: 20px;
+    background-color: rgb(20, 118, 53);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(83, 80, 80, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+
+}
+
+.numero_notificaciones {
+    background-color: white;
+    border-radius: 50%;
+    color: black;
+    padding: 2px;
+    margin-right: 10px;
+    font-size: 0.7rem;
+} */
 
 .adjunto {
     white-space: nowrap;
