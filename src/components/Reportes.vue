@@ -5,7 +5,7 @@
             <div class="col-6">
                 <SearchList nombreCampo="Seleccione la categoria del reporte" eventoCampo="getSubCategoryReports"
                     @getSubCategoryReports="getSubCategoryReports" nombreItem="nom_mod" :registros="categorias"
-                    placeholder="Seleccione un categoría" />
+                    placeholder="Seleccione un categoría" :valida_campo="false"/>
             </div>
             <div class="col">
                 <button v-if="subcategory_reports_apl != ''" class="btn btn-success"
@@ -17,7 +17,7 @@
                 <SearchList nombreCampo="Seleccione la subcategoria del reporte"
                     @getSubCategoryReportsId="getSubCategoryReportsId" eventoCampo="getSubCategoryReportsId"
                     nombreItem="des_cat" :registros="subcategorias" :clearInput="clearInput"
-                    placeholder="Seleccione un categoría" />
+                    placeholder="Seleccione un categoría" :valida_campo="false" />
             </div>
         </div>
         <Tabla :datos="datos" :tabla="tabla" :search="subcategory_reports_apl" :search2="subcategory_reports_cod"

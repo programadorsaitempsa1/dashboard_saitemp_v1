@@ -1,5 +1,8 @@
 <template>
     <div id="container2">
+        <div v-if="loading" class="loading">
+            <div class="loader" id="loader">Loading...</div>
+        </div>
         <div class="row" id="container" style="float: left; clear: both; color: #d06519">
             <div class="col-xs-12 col-md-12">
                 <h5 v-if="!sin_registros">
@@ -104,7 +107,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,17 +129,17 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" colspan="3">Acciones</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/correo-novedades-nomina'" colspan="3">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -151,13 +154,13 @@
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
                        <td v-if="empleados() && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
 
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -290,6 +293,7 @@ export default {
             sinregistros: 'No hay resgistros guardados',
             url:'',
             analista:[],
+            loading:false,
         };
     },
 
@@ -344,9 +348,9 @@ export default {
             else if (this.ruta.includes('reporteitems')) {
                 return true
             }
-            // else if (this.ruta.includes('sigcontratos')) {
-            //     return true
-            // }
+            else if (this.ruta.includes('correo-novedades-nomina')) {
+                return true
+            }
             // else if (this.ruta.includes('zonas')) {
             //     return true
             // }
@@ -617,6 +621,7 @@ export default {
             });
         },
         pagination(pag) {
+            this.loading = true
             if (pag != null) {
                 let self = this;
                 let config = this.configHeader();
@@ -625,6 +630,7 @@ export default {
                     // self.llenarTabla(result)
                     self.items_tabla2 = Object.values(result.data.data); // se está llenando la tabla con los datos cuando se pagina
                     // desde acá porque en la función llenartabla() está dando error al llenar la tabla
+                    self.loading = false
                 });
             }
         },
@@ -799,4 +805,102 @@ a{
     color: white;
     text-decoration: none;
 }
+/* Loading */
+.loading {
+    background-color: rgba(252, 252, 252, 0.63);
+    position: fixed;
+    width: 100%;
+    height: 1000px;
+    /* top: 0%; */
+    left: 0%;
+    top:0%;
+    z-index: 200;
+}
+
+.loader {
+    font-size: 15px;
+    margin: 20% auto;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-animation: load4 1.3s infinite linear;
+    animation: load4 1.3s infinite linear;
+    z-index: 500;
+}
+
+@-webkit-keyframes load4 {
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
+}
+
+@keyframes load4 {
+
+    0%,
+    100% {
+        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    12.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    25% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    37.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    50% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    62.5% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
+    }
+
+    75% {
+        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
+    }
+
+    87.5% {
+        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
+    }
+
+}
+/* Fin loading */
 </style>
