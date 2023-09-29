@@ -2,7 +2,7 @@
     <div class="container">
         <Loading :loading="loading" />
         <h2>Formulario de supervisión</h2>
-        <NotificacionesSocket />
+        <NotificacionesSocket/>
         <div class="card col-xs-12 col-md-6">
             <form class="was-validated" @submit.prevent="save()">
                 <div id="seccion">
@@ -78,22 +78,22 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Elemtos de proteccion personal -->
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Elementos de proteccción personal</label>
                         <div class="row" style=" display: flex; align-items: center;" id="label"
-                            v-for="item, index in elementos_p_p" :key="index">
+                            v-for="item, index3 in elementos_p_p" :key="item.id">
                             <div class="col-sm-4 col-md-4">
                                 <label class="form-check-label" for="flexSwitchCheckChecked">{{ item.nombre }}</label>
                             </div>
                             <div class="col-sm-4 col-md-4 radios">
-                                <div class="form-check m-2" v-for="item2, index2 in estados_epp" :key="index2">
-                                    <input class="form-check-input" :ref="'checkbox' + index + index2" type="radio"
-                                        @click="validaRadio(item, item2, index)" :name="'radio' + index"
-                                        :id="'radio' + index + index2" required>
+                                <div class="form-check m-2" v-for="item2, index4 in estados_epp" :key="item2.id">
+                                    <input class="form-check-input" :ref="'checkboxs' + index3 + index4" type="radio"
+                                        @click="validaRadio2(item, item2, index3)" :name="'radios' + index3"
+                                        :id="'radios' + index3 + index4" required>
                                     {{ item2.estado_concepto }}
                                 </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
-                                <textarea name="" id="" placeholder="Observaciones"></textarea>
+                                <textarea name="" style="width: 100%;padding: 5px;border-radius: 5px;" id="" v-model="observacionesepp[index3]" placeholder="Observaciones"></textarea>
                             </div>
                         </div>
                         <div class="row obs" v-for="item, index in observaciones" :key="item.id">
@@ -249,13 +249,15 @@ export default {
             observaciones: [{ body: '', file: [] }],
             estados_concepto: [],
             concepto_estado_formulario: [],
+            concepto_estado_epp_formulario: [],
             loading: false,
             imagen_firma_supervisor: '',
             imagen_firma_persona_contactada: '',
             descripcion: '',
-            elementos_p_p: [],
-            elementos_pp_formulario: [],
-            estados_epp: []
+            elementos_p_p:[],
+            elementos_pp_formulario:[],
+            estados_epp:[],
+            observacionesepp:[]
         }
     },
     computed: {
@@ -265,7 +267,7 @@ export default {
 
     },
     mounted() {
-
+       
     },
     filters: {
         truncate(text, length, suffix) {
@@ -309,6 +311,7 @@ export default {
             return formattedValue;
         },
         save() {
+            let self = this
             if (this.validaFirmas()) {
                 return
             }
@@ -327,13 +330,20 @@ export default {
             this.concepto_estado_formulario.forEach(function (item) {
                 formulario.append('concepto_estado[]', item.concepto + '*' + item.estado)
             })
+           
+            this.concepto_estado_epp_formulario.forEach(function (item,index) {
+                if(self.observacionesepp[index] != undefined){
+                    formulario.append('concepto_estado_epp[]', item.concepto + '*' + item.estado+ '*' +self.observacionesepp[index])
+                }else{
+                    formulario.append('concepto_estado_epp[]', item.concepto + '*' + item.estado)
+                }
+            })
             this.observaciones.forEach(function (item, index) {
                 formulario.append('imagen[' + index + '][0]', item.body)
                 item.file.forEach(function (item2, index2) {
                     formulario.append('imagen[' + index + '][' + (index2 + 1) + ']', item2)
                 })
             })
-            let self = this;
             let config = this.configHeader();
             axios
                 .post(self.URL_API + "api/v1/formulariosupervision", formulario, config)
@@ -401,6 +411,9 @@ export default {
         validaRadio(item, item2, index) {
             this.concepto_estado_formulario.splice(index, 1, { concepto: item.concepto_id, estado: item2.id })
         },
+        validaRadio2(item, item2, index) {
+            this.concepto_estado_epp_formulario.splice(index, 1, { concepto: item.concepto_id, estado: item2.id, observacion: '' })
+        },
         validaFirmas() {
             if (this.firma_supervisor == '') {
                 this.showAlert('Error, debe diligenciar la firma del supervisor encargado.', 'error')
@@ -443,7 +456,7 @@ export default {
                 .get(self.URL_API + "api/v1/lementospp", config)
                 .then(function (result) {
                     self.elementos_p_p = result.data
-                    self.elementos_pp_formulario = new Array(self.conceptos.length)
+                    self.concepto_estado_epp_formulario = new Array(self.elementos_p_p.length)
                     self.loading = false
                     self.scrollAuto()
                 });
@@ -593,6 +606,18 @@ export default {
                     }
                 }
             }
+            for (let i = 0; i < this.elementos_p_p.length; i++) {
+                for (let j = 0; j < this.estados_epp.length; j++) {
+                    const refName = `checkboxs${i.toString()}${j.toString()}`;
+                    if (item.elementos_pp[i].estado_concepto_id == this.estados_epp[j].id) {
+                        this.$refs[refName][0].checked = true
+                    }
+                }
+            }
+
+            item.elementos_pp.forEach(function(item,index){
+                self.observacionesepp[index] = item.observacion
+            })
 
             var observacion = ''
             var posicion_observacion = 0
