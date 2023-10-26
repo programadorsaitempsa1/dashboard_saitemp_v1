@@ -46,6 +46,9 @@ export default ({
       contraseña: false
     }
   },
+  created(){
+    this.urlExterna()
+  },
   methods: {
     login() {
       let self = this;

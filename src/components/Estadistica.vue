@@ -48,6 +48,7 @@ export default {
 
     },
     created() {
+        this.urlExterna ()
         this.empleadosActivos()
         this.empleadosPlanta()
         this.ingresosMesCurso()

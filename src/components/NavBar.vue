@@ -31,9 +31,10 @@
               <router-link class="nav-link active" to="">{{ saludo }}
                 {{ userlogued.nombres }}</router-link>
             </li>
-            <li class="nav-item contrasena" id="menu-lateral" @click="ocultarMenu(),collapese()">
+            <li class="nav-item contrasena" id="menu-lateral" @click="ocultarMenu(), collapese()">
               <!-- <router-link class="nav-link active" to="/"> -->
-              <i :class="menu_lateral ? 'bi bi-text-indent-right':'bi bi-text-indent-left'"></i> {{ menu_lateral ? 'Ocultar menú lateral' : 'Mostrar menú lateral' }}
+              <i :class="menu_lateral ? 'bi bi-text-indent-right' : 'bi bi-text-indent-left'"></i> {{ menu_lateral ?
+                'Ocultar menú lateral' : 'Mostrar menú lateral' }}
               <!-- </router-link> -->
             </li>
             <li class="nav-item contrasena" id="contrasena" @click="actualizar()">
@@ -93,12 +94,12 @@
 <script>
 /* eslint-disable */
 import axios from "axios";
-import {Token} from '../Mixins/Token'
+import { Token } from '../Mixins/Token'
 export default {
   components: {
     name: 'Navbar',
   },
-  mixins:[Token],
+  mixins: [Token],
   data() {
     return {
       username: "",
@@ -132,6 +133,7 @@ export default {
     //   this.ruta = this.$route.name
     //   this.userId()
     //   this.getLogoPagina()
+    this.urlExterna()
     this.userLogued()
   },
   methods: {
@@ -165,7 +167,7 @@ export default {
         menu.style.display = 'block'; // Mostrar el menú
       }
       this.menu_lateral = !this.menu_lateral
-      localStorage.setItem("menu_lateral",this.menu_lateral)
+      localStorage.setItem("menu_lateral", this.menu_lateral)
     },
     actualizar() {
       this.$router.push({ name: "editarUsuario", params: { id: this.user_id } });

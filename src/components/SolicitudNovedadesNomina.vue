@@ -168,7 +168,7 @@ export default {
             correos1: [],
             correos2: [],
             correo: '',
-            mensaje_error: '¡Correos con formato herrado!',
+            mensaje_error: '¡Correos con formato errado!',
             existen_errados: false,
             existen_errados1: false,
             existen_errados2: false,

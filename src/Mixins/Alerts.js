@@ -13,6 +13,14 @@ export const Alerts = {
         timer: icono == 'error' ? 3000 : 1500,
       });
     },
+    showAlertConfirm(mensaje, icono) {
+      this.$swal({
+          position: "top",
+          icon: icono,
+          title: mensaje,
+          showConfirmButton: true,
+      });
+  },
   },
   computed: {},
   created () {},

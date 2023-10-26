@@ -153,6 +153,7 @@ export default {
     },
 
     created() {
+        this.urlExterna ()
         if (this.$route.params.id != undefined) {
             this.getUser()
         }

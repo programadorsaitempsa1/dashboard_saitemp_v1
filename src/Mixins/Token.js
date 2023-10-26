@@ -1,11 +1,16 @@
 // Mixin para retornar el token de usuario
 export const Token = {
   data () {
-    return {
-     
-    };
+    return {};
   },
   methods: {
+    urlExterna () {
+      const urlCompleta = window.location.href;
+      if (urlCompleta.includes ('debidadiligencia.saitempsa.com')) {
+        this.URL_API =
+          'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/';
+      }
+    },
     configHeader () {
       let config = {
         headers: {
@@ -15,10 +20,6 @@ export const Token = {
       return config;
     },
   },
-  computed: {
-   
-  },
-  created () {
- 
-  },
+  computed: {},
+  created () {},
 }; // MiMixin.js

@@ -22,7 +22,7 @@ export default {
     return {
       show_table: false,
       datos: [],
-      endpoint: 'consultaformulariocliente',
+      endpoint: 'formulariosupervision',
       endpointexport: 'exportaformulariocliente',
       URL_API: process.env.VUE_APP_URL_API,
       tabla: [
@@ -49,6 +49,7 @@ export default {
 
   },
   created() {
+    this.urlExterna()
     this.getItems()
     this.llenarLista()
     this.getEjecutivosComerciales()

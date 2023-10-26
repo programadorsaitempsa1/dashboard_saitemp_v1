@@ -2,7 +2,7 @@
     <div class="container">
         <Loading :loading="loading" />
         <h2>Formulario de supervisión</h2>
-        <NotificacionesSocket/>
+        <NotificacionesSocket />
         <div class="card col-xs-12 col-md-6">
             <form class="was-validated" @submit.prevent="save()">
                 <div id="seccion">
@@ -78,7 +78,8 @@
                                 </div>
                             </div>
                         </div>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Elementos de proteccción personal</label>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Elementos de proteccción
+                            personal</label>
                         <div class="row" style=" display: flex; align-items: center;" id="label"
                             v-for="item, index3 in elementos_p_p" :key="item.id">
                             <div class="col-sm-4 col-md-4">
@@ -93,7 +94,8 @@
                                 </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
-                                <textarea name="" style="width: 100%;padding: 5px;border-radius: 5px;" id="" v-model="observacionesepp[index3]" placeholder="Observaciones"></textarea>
+                                <textarea name="" style="width: 100%;padding: 5px;border-radius: 5px;" id=""
+                                    v-model="observacionesepp[index3]" placeholder="Observaciones"></textarea>
                             </div>
                         </div>
                         <div class="row obs" v-for="item, index in observaciones" :key="item.id">
@@ -181,10 +183,15 @@
                 </div>
                 <div class="row" v-if="$route.params.id == undefined">
                     <div class="col-md-4 col-sm-6">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" :disabled="deshabilitar_boton" class="btn btn-success">
                             Guardar formulario
                         </button>
                     </div>
+                </div>
+                <div v-else class="col-md-4 col-sm-6">
+                    <a :href="URL_API + 'api/v1/crearPdf/' + idpdf" target="_blank" class="white-text">
+                        <button type="button" class="btn btn-success">Descargar pdf</button>
+                    </a>
                 </div>
             </form>
         </div>
@@ -254,10 +261,12 @@ export default {
             imagen_firma_supervisor: '',
             imagen_firma_persona_contactada: '',
             descripcion: '',
-            elementos_p_p:[],
-            elementos_pp_formulario:[],
-            estados_epp:[],
-            observacionesepp:[]
+            elementos_p_p: [],
+            elementos_pp_formulario: [],
+            estados_epp: [],
+            observacionesepp: [],
+            idpdf: '',
+            deshabilitar_boton: false
         }
     },
     computed: {
@@ -267,7 +276,7 @@ export default {
 
     },
     mounted() {
-       
+
     },
     filters: {
         truncate(text, length, suffix) {
@@ -279,6 +288,7 @@ export default {
         }
     },
     created() {
+        this.urlExterna()
         this.getCliente()
         this.setSupervisor()
         this.obtenerFechaHoraActual()
@@ -292,9 +302,15 @@ export default {
         if (this.$route.params.id != undefined) {
             this.consultaFormulario(this.$route.params.id)
         }
+        this.idPfd()
 
     },
     methods: {
+        idPfd() {
+            if (this.$route.params.id != undefined) {
+                this.idpdf = this.$route.params.id
+            }
+        },
         formatInput(value) {
             const formattedValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
             return formattedValue;
@@ -315,6 +331,10 @@ export default {
             if (this.validaFirmas()) {
                 return
             }
+            this.deshabilitar_boton = true;
+            setTimeout(() => {
+                this.deshabilitar_boton = false;
+            }, 10000);
             this.scrollTop()
             this.loading = true
             const formulario = new FormData()
@@ -330,11 +350,11 @@ export default {
             this.concepto_estado_formulario.forEach(function (item) {
                 formulario.append('concepto_estado[]', item.concepto + '*' + item.estado)
             })
-           
-            this.concepto_estado_epp_formulario.forEach(function (item,index) {
-                if(self.observacionesepp[index] != undefined){
-                    formulario.append('concepto_estado_epp[]', item.concepto + '*' + item.estado+ '*' +self.observacionesepp[index])
-                }else{
+
+            this.concepto_estado_epp_formulario.forEach(function (item, index) {
+                if (self.observacionesepp[index] != undefined) {
+                    formulario.append('concepto_estado_epp[]', item.concepto + '*' + item.estado + '*' + self.observacionesepp[index])
+                } else {
                     formulario.append('concepto_estado_epp[]', item.concepto + '*' + item.estado)
                 }
             })
@@ -350,8 +370,53 @@ export default {
                 .then(function (result) {
                     self.loading = false
                     self.showAlert(result.data.message, result.data.status);
+                    self.limpiarFormulario()
                 });
 
+        },
+        limpiarFormulario() {
+            this.concepto = []
+            this.campos_cliente = ['cod_cli', 'nom_cli']
+            this.consulta_cliente = '.';
+            setTimeout(() => {
+                this.consulta_cliente = '';
+            }, 300);
+            this.codigo_cliente = ''
+            this.contacto = ''
+            this.fecha = ''
+            this.obtenerFechaHoraActual()
+            this.municipios = []
+            this.consulta_departamento = '.';
+            setTimeout(() => {
+                this.consulta_departamento = '';
+            }, 300);
+            this.consulta_municipio = ''
+            this.fechaHora = ''
+            this.error = null
+            this.errorMensaje = ''
+            this.direccion = ''
+            this.consulta_pais = ''
+            this.paises = []
+            this.firma_supervisor = ''
+            this.firma_persona_contactada = ''
+            this.show_pad1 = false
+            this.show_pad2 = false
+            this.signed = false
+            this.archivo_firma_supervisor = null
+            this.archivo_firma_persona_contactada = null
+            this.consulta_texto = []
+            this.observaciones = [{ body: '', file: [] }]
+            this.estados_concepto = []
+            this.getEstadosConcepto()
+            this.concepto_estado_formulario = []
+            this.concepto_estado_epp_formulario = []
+            this.imagen_firma_supervisor = ''
+            this.imagen_firma_persona_contactada = ''
+            this.descripcion = ''
+            this.elementos_pp_formulario = []
+            this.estados_epp = []
+            this.getEstadosEPP()
+            this.observacionesepp = []
         },
         firma(firma) {
             if (this.show_pad1) {
@@ -421,6 +486,10 @@ export default {
             }
             if (this.firma_persona_contactada == '') {
                 this.showAlert('Error, debe diligenciar la firma de la persona contactada.', 'error')
+                return true
+            }
+            if(this.consulta_municipio.trim() == '' && !/^[A-Za-z ]+$/.test(this.consulta_municipio)){
+            this.showAlert('Error, debe diligenciar la ciudad.', 'error')
                 return true
             }
         },
@@ -615,7 +684,7 @@ export default {
                 }
             }
 
-            item.elementos_pp.forEach(function(item,index){
+            item.elementos_pp.forEach(function (item, index) {
                 self.observacionesepp[index] = item.observacion
             })
 
@@ -770,5 +839,9 @@ label {
     .card {
         margin: 0px;
     }
+}
+
+.white-text {
+    color: white;
 }
 </style>

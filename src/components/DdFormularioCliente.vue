@@ -1587,10 +1587,11 @@ export default {
 
     },
     created() {
-        const urlCompleta = window.location.href;
-        if (urlCompleta.includes('debidadiligencia.saitempsa.com')) {
-            this.URL_API = 'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/'
-        }
+        // const urlCompleta = window.location.href;
+        this.urlExterna()
+        // if (urlCompleta.includes('debidadiligencia.saitempsa.com')) {
+        //     this.URL_API = 'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/'
+        // }
         this.estabilidad_laboral == false
         this.getExamenes()
         this.getRequsitos()

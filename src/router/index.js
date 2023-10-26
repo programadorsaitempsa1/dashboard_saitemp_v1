@@ -45,6 +45,8 @@ import GestionCliente from "../components/GestionCliente.vue";
 import FormularioSupervision from "../components/FormularioSupervision.vue";
 import MapaVue from "../components/MapaVue.vue";
 import ClienteSupervision from "../components/ClienteSupervision.vue";
+import OrdenServicio from "../components/OrdenServicio.vue";
+
 
 
 Vue.use(VueRouter);
@@ -270,6 +272,12 @@ const routes = [
         name: "cliente-supervision",
         component: ClienteSupervision,
       },
+      {
+        path: "orden-servicio",
+        name: "orden-servicio",
+        component: OrdenServicio,
+      },
+     
     ],
   },
 

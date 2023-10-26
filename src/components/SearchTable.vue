@@ -177,6 +177,7 @@ export default {
     },
 
     created() {
+        this.urlExterna()
         this.registro = this.consulta
     },
     methods: {
