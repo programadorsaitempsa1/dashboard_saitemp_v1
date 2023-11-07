@@ -109,9 +109,18 @@
                                 </div>
                             </div>
                             <div class="botones" v-for="item2, index2 in observaciones[index].file" :key="index2">
-                                <div v-if="$route.params.id != undefined" class="imagen-observacion"><img :src="item2"
-                                        alt="">
-                                    <div v-html="item.body"></div>
+                                <div class="card mb-3" v-if="$route.params.id != undefined">
+                                    <div class="row g-0">
+                                        <div class="col-md-4">
+                                            <img v-bind:src="item2"  class="img-fluid rounded-start" alt="">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body" style="text-align: left;">
+                                                <h5 class="card-title">Observación:</h5>
+                                               <div v-html="item.body"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div v-else class="btn-group" role="group" aria-label="Basic example">
                                     <button type="button" class="btn adjunto"><i class="bi bi-file-earmark-check"></i>
@@ -290,7 +299,9 @@ export default {
     created() {
         this.urlExterna()
         this.getCliente()
-        this.setSupervisor()
+        if (this.$route.params.id == undefined) {
+            this.setSupervisor()
+        }
         this.obtenerFechaHoraActual()
         this.getConceptos()
         this.getElementosPP()
@@ -488,8 +499,8 @@ export default {
                 this.showAlert('Error, debe diligenciar la firma de la persona contactada.', 'error')
                 return true
             }
-            if(this.consulta_municipio.trim() == '' && !/^[A-Za-z ]+$/.test(this.consulta_municipio)){
-            this.showAlert('Error, debe diligenciar la ciudad.', 'error')
+            if (this.consulta_municipio.trim() == '' && !/^[A-Za-z ]+$/.test(this.consulta_municipio)) {
+                this.showAlert('Error, debe diligenciar la ciudad.', 'error')
                 return true
             }
         },
@@ -514,7 +525,6 @@ export default {
                 .then(function (result) {
                     self.conceptos = result.data
                     self.concepto_estado_formulario = new Array(self.conceptos.length)
-                    self.loading = false
                     self.scrollAuto()
                 });
         },
@@ -648,14 +658,13 @@ export default {
                 .get(self.URL_API + "api/v1/formulariosupervision/" + id, config)
                 .then(function (result) {
                     self.llenarFormulario(result.data)
-                    self.loading = false
                     self.scrollAuto()
                 });
         },
         llenarFormulario(item) {
             var self = this
             this.fecha = item.fecha_hora
-            this.Supervisor = item.supervisor
+            this.supervisor = item.supervisor
             this.contacto = item.persona_contactada
             this.descripcion = item.descripcion
             this.direccion = item.direccion
@@ -698,6 +707,7 @@ export default {
                 self.observaciones[posicion_observacion].file.push(self.URL_API + item.imagen_observacion)
 
             })
+            self.loading = false
         },
     }
 };
@@ -843,5 +853,4 @@ label {
 
 .white-text {
     color: white;
-}
-</style>
+}</style>

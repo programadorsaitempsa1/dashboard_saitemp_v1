@@ -7,9 +7,10 @@
                 <input type="text" @focus="consultaEndPoint()" @click="hover = !hover" @keyup="hover = true"
                     autocomplete="off" @input="filterResults(registro, registros, 'registros')" class="form-control"
                     id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro"
-                    :disabled="disabled" :required="valida_campo"/>
-                <span class="input-group-text" style="cursor:pointer; border-top-right-radius:5px;border-bottom-right-radius:5px" @click="listaEnCadena(registro), registro = ''"
-                    id="basic-addon3"><i class="bi bi-x"></i></span>
+                    :disabled="disabled" :required="valida_campo" />
+                <span class="input-group-text"
+                    style="cursor:pointer; border-top-right-radius:5px;border-bottom-right-radius:5px"
+                    @click="registro = '', listaEnCadena(registro)" id="basic-addon3"><i class="bi bi-x"></i></span>
                 <div class="invalid-feedback">
                     {{ mensaje_error }}
                 </div>
@@ -67,7 +68,7 @@ export default {
             hover: false,
             registro: '',
             registrosFilter: this.registros,
-            mensaje_error:'¡Este campo debe ser diligenciado!'
+            mensaje_error: '¡Este campo debe ser diligenciado!'
         }
     },
 
@@ -121,6 +122,9 @@ export default {
             }
         },
         listaEnCadena(item) {
+            if (item == '') {
+                this.$emit(this.eventoCampo,null)
+            }
             switch (this.eventoCampo) {
                 case 'getPaises':
                     this.$emit('getDepartamentos', item, this.ordenCampo, this.index)

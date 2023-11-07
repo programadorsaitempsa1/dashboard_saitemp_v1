@@ -40,9 +40,9 @@
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-6">
-                            <SearchList nombreCampo="Número de vacantes disponibles: *" nombreItem="nombre" eventoCampo="getVacantes"
-                                :consulta="consulta_vacantes" :registros="numero_vacantes" :ordenCampo="1"
-                                @getVacantes="getVacantes" placeholder="Seleccione una opción" />
+                            <SearchList nombreCampo="Número de vacantes disponibles: *" nombreItem="nombre"
+                                eventoCampo="getVacantes" :consulta="consulta_vacantes" :registros="numero_vacantes"
+                                :ordenCampo="1" @getVacantes="getVacantes" placeholder="Seleccione una opción" />
                         </div>
                     </div>
                     <div class="row">
@@ -127,10 +127,12 @@
                 <div id="seccion">
                     <h5 class="tituloseccion">Información personal candidato</h5>
                     <hr>
-                    <div class="row">
+                    <div class="row"
+                        v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
                         <h5 style="text-align: left;">Número de candidatos registrados: {{ candidatos.length }}</h5>
                     </div>
-                    <div v-if="this.servicio_solicitado_id != 2 || this.servicio_solicitado_id != 3 || this.servicio_solicitado_id != 4" class="row">
+                    <div v-if="servicio_solicitado_id != 2 && servicio_solicitado_id != 3 && servicio_solicitado_id != 4"
+                        class="row">
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Nombres:</label>
                             <input type="text"
@@ -151,9 +153,9 @@
                                 {{ mensaje_error }}
                             </div>
                         </div>
-
                     </div>
-                    <div v-if="this.servicio_solicitado_id != 2 || this.servicio_solicitado_id != 3 || this.servicio_solicitado_id != 4" class="row">
+                    <div v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4"
+                        class="row">
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label class="form-label">Número celular candidato:</label>
                             <input type="text"
@@ -175,7 +177,8 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="this.servicio_solicitado_id != 2 || this.servicio_solicitado_id != 3 || this.servicio_solicitado_id != 4" class="row">
+                    <div v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4"
+                        class="row">
                         <div class="col-sm-12 col-md-4 mb-3">
                             <SearchList nombreCampo="Pais de nacimiento: *" @getPaises="getPaises" eventoCampo="getPaises"
                                 nombreItem="nombre" :consulta="consulta_pais_n" :registros="paises" :ordenCampo="1"
@@ -192,7 +195,8 @@
                                 :ordenCampo="1" placeholder="Seleccione una opción" />
                         </div>
                     </div>
-                    <div v-if="this.servicio_solicitado_id != 2 || this.servicio_solicitado_id != 3 || this.servicio_solicitado_id != 4" class="row">
+                    <div v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4"
+                        class="row">
                         <div class="col-sm-12 col-md-6 mb-3">
                             <SearchList nombreCampo="Tipo de Identificación: *"
                                 @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
@@ -273,7 +277,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="this.servicio_solicitado_id != 2 || this.servicio_solicitado_id != 3 || this.servicio_solicitado_id != 4" class="row">
+                        <div v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4"
+                            class="row">
                             <label class="form-label">Especificaciones a tener en cuenta para vinculación:</label>
                             <div class="col">
                                 <EditorTextoHtml :consulta="consulta_textohtml_especificacion_v" :index="1"
@@ -432,7 +437,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4 col-md-12  mt-2 mb-3" v-if="candidatos.length > 0">
+                <div class="row"
+                    v-if="candidatos.length > 0 && this.servicio_solicitado_id == 2 || this.servicio_solicitado_id == 3 || this.servicio_solicitado_id == 4">
+                    <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
+                        <button type="submit" class="btn btn-success" @click="siguiente()">
+                            Guardar formulario
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-12  mt-2 mb-3"
+                    v-if="candidatos.length > 0 && this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
                     <nav aria-label="Page navigation example" style="padding:0px;margin:0px;">
                         <ul class="pagination">
                             <!-- <li class="page-item" id="atras"><a class="page-link"
@@ -446,19 +460,20 @@
                         </ul>
                     </nav>
                 </div>
-                <div class="row" v-if="$route.params.id == undefined">
+                <div class="row"
+                    v-if="$route.params.id == undefined && this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
                     <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
-                        <button type="submit" class="btn btn-success" @click="siguiente()">
+                        <button class="btn btn-success" @click.prevent="siguiente()">
                             Agregar candidato
                         </button>
                     </div>
                     <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
-                        <button type="submit" class="btn btn-success" @click="siguiente(pagina)">
+                        <button class="btn btn-success" @click.prevent="siguiente(pagina)">
                             Actualizar candidato actual
                         </button>
                     </div>
                     <div class="col-sm-4 col-md-4  mt-2 mb-3">
-                        <button type="submit" class="btn btn-success" @click="eliminarCandidato()">
+                        <button class="btn btn-success" @click.prevent="eliminarCandidato()">
                             Eliminar candidato actual
                         </button>
                     </div>
@@ -471,7 +486,8 @@
                     </div> -->
                 </div>
             </form>
-            <form class="was-validated " ref="formulario" id="card" @submit.prevent="save()">
+            <form class="was-validated " ref="formulario" id="card" @submit.prevent="save()"
+                v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
                 <div id="seccion">
                     <h5 class="tituloseccion">Adjuntar hoja de vida</h5>
                     <hr>
@@ -614,9 +630,9 @@ export default {
             documento_identidad_candidato: '',
             motivo_cancelacion: '',
             actual: false,
-            numero_vacantes:[],
-            consulta_vacantes:'',
-            vacantes_id:'',
+            numero_vacantes: [],
+            consulta_vacantes: '',
+            vacante_id: '',
             mensaje_cliente: 'Estimado cliente, Saitemp S.A se encuentra comprometido con la mejora en la calidad de los servicios ofrecidos; te invitamos a participar de la actualización del registro cliente de su negociación con el  propósito de cumplir con  las disposiciones legales exigidas por nuestros entes de control  ingresando  ( link debida diligencia) o comuníquese a la línea 3133024926 para recibir orientación en su proceso de actualización. '
         }
     },
@@ -655,6 +671,18 @@ export default {
     },
     methods: {
         save() {
+            console.log('funcion save()')
+            // this.guardarSeccion()
+            // let self = this;
+            // let formulario = JSON.parse(localStorage.getItem("cliente"))
+            // formulario['servicios'] = JSON.parse(localStorage.getItem("candidatos"))
+            // let config = this.configHeader();
+            // axios
+            //     .post(self.URL_API + "api/v1/ordenserviciocliente", formulario, config)
+            //     .then(function (result) {
+            //         // self.servicios = result.data
+            //         console.log(result.data)
+            //     });
 
         },
         eliminarCandidato() {
@@ -669,6 +697,7 @@ export default {
                 var cliente = JSON.parse(localStorage.getItem('cliente'))
                 this.consulta_tipo_persona = cliente.tipo_persona
                 this.tipo_persona_id = cliente.tipo_persona_id
+                this.tipo_persona = cliente.tipo_persona_id
                 this.razon_social = cliente.razon_social
                 this.nombre_solicitante = cliente.nombre_solicitante
                 this.cargo_solicitante = cliente.cargo_solicitante
@@ -684,11 +713,14 @@ export default {
                 this.numero_identificacion = cliente.numero_identificacion
                 this.nit = cliente.nit
                 this.persona_natural = this.tipo_persona_id == 1 ? false : true
+                this.vacante_id = cliente.numero_vacantes_id
+                this.consulta_vacantes = cliente.numero_vacantes
                 this.opcionesTipoPersona(!this.persona_natural)
             }
         },
         llenarCampoCandidato(index = 0) {
-            if (JSON.parse(localStorage.getItem('candidatos')).length > 0) {
+            var objeto = JSON.parse(localStorage.getItem('candidatos'))
+            if (objeto != undefined && objeto.length > 0) {
                 this.candidatos = JSON.parse(localStorage.getItem('candidatos'))
                 this.candidatos.forEach(function (item) {
                     item.actual = false
@@ -724,7 +756,7 @@ export default {
                 this.recomendacion_examen_medico = this.candidatos[index].recomendaciones_examen_medico
                 this.orientacion_laboratorio = this.candidatos[index].orientacion_laboratorio
                 this.bonificaciones = this.candidatos[index].bonificaciones
-                this.cargos2 = this.candidatos[index].cargos
+                this.cargos2 = this.candidatos[index].cargos2
                 this.motivo_cancelacion = this.candidatos[index].motivo_cancelacion
                 // this.actual = true
                 this.candidatos[index].actual = true
@@ -740,8 +772,9 @@ export default {
                 this.array_lista_recomendaciones[index] = this.candidatos[index].recomendaciones
                 // ************************************************
                 // console.log(this.candidatos)
-            } else {
                 this.getBonificaciones()
+            } else {
+                console.log('')
             }
         },
         guardarSeccion() {
@@ -764,6 +797,8 @@ export default {
                     departamento_prestacion_servicio_id: this.consulta_departamento_p_s_id,
                     ciudad_prestacion_servicio_id: this.ciudad_prestacion_servicio_id,
                     ciudad_prestacion_servicio: this.consulta_municipio_p_s,
+                    numero_vacantes_id: this.vacante_id,
+                    numero_vacantes: this.consulta_vacantes
                 }
                 localStorage.setItem('cliente', JSON.stringify(this.cliente))
             } else {
@@ -816,12 +851,12 @@ export default {
                     estado_solicitud: this.consulta_estado_solicitud,
                     estado_solicitud_id: this.estado_solicitud_id,
                     bonificaciones: this.bonificaciones,
-                    cargos: this.cargos2,
+                    cargos2: this.cargos2,
                     motivo_cancelacion: this.motivo_cancelacion,
                     actual: this.actual
                 }
 
-                this.cargos2.forEach(function (item, index) {
+                this.cargos2.forEach(function (item,index) {
                     candidato.tipo_cargo = item.tipo_cargo == 1 ? 'Administrativo' : 'Operativo'
                     candidato.tipo_cargo_id = self.tipo_cargo[index]
                     candidato.cargo_id = item.cargo_id
@@ -1041,8 +1076,10 @@ export default {
                 this.consulta_vacantes = item.nombre
             }
             this.numero_vacantes = []
-            for (let i = 0; i < 20; i++) {
-                this.numero_vacantes.push({id:i,nombre:i+1})
+            var numero = ''
+            for (let i = 1; i <= 20; i++) {
+                numero++;
+                this.numero_vacantes.push({ id: i, nombre: "" + numero })
             }
             // let self = this;
             // let config = this.configHeader();
@@ -1144,7 +1181,7 @@ export default {
         },
         getRiesgosLaborales(item = null, index = null) {
             if (item != null) {
-                console.log(item, index)
+                this.cargos2[0].riesgo_laboral_id = item.id;
                 this.consulta_riesgo_laboral[index] = item.nombre;
                 this.riesgo_laboral = item.id;
             }
@@ -1183,6 +1220,7 @@ export default {
         retornoTexto(index, texto) {
             switch (index) {
                 case 0:
+                    this.cargos2[0].funcion_cargo = texto
                     this.consulta_textohtml_funciones = texto
                     break;
                 case 1:
