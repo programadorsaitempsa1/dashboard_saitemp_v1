@@ -47,6 +47,7 @@ import MapaVue from "../components/MapaVue.vue";
 import ClienteSupervision from "../components/ClienteSupervision.vue";
 import OrdenServicio from "../components/OrdenServicio.vue";
 import OrdenServicios from "../components/OrdenServicios.vue";
+import SolicitudesOrdenServicio from "../components/SolicitudesOrdenServicio.vue";
 
 
 
@@ -279,9 +280,14 @@ const routes = [
         component: OrdenServicio,
       },
       {
-        path: "orden-servicios",
+        path: "orden-servicios/:id?",
         name: "orden-servicios",
         component: OrdenServicios,
+      },
+      {
+        path: "solicitudes-os",
+        name: "solicitudes-os",
+        component: SolicitudesOrdenServicio,
       },
      
     ],

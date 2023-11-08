@@ -105,7 +105,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -127,7 +127,7 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'" scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
@@ -137,7 +137,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -152,13 +152,13 @@
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
                        <td v-if="empleados() && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
 
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -178,6 +178,12 @@
                         </td>
                         <td v-if="ruta == '/navbar/cliente-supervision'">
                             <button type="button" class="btn btn-success btn-sm " @click="verFormularioSuper(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> Ver registro
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/solicitudes-os'">
+                            <button type="button" class="btn btn-success btn-sm " @click="verOrdenServicio(item)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-eye"></i> Ver registro
                             </button>
@@ -690,6 +696,9 @@ export default {
         },
         verFormularioSuper(item) {
             this.$router.push({ name: 'formulario-supervision', params: { id: item.id } })
+        },
+        verOrdenServicio(item) {
+            this.$router.push({ name: 'orden-servicios', params: { id: item.id } })
         },
         exportFormularioDD(item){
             console.log(item)

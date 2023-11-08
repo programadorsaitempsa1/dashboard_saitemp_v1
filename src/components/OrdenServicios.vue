@@ -102,8 +102,8 @@
                             </div>
                             <div class="col-sm-12 col-md-6 mb-3">
                                 <label class="form-label">Fecha inicio labores: *</label>
-                                <input type="date" class="form-control" autocomplete="off" id="exampleInput2"
-                                    aria-describedby="emailHelp" v-model="item.fecha_inicio" required />
+                                <input type="date" class="form-control" autocomplete="off" placeholder="dd-mm-aaaa"
+                                    id="exampleInput2" aria-describedby="emailHelp" v-model="item.fecha_inicio" required />
                                 <div class="invalid-feedback">
                                     {{ mensaje_error }}
                                 </div>
@@ -112,8 +112,9 @@
                         <div class="row">
                             <div class="col-sm-12 col-md-6 mb-3">
                                 <label class="form-label">Fecha de solicitud: *</label>
-                                <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInput2"
-                                    aria-describedby="emailHelp" v-model="item.fecha_solicitud" required />
+                                <input type="datetime-local" class="form-control" autocomplete="off"
+                                    placeholder="dd-mm-aaaa" id="exampleInput2" aria-describedby="emailHelp"
+                                    v-model="item.fecha_solicitud" required />
                                 <div class="invalid-feedback">
                                     {{ mensaje_error }}
                                 </div>
@@ -176,8 +177,8 @@
                         <div class="col-sm-12 col-md-6 mb-3">
                             <label for="formFileMultiple" class="form-label">Adjuntar hoja de vida</label>
                             <div class="input-group mb-3">
-                                <input class="form-control" ref="fileInput" type="file" multiple
-                                    @change="cargarArchivo($event, index)" id="formFileMultiple" required>
+                                <input class="form-control" ref="fileInput" accept=".pdf" type="file" multiple
+                                    @change="cargarArchivo($event, index)" id="formFileMultiple">
                                 <span style="cursor: pointer" class="input-group-text" @click="quitarAdjuntos(index)"
                                     id="basic-addon1">Quitar archivo</span>
                                 <div class="invalid-feedback">
@@ -221,19 +222,19 @@
                             <tbody>
                                 <tr v-for="item, index in hojas_vida_enviadas" :key="index">
                                     <th scope="row">{{ index + 1 }}</th>
-                                    <td>{{ cargos[0].nombre }}</td>
+                                    <td>{{ item.cargo }}</td>
                                     <td>
-                                        <div class="row" v-for="item, index in 5" :key="index">
+                                        <div class="row" v-for="item, index in item.detalles" :key="index">
                                             <div class="col-12 m-2">
-                                                {{ '02/11/2023' }}
+                                                {{ fecha(item.fecha_hora_envio) }}
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="row" v-for="item, index in 5" :key="index">
+                                        <div class="row" v-for="item2, index in item.detalles" :key="index">
                                             <div class="col-12 m-1">
                                                 <button type="button" class="btn btn-success btn-sm">
-                                                    <a :href="URL_API + item.ruta" target="_blank"
+                                                    <a :href="URL_API + item2.ruta_documento" target="_blank"
                                                         style="color:white;text-decoration: none;"
                                                         rel="noopener noreferrer"><i class="bi bi-eye">
                                                             ver hoja de vida</i></a></button>
@@ -284,16 +285,15 @@ export default {
             departamentos: [],
             municipios: [],
             personas_cargo: [],
-            cargos: [{ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '', cliente_id: '' }],
+            cargos: [{ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '' }],
             cantidad_personas: [],
             profesional: '',
             profesionales: [],
             hojas_vida: [{ cargo: '', hojas_vida: [] }],
             hojas_vida_enviadas: [
-                { fecha: '', cargo: '', ruta: '' },
-                { fecha: '', cargo: '', ruta: '' },
-                { fecha: '', cargo: '', ruta: '' },
             ],
+            id_cliente: this.$route.params.id,
+            actualizar: false
         }
     },
     computed: {
@@ -308,20 +308,78 @@ export default {
     created() {
         this.getDepartamentos(43)
         this.getPersonasCargo()
+        // Si viene un id en la url, se consulta un cliente mediante este ID
         if (this.$route.params.id != undefined) {
-            // this.getCliente()
+            this.getCliente()
         }
     },
     methods: {
+        // Consulta cliente registrado
         getCliente() {
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/userslist", config)
+                .get(self.URL_API + "api/v1/ordenserviciocliente/" + self.id_cliente, config)
                 .then(function (result) {
-                    self.profesionales = result.data
+                    self.llenarCamposClinte(result.data)
                 });
         },
+        // Llena los campos del formulario luego de consultar el cliente por Id
+        llenarCamposClinte(cliente) {
+            let self = this
+            this.numero_documento = cliente.nit_ndocumento
+            this.razon_social = cliente.nombre_razon_social
+            this.nombre_solicitante = cliente.nombre_solicitante
+            this.correo_solicitante = cliente.correo_solicitante
+            this.celular_solicitante = cliente.celular_solicitante
+            cliente.cargos.forEach(function (item, index) {
+                if (index > 0 && !self.actualizar) {
+                    self.agregarCargo()
+                }
+                self.cargos[index].nombre = item.nombre
+                self.cargos[index].cantidad_personas = item.cantidad_vacantes
+                self.cantidad_personas[index] = item.cantidad_vacantes
+                self.cargos[index].salario = item.salario
+                self.cargos[index].fecha_inicio = item.fecha_inicio
+                self.cargos[index].fecha_solicitud = self.reformatearFecha(item.fecha_solicitud)
+                self.cargos[index].observaciones = item.observaciones
+                self.cargos[index].ciudad_id = item.ciudad_id
+                self.consulta_departamento[index] = item.departamento
+                self.consulta_municipio[index] = item.municipio
+            })
+            self.hojas_vida_enviadas = cliente.hojas_vida
+
+        },
+        //Muestra la fecha en un formato mas amigable
+        fecha(valor) {
+            valor = new Date(valor);
+            const opciones = {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            };
+            return valor.toLocaleDateString('es-ES', opciones);
+        },
+        // formatea la fecha consultada de "2023-07-11 16:14:00.000" a "2023-11-07T16:14"
+        reformatearFecha(fechaOriginal) {
+            let fechaObjeto = new Date(fechaOriginal);
+            // Obtener año, mes y día
+            let año = fechaObjeto.getFullYear();
+            let mes = (fechaObjeto.getMonth() + 1).toString().padStart(2, '0'); // Se suma 1 al mes porque los meses en JavaScript van de 0 a 11
+            let dia = fechaObjeto.getDate().toString().padStart(2, '0');
+            // Obtener horas y minutos
+            let horas = fechaObjeto.getHours().toString().padStart(2, '0');
+            let minutos = fechaObjeto.getMinutes().toString().padStart(2, '0');
+            // Crear la nueva fecha en el formato deseado
+            let nuevaFecha = año + '-' + mes + '-' + dia + 'T' + horas + ':' + minutos;
+            return nuevaFecha;
+        },
+        // Lista de usuarios del sistema
         getProfesionales(item = null) {
             this.usuario_id = ''
             this.profesional = ''
@@ -337,6 +395,7 @@ export default {
                     self.profesionales = result.data
                 });
         },
+        // Guarda la sección del cliente del formulario
         guardarCliente() {
             let self = this;
             let cliente = {
@@ -351,18 +410,28 @@ export default {
             axios
                 .post(self.URL_API + "api/v1/ordenserviciocliente", cliente, config)
                 .then(function (result) {
-                    console.log(result.data)
+                    self.showAlert(result.data.message, result.data.status)
                 });
         },
+        // Guarda la sección de cargos del formulario
         guardarCargos() {
             let self = this;
             let config = this.configHeader();
-            axios
-                .post(self.URL_API + "api/v1/ordenserviciocargo/" + self.numero_documento, self.cargos, config)
-                .then(function (result) {
-                    console.log(result.data)
-                });
+            if (this.$route.params.id != undefined) {
+                axios
+                    .put(self.URL_API + "api/v1/ordenserviciocargo/" + self.numero_documento, self.cargos, config)
+                    .then(function (result) {
+                        self.showAlert(result.data.message, result.data.status)
+                    });
+            } else {
+                axios
+                    .post(self.URL_API + "api/v1/ordenserviciocargo/" + self.numero_documento, self.cargos, config)
+                    .then(function (result) {
+                        self.showAlert(result.data.message, result.data.status)
+                    });
+            }
         },
+        // Guarda las hojas de vida cargadas en el formulario
         enviarHojasVida() {
             let self = this;
             let config = this.configHeader();
@@ -371,9 +440,13 @@ export default {
             axios
                 .post(self.URL_API + "api/v1/ordenserviciohojavida/" + self.numero_documento, hojas_vida, config)
                 .then(function (result) {
-                    console.log(result.data)
+                    self.actualizar = true
+                    self.getCliente()
+                    self.limpiarCargueArchivos()
+                    self.showAlert(result.data.message, result.data.status)
                 });
         },
+        // Crea un array bidimensional para cargar las hojas de vida y enviarlas al back
         prepararCargueArchivos() {
             const hojas = new FormData();
             this.hojas_vida.forEach(function (item, index) {
@@ -385,19 +458,26 @@ export default {
             })
             return hojas
         },
+        // Luego de enviar las hojas de vida limpia el array
+        limpiarCargueArchivos() {
+            this.hojas_vida.forEach(function (item) {
+                item.hojas_vida = []
+            })
+        },
+        // Valida los campos de tipo numero
         validarNumero(valor) {
             return valor.replace(/\D/g, "");
         },
+        // Cambia los caracteres de los campos a mayusculas
         formatInputUpperCase(value) {
             const formattedValue = value.toUpperCase();
             return formattedValue;
         },
+        // mediante un botón borra los archivos adjuntos
         quitarAdjuntos(index) {
             this.hojas_vida[index].hojas_vida = []
-            // this.$refs.fileInput[0].files.splice(0,1)
-            // console.log(this.$refs.fileInput[0].files)
-
         },
+        // Muestra el tamaño del archivo cargado
         formatearPesoArchivo(pesoBytes) {
             if (pesoBytes < 1024) {
                 return `${pesoBytes} bytes`;
@@ -409,6 +489,7 @@ export default {
                 return `${Math.ceil(pesoBytes / (1024 * 1024 * 1024))} GB`;
             }
         },
+        // Inserta las hojas de vida a un array para posteriormente enviarlas
         cargarArchivo(event, index) {
             var self = this
             var file = event.target.files;
@@ -417,16 +498,19 @@ export default {
                 self.hojas_vida[index].hojas_vida.push(file[j])
             }
         },
+        // botón para eliminar cargos
         eliminarCargo(index) {
             this.cargos.splice(index, 1)
         },
+        agregarHojaVidaEnviada() {
+            this.hojas_vida_enviadas.push({ nombre_cargo: '', fecha_hora_envio: '', ruta_documento: '' })
+        },
         agregarCargo() {
-            this.cargos.push({ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '', cliente_id: '' })
+            this.cargos.push({ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '' })
             this.hojas_vida.push({ cargo: '', hojas_vida: [] })
         },
         getPersonasCargo(item = null, index = null) {
             if (item != null) {
-                // console.log(item, 'item', campo, ' campo', index, ' index')
                 this.cargos[index].cantidad_personas = item.nombre
             }
             this.personas_cargo = []
@@ -460,7 +544,6 @@ export default {
         },
         getDepartamentos(id) {
             let self = this;
-            // this.setLabelPais(id)
             id = id.id != undefined ? id.id : id
             let config = this.configHeader();
             axios
