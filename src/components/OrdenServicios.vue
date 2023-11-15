@@ -121,7 +121,7 @@
                             </div>
                             <div class="col-sm-12 col-md-6 mb-3">
                                 <label class="form-label">Observaciones: *</label>
-                                <textarea class="form-control" required name="" id="observaciones" rows="1"
+                                <textarea class="form-control" name="" id="observaciones" rows="1"
                                     v-model="item.observaciones"
                                     @input="item.observaciones = formatInputUpperCase($event.target.value)"></textarea>
                                 <div class="invalid-feedback">
@@ -139,6 +139,33 @@
                                 <SearchList nombreCampo="Ciudad: *" nombreItem="nombre" :registros="municipios"
                                     :consulta="consulta_municipio[index]" @setMunicipios="setMunicipios" :index="index"
                                     eventoCampo="setMunicipios" :ordenCampo="0" placeholder="Seleccione una opción" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6" v-if="item.oculta_estado_cargo">
+                                <SearchList nombreCampo="Estado del cargo: *" nombreItem="nombre"
+                                    eventoCampo="getEstadoCargo" :consulta="consulta_estado_cargo[index]" :index="index"
+                                    :registros="estados_cargos" @getEstadoCargo="getEstadoCargo"
+                                    placeholder="Seleccione una opción" />
+                            </div>
+                            <div class="col-sm-12 col-md-6 mb-3" v-if="cargos[index].estado_cargo_id == 4">
+                                <label class="form-label">Motivo cancelación: *</label>
+                                <textarea class="form-control" required name="" id="motivo_cancelacion" rows="1"
+                                    v-model="item.motivo_cancelacion"
+                                    @input="item.motivo_cancelacion = formatInputUpperCase($event.target.value)"></textarea>
+                                <div class="invalid-feedback">
+                                    {{ mensaje_error }}
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6 mb-3" v-if="cargos[index].estado_cargo_id == 3">
+                                <label class="form-label">Vacantes ocupadas: *</label>
+                                <input type="text" class="form-control" autocomplete="off"
+                                    @input="item.vacantes_ocupadas = validarNumero(item.vacantes_ocupadas)"
+                                    aria-describedby="emailHelp" placeholder="" id="exampleInput2"
+                                    v-model="item.vacantes_ocupadas" required />
+                                <div class="invalid-feedback">
+                                    {{ mensaje_error }}
+                                </div>
                             </div>
                         </div>
                         <span v-if="index > 0" id="clasificador2" @click="eliminarCargo(index)" style="cursor: pointer"><i
@@ -215,6 +242,7 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Cargo solicitado</th>
+                                    <th scope="col">Datos solicitante</th>
                                     <th scope="col">Fecha de envío hojas de vida</th>
                                     <th scope="col">Hojas de vida</th>
                                 </tr>
@@ -223,6 +251,13 @@
                                 <tr v-for="item, index in hojas_vida_enviadas" :key="index">
                                     <th scope="row">{{ index + 1 }}</th>
                                     <td>{{ item.cargo }}</td>
+                                    <td>
+                                        <div class="row" v-for="item, index in item.detalles" :key="index">
+                                            <div class="col-12 m-2">
+                                                {{ item.datos_solicitante }}
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <div class="row" v-for="item, index in item.detalles" :key="index">
                                             <div class="col-12 m-2">
@@ -285,7 +320,7 @@ export default {
             departamentos: [],
             municipios: [],
             personas_cargo: [],
-            cargos: [{ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '' }],
+            cargos: [{ id: '', nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', vacantes_ocupadas: '', observaciones: '', ciudad_id: '', estado_cargo_id: '', oculta_estado_cargo: false }],
             cantidad_personas: [],
             profesional: '',
             profesionales: [],
@@ -293,7 +328,11 @@ export default {
             hojas_vida_enviadas: [
             ],
             id_cliente: this.$route.params.id,
-            actualizar: false
+            actualizar: false,
+            estados_cargos: [],
+            consulta_estado_cargo: [],
+            // oculta_estado_cargo: false
+            // estado_cargo_id: '',
         }
     },
     computed: {
@@ -308,9 +347,14 @@ export default {
     created() {
         this.getDepartamentos(43)
         this.getPersonasCargo()
+        this.getEstadoCargo()
         // Si viene un id en la url, se consulta un cliente mediante este ID
         if (this.$route.params.id != undefined) {
             this.getCliente()
+            // console.log(this.cargos.length)
+            // if (this.cargos.length > 1) {
+            //     this.oculta_estado_cargo = true
+            // }
         }
     },
     methods: {
@@ -336,16 +380,22 @@ export default {
                 if (index > 0 && !self.actualizar) {
                     self.agregarCargo()
                 }
+                self.cargos[index].id = item.id
                 self.cargos[index].nombre = item.nombre
                 self.cargos[index].cantidad_personas = item.cantidad_vacantes
                 self.cantidad_personas[index] = item.cantidad_vacantes
                 self.cargos[index].salario = item.salario
                 self.cargos[index].fecha_inicio = item.fecha_inicio
                 self.cargos[index].fecha_solicitud = self.reformatearFecha(item.fecha_solicitud)
+                self.cargos[index].vacantes_ocupadas = item.vacantes_ocupadas
                 self.cargos[index].observaciones = item.observaciones
                 self.cargos[index].ciudad_id = item.ciudad_id
+                self.cargos[index].estado_cargo_id = item.estado_cargo_id
+                self.cargos[index].oculta_estado_cargo = true
+                self.cargos[index].motivo_cancelacion = item.motivo_cancelacion
                 self.consulta_departamento[index] = item.departamento
                 self.consulta_municipio[index] = item.municipio
+                self.consulta_estado_cargo[index] = item.estado_cargo
             })
             self.hojas_vida_enviadas = cliente.hojas_vida
 
@@ -398,7 +448,7 @@ export default {
         // Guarda la sección del cliente del formulario
         guardarCliente() {
             let self = this;
-            let cliente = {
+            var cliente = {
                 nit_ndocumento: this.numero_documento,
                 nombre_razon_social: this.razon_social,
                 nombre_solicitante: this.nombre_solicitante,
@@ -407,11 +457,26 @@ export default {
                 usuario_id: this.usuario_id
             }
             let config = this.configHeader();
-            axios
-                .post(self.URL_API + "api/v1/ordenserviciocliente", cliente, config)
-                .then(function (result) {
-                    self.showAlert(result.data.message, result.data.status)
-                });
+            var id = this.$route.params.id
+            if (id != undefined) {
+                axios
+                    .put(self.URL_API + "api/v1/ordenserviciocliente/" + id, cliente, config)
+                    .then(function (result) {
+                        self.showAlert(result.data.message, result.data.status)
+                    });
+            } else {
+                axios
+                    .post(self.URL_API + "api/v1/ordenserviciocliente", cliente, config)
+                    .then(function (result) {
+                        self.showAlert(result.data.message, result.data.status)
+                    });
+            }
+            // let config = this.configHeader();
+            // axios
+            //     .post(self.URL_API + "api/v1/ordenserviciocliente", cliente, config)
+            //     .then(function (result) {
+            //         self.showAlert(result.data.message, result.data.status)
+            //     });
         },
         // Guarda la sección de cargos del formulario
         guardarCargos() {
@@ -450,11 +515,13 @@ export default {
         prepararCargueArchivos() {
             const hojas = new FormData();
             this.hojas_vida.forEach(function (item, index) {
-                hojas.append('cargo[' + index + '][0]', item.cargo)
-                item.hojas_vida.forEach(function (item2, index2) {
-                    hojas.append('cargo[' + index + '][' + (index2 + 1) + ']', item2)
+                if (item.cargo != null) {
+                    hojas.append('cargo[' + index + '][0]', item.cargo)
+                    item.hojas_vida.forEach(function (item2, index2) {
+                        hojas.append('cargo[' + index + '][' + (index2 + 1) + ']', item2)
 
-                })
+                    })
+                }
             })
             return hojas
         },
@@ -506,7 +573,7 @@ export default {
             this.hojas_vida_enviadas.push({ nombre_cargo: '', fecha_hora_envio: '', ruta_documento: '' })
         },
         agregarCargo() {
-            this.cargos.push({ nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', observaciones: '', ciudad_id: '' })
+            this.cargos.push({ id: '', nombre: '', cantidad_personas: '', salario: '', fecha_inicio: '', fecha_solicitud: '', vacantes_ocupadas: '', observaciones: '', ciudad_id: '', estado_cargo_id: '', oculta_estado_cargo: false })
             this.hojas_vida.push({ cargo: '', hojas_vida: [] })
         },
         getPersonasCargo(item = null, index = null) {
@@ -521,6 +588,19 @@ export default {
 
             }
         },
+        getEstadoCargo(item = null, index = null) {
+            if (item != null) {
+                this.consulta_estado_cargo[index] = item.nombre
+                this.cargos[index].estado_cargo_id = item.id
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/oservicioestadocargo", config)
+                .then(function (result) {
+                    self.estados_cargos = result.data
+                });
+        },
         getMunicipios(item, ordenCampo, index) {
             let self = this;
             this.setLabelDepartamento(item, ordenCampo, index)
@@ -531,7 +611,7 @@ export default {
                     self.municipios = result.data
                 });
         },
-        setMunicipios(item, campo, index) {
+        setMunicipios(item, campo, index = 0) {
             if (item != null) {
                 switch (campo) {
                     case 0:
