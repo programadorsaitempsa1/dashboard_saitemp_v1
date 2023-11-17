@@ -270,7 +270,7 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 300;
+  z-index: 2000;
   color: white;
   transition: width 1s;
   overflow-x: hidden;

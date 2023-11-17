@@ -8,7 +8,7 @@ export const Token = {
       const urlCompleta = window.location.href;
       if (urlCompleta.includes ('debidadiligencia.saitempsa.com')) {
         this.URL_API =
-          'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/';
+          'https://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/';
       }
     },
     configHeader () {

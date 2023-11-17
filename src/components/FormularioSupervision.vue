@@ -4,7 +4,7 @@
         <h2>Formulario de supervisión</h2>
         <NotificacionesSocket />
         <div class="card col-xs-12 col-md-6">
-            <form class="was-validated" @submit.prevent="save()">
+            <form class="was-validated" @submit.prevent="validaLocalizacion()">
                 <div id="seccion">
                     <div class="row">
                         <div class="col-sm-12 col-md-6">
@@ -112,12 +112,12 @@
                                 <div class="card mb-3" v-if="$route.params.id != undefined">
                                     <div class="row g-0">
                                         <div class="col-md-4">
-                                            <img v-bind:src="item2"  class="img-fluid rounded-start" alt="">
+                                            <img v-bind:src="item2" class="img-fluid rounded-start" alt="">
                                         </div>
                                         <div class="col-md-8">
                                             <div class="card-body" style="text-align: left;">
                                                 <h5 class="card-title">Observación:</h5>
-                                               <div v-html="item.body"></div>
+                                                <div v-html="item.body"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -203,6 +203,11 @@
                     </a>
                 </div>
             </form>
+            <div class="row mt-4" v-if="latitud != null">
+                <h3>Geolocalización <i class="bi bi-geo-alt"></i></h3>
+                <MapaVue @coordenadas="coordenadas" :showMap="showMap" :latitud="latitud" :longitud="longitud"
+                    :label="label" :marcador="marcador" />
+            </div>
         </div>
     </div>
 </template>
@@ -213,10 +218,12 @@ import SearchTable from './SearchTable.vue'
 import SearchList from './SearchList.vue'
 import FirmaDigital from './FirmaDigital.vue'
 import NotificacionesSocket from './NotificacionSocket.vue'
+import MapaVue from './MapaVue.vue'
 import Loading from './Loading.vue'
 import { Token } from '../Mixins/Token.js';
 import { Alerts } from '../Mixins/Alerts.js';
 import { Scroll } from '../Mixins/Scroll.js';
+import { Geolocal } from '../Mixins/Geolocal.js';
 export default {
     components: {
         EditorTextoHtml,
@@ -224,9 +231,11 @@ export default {
         SearchList,
         FirmaDigital,
         Loading,
-        NotificacionesSocket
+        NotificacionesSocket,
+        MapaVue,
+
     },
-    mixins: [Token, Alerts, Scroll],
+    mixins: [Token, Alerts, Scroll, Geolocal],
     props: {
         userlogued: {}
     },
@@ -275,7 +284,12 @@ export default {
             estados_epp: [],
             observacionesepp: [],
             idpdf: '',
-            deshabilitar_boton: false
+            deshabilitar_boton: false,
+            showMap: true,
+            latitud: '',
+            longitud: '',
+            label: '',
+            marcador: require('@/assets/marcador_alinstante.png')
         }
     },
     computed: {
@@ -285,7 +299,9 @@ export default {
 
     },
     mounted() {
-
+        if (this.$route.params.id == undefined) {
+            this.geolocal()
+        }
     },
     filters: {
         truncate(text, length, suffix) {
@@ -317,6 +333,20 @@ export default {
 
     },
     methods: {
+        async geolocal() {
+            try {
+                // Llamar a obtenerGeolocalizacion y esperar la respuesta
+                const result = await this.obtenerGeolocalizacion();
+                this.label = 'Ubicacion actual'
+                this.latitud = String(result.latitud)
+                this.longitud = String(result.longitud)
+                this.showMap = !this.showMap
+                return true
+            } catch (error) {
+                this.showMap = false
+                return false
+            }
+        },
         idPfd() {
             if (this.$route.params.id != undefined) {
                 this.idpdf = this.$route.params.id
@@ -336,6 +366,18 @@ export default {
         formatInputUpperCase(value) {
             const formattedValue = value.toUpperCase();
             return formattedValue;
+        },
+        async validaLocalizacion() {
+            try {
+                const resultado = await this.geolocal();
+                if (resultado) {
+                    this.save()
+                } else {
+                    this.showAlert('No se a podido obtener la geolocalización del dispositivo, por favor verifica tu conexión a internet o activa el gps del dispositivo.', 'error');
+                }
+            } catch (error) {
+                this.showAlert('No se a podido obtener la geolocalización del dispositivo, por favor verifica tu conexión a internet o activa el gps del dispositivo.', 'error');
+            }
         },
         save() {
             let self = this
@@ -358,6 +400,8 @@ export default {
             formulario.append('descripcion', this.descripcion)
             formulario.append('firma_supervisor', this.archivo_firma_supervisor)
             formulario.append('firma_persona_contactada', this.archivo_firma_persona_contactada)
+            formulario.append('latitud', this.latitud)
+            formulario.append('longitud', this.longitud)
             this.concepto_estado_formulario.forEach(function (item) {
                 formulario.append('concepto_estado[]', item.concepto + '*' + item.estado)
             })
@@ -597,21 +641,6 @@ export default {
                 this.consulta_municipio = item.nombre
             }
         },
-        obtenerGeolocalizacion() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        this.geolocalizacion = {
-                            latitud: position.coords.latitude,
-                            longitud: position.coords.longitude
-                        };
-                        this.errorMensaje = '';
-                    },
-                );
-            } else {
-                this.errorMensaje = 'Geolocalización no compatible con este navegador.';
-            }
-        },
         cargarArchivo(event, index) {
             var self = this
             const file = event.target.files;
@@ -676,6 +705,13 @@ export default {
             this.consulta_departamento = item.departamento
             this.consulta_municipio = item.municipio
 
+            // this.label = 'Ubicación visita'
+            this.latitud = item.latitud //'6.17591'
+            this.longitud = item.longitud //'-75.59174'
+            if (this.latitud != null) {
+                this.showMap = !this.showMap
+            }
+
             for (let i = 0; i < this.conceptos.length; i++) {
                 for (let j = 0; j < this.estados_concepto.length; j++) {
                     const refName = `checkbox${i.toString()}${j.toString()}`;
@@ -709,6 +745,9 @@ export default {
             })
             self.loading = false
         },
+        coordenadas() {
+            // console.log(coordenadas)
+        }
     }
 };
 </script>
@@ -853,4 +892,5 @@ label {
 
 .white-text {
     color: white;
-}</style>
+}
+</style>
