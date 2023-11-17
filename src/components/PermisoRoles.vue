@@ -74,7 +74,10 @@
 </template>
 <script>
 import axios from "axios";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 export default {
+    mixins: [Token, Alerts],
     data() {
         return {
             rolespermisos: [],
@@ -260,23 +263,6 @@ export default {
                         localStorage.removeItem("access_token");
                     }
                 });
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

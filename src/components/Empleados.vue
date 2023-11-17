@@ -28,13 +28,14 @@
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue';
+import {Token} from '../Mixins/Token'
 // import ReporteWeb from './ReporteWeb.vue';
 export default {
     components: {
         Tabla,
         // ReporteWeb
     },
-    mixins: [],
+    mixins: [Token],
     props: {
 
     },
@@ -87,7 +88,6 @@ export default {
             axios
                 .get(self.URL_API + "api/v1/historicoempleado/" + this.search + '/' + 10, config)
                 .then(function (result) {
-                    console.log(result)
                     self.datos = result;
                     if (result.data.data.length > 0 && descarga_excel) {
                         self.download_excel = true
@@ -138,14 +138,6 @@ export default {
             let self = this;
             let cadena = this.campo + '/' + this.operador + '/' + this.valor_comparar + '/' + self.valor_comparar2
             this.base64consulta = (btoa(cadena))
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

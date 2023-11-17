@@ -17,8 +17,8 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div :class="collapse
-            ? 'collapse navbar-collapse show'
-            : 'collapse navbar-collapse'
+          ? 'collapse navbar-collapse show'
+          : 'collapse navbar-collapse'
           " id="navbarNav">
           <ul class="navbar-nav">
             <!-- <li id="menucolapsed" class="nav-item" @click="collapese">
@@ -30,6 +30,12 @@
             <li class="nav-item" @click="collapese">
               <router-link class="nav-link active" to="">{{ saludo }}
                 {{ userlogued.nombres }}</router-link>
+            </li>
+            <li class="nav-item contrasena" id="menu-lateral" @click="ocultarMenu(), collapese()">
+              <!-- <router-link class="nav-link active" to="/"> -->
+              <i :class="menu_lateral ? 'bi bi-text-indent-right' : 'bi bi-text-indent-left'"></i> {{ menu_lateral ?
+                'Ocultar menú lateral' : 'Mostrar menú lateral' }}
+              <!-- </router-link> -->
             </li>
             <li class="nav-item contrasena" id="contrasena" @click="actualizar()">
               <!-- <router-link class="nav-link active" to="/"> -->
@@ -69,7 +75,7 @@
           :aria-labelledby="'flush-heading' + option[index]" data-bs-parent="#accordionFlushExample">
           <div v-for="(item, index) in menu[index].opciones" :key="index" class="accordion-body">
             <router-link v-if="item.urlExterna == '0'" class="nav-link active"
-              :to="item.powerbi != '' ? '/' + item.url+'/'+item.nombre : item.url != '' ? '/' + item.url : '/navbar'"
+              :to="item.powerbi != '' ? '/' + item.url + '/' + item.nombre : item.url != '' ? '/' + item.url : '/navbar'"
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
             </router-link>
@@ -88,10 +94,12 @@
 <script>
 /* eslint-disable */
 import axios from "axios";
+import { Token } from '../Mixins/Token'
 export default {
   components: {
     name: 'Navbar',
   },
+  mixins: [Token],
   data() {
     return {
       username: "",
@@ -107,6 +115,7 @@ export default {
       autoriced: false,
       option: ['One', 'Two', 'Tree', 'Four', 'Five', 'six', 'Seven'],
       categoria_menu: [],
+      menu_lateral: true,
       // menu: [
       //   { categoria: 'Menú', icon: 'bi bi-speedometer2', opciones: [] },
       //   {
@@ -124,6 +133,7 @@ export default {
     //   this.ruta = this.$route.name
     //   this.userId()
     //   this.getLogoPagina()
+    this.urlExterna()
     this.userLogued()
   },
   methods: {
@@ -147,6 +157,17 @@ export default {
       //     localStorage.removeItem("access_token");
       //     }
       //   });
+    },
+    ocultarMenu() {
+      var menu = document.getElementsByClassName('aside')[0];
+
+      if (this.menu_lateral) {
+        menu.style.display = 'none'; // Ocultar el menú
+      } else {
+        menu.style.display = 'block'; // Mostrar el menú
+      }
+      this.menu_lateral = !this.menu_lateral
+      localStorage.setItem("menu_lateral", this.menu_lateral)
     },
     actualizar() {
       this.$router.push({ name: "editarUsuario", params: { id: this.user_id } });
@@ -226,14 +247,6 @@ export default {
     //         self.getLogoPagina()
     //       });
     //   },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
-    },
     asideExpand() {
       this.expand = !this.expand;
     },
@@ -257,7 +270,7 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 300;
+  z-index: 2000;
   color: white;
   transition: width 1s;
   overflow-x: hidden;
@@ -269,7 +282,7 @@ export default {
   pointer-events: auto;
 }
 
-.aside i{
+.aside i {
   font-size: 1.2rem;
 }
 
@@ -347,7 +360,7 @@ export default {
 }
 
 .aside:hover {
-  width: 240px;
+  width: 280px;
 }
 
 /* .aside2 {
@@ -387,6 +400,15 @@ export default {
   cursor: pointer;
 }
 
+#menu-lateral {
+  position: absolute;
+  right: 300px;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
 @media screen and (max-width: 991px) {
   #logout {
     position: relative;
@@ -396,8 +418,12 @@ export default {
   #contrasena {
     position: relative;
     right: 0px;
+  }
 
-    /* right: 0px; */
+  #menu-lateral {
+    position: relative;
+    right: 0px;
+    visibility: visible;
   }
 
   /* #menucolapsed{

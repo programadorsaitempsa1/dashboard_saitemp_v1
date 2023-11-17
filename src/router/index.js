@@ -39,6 +39,18 @@ import DdClientes from "../components/DdClientes.vue";
 import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 import FormularioRegistro from "../components/FormularioRegistro.vue";
 import NovedadesNomina from "../components/NovedadesNomina.vue";
+import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue";
+import ConsultaNN from "../components/ConsultaNN.vue";
+import GestionCliente from "../components/GestionCliente.vue";
+import FormularioSupervision from "../components/FormularioSupervision.vue";
+import MapaVue from "../components/MapaVue.vue";
+import ClienteSupervision from "../components/ClienteSupervision.vue";
+import OrdenServicio from "../components/OrdenServicio.vue";
+import OrdenServicios from "../components/OrdenServicios.vue";
+import SolicitudesOrdenServicio from "../components/SolicitudesOrdenServicio.vue";
+import PieChar from "../components/PieChar.vue";
+import GraficosGerencia from "../components/GraficosGerencia.vue";
+
 
 
 Vue.use(VueRouter);
@@ -234,6 +246,62 @@ const routes = [
         name: "gestion-novedades-nomina",
         component: NovedadesNomina,
       },
+      {
+        path: "solicitud-novedades-nomina",
+        name: "solicitud-novedades-nomina",
+        component: SolicitudNovedadesNomina,
+      },
+      {
+        path: "correo-novedades-nomina",
+        name: "correo-novedades-nomina",
+        component: ConsultaNN,
+      },
+      {
+        path: "estados-cliente",
+        name: "estados-cliente",
+        component: GestionCliente,
+      },
+      {
+        path: "formulario-supervision/:id?",
+        name: "formulario-supervision",
+        component: FormularioSupervision,
+      },
+      {
+        path: "mapa",
+        name: "mapa",
+        component: MapaVue,
+      },
+      {
+        path: "cliente-supervision",
+        name: "cliente-supervision",
+        component: ClienteSupervision,
+      },
+      {
+        path: "orden-servicio",
+        name: "orden-servicio",
+        component: OrdenServicio,
+      },
+      {
+        path: "orden-servicios/:id?",
+        name: "orden-servicios",
+        component: OrdenServicios,
+      },
+      {
+        path: "solicitudes-os",
+        name: "solicitudes-os",
+        component: SolicitudesOrdenServicio,
+      },
+      {
+        path: "piechar",
+        name: "piechar",
+        component: PieChar,
+      },
+      {
+        path: "graficos-gerencia",
+        name: "graficos-gerencia",
+        component: GraficosGerencia,
+      },
+     
     ],
   },
 

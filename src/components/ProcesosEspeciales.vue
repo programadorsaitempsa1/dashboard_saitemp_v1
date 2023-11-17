@@ -6,22 +6,14 @@
                 <SearchList nombreCampo="Procesos" @getProcedureId="getProcedureId" eventoCampo="getProcedureId"
                     nombreItem="nom_proc" :registros="procedures" placeholder="Seleccione un proceso" />
             </div>
-            <!-- <div class="col">
-                <button v-if="subcategory_reports_apl != ''" class="btn btn-success"
-                    @click="getReports(subcategory_reports_apl = '', subcategory_reports_cod = '')">Listar todo</button>
-            </div> -->
         </div>
         <div class="row" v-for="item, index in form_procedures" :key="index">
-            <!-- <div class="col-6" v-if="item.tip_obj == 'LA'">
-                <SearchList :nombreCampo="item.des_param" @getGeneric="getGeneric(item.tab_hlp)" eventoCampo="getGeneric"
-                    :nombreItem="item.nom_hlp" :registros="registros" placeholder="Seleccione una opcion" />
-            </div> -->
             <div class="col-6" v-if="item.tip_obj.trim() == 'LA'">
                 <SearchTable :nombreCampo="item.des_param" @getValue="getValue"
                     @getGeneric="getGeneric(item.tab_hlp, item.nom_hlp, item.des_hlp)" eventoCampo="getGeneric"
                     :nombreItem="item.nom_hlp" :endpoint="endpoint" :item="item.tab_hlp" :item1="item.nom_hlp"
                     :item2="item.des_hlp" :posicion="item.ord_cmp" placeholder="Seleccione una opcion"
-                    :showModal="showModal" :datos="registros" />
+                    :showModal="showModal" :datos="registros" :valida_campo="false"/>
             </div>
             <div class="col-6" v-if="item.tip_obj.trim() == 'L'">
                 <div>
@@ -34,12 +26,12 @@
             <div class="col-6 mb-3" v-if="item.tip_obj.trim() == 'F'">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">{{ item.des_param }}</label>
                 <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" />
+                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" :valida_campo="false"/>
             </div>
             <div class="col-6 mb-3" v-if="item.tip_obj.trim() == 'T'">
                 <label endpointEmpleadosfor="exampleInputEmail1" class="form-label">{{ item.des_param }}</label>
                 <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" />
+                    aria-describedby="emailHelp" v-model="text_field[item.ord_cmp - 1]" :valida_campo="false"/>
             </div>
         </div>
         <div class="row">
@@ -65,13 +57,14 @@ import axios from 'axios'
 import Tabla from './Tabla.vue'
 import SearchList from './SearchList.vue'
 import SearchTable from './SearchTable.vue'
+import {Token} from '../Mixins/Token'
 export default {
     components: {
         Tabla,
         SearchList,
         SearchTable
     },
-    mixins: [],
+    mixins: [Token],
     props: {
 
     },
@@ -87,13 +80,7 @@ export default {
             form_procedures: '',
             showModal: false,
             listaTabla: true,
-            tabla: [
-                // { nombre: "Número de identificacion", orden: "DESC", tipo: "texto", calculado: 'false' },
-                // { nombre: "Nombre", orden: "DESC", tipo: "texto", calculado: 'false' },
-                // { nombre: "Observación", orden: "DESC", tipo: "texto", calculado: 'false' },
-                // { nombre: "Fcecha", orden: "DESC", tipo: "texto", calculado: 'false' },
-                // { nombre: "Bloqueado", orden: "DESC", tipo: "texto", calculado: 'false' },
-            ],
+            tabla: [ ],
             text_field: [],
             registros: '',
             show_button_process: false,
@@ -133,24 +120,6 @@ export default {
                 this.code_procedure = item.cod_proc.trim();
                 this.getFieldsForm(this.code_procedure);
                 this.show_button_process = true
-                // cont++;
-                // var cont = 0;
-                // console.log(item)
-                // let self = this;
-                // var cont = 0;
-                // this.procedures.forEach(function (element) {
-                //     if (item.trim() == element.nom_proc.trim()) {
-                //         self.name_procedure = element.nom_sp.trim();
-                //         self.code_procedure = element.cod_proc.trim();
-                //         self.getFieldsForm(self.code_procedure);
-                //         cont++;
-                //         self.show_button_process = true
-                //     }
-                // });
-                // if (cont <= 0) {
-                //     self.name_procedure = ''
-                //     self.code_procedure = ''
-                // }
             }
         },
         getFieldsForm(item) {
@@ -229,23 +198,6 @@ export default {
                         self.btnexport = false
                     }
                 });
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: "top",
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: true,
-                // timer: 1500,
-            });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };

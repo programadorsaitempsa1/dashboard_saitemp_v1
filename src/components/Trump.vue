@@ -18,11 +18,12 @@
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue'
+import {Token} from '../Mixins/Token'
 export default {
    components: {
      Tabla
    },
-   mixins: [],
+   mixins: [Token],
    props: {
      
    },
@@ -63,14 +64,6 @@ export default {
                 .then(function (result) {
                     self.datos = result;
                 });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
    }
 };

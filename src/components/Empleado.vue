@@ -158,8 +158,10 @@
 </template>
 <script>
 import axios from 'axios'
+import {Token} from '../Mixins/Token'
 
 export default {
+    mixins:[Token],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -228,14 +230,6 @@ export default {
             this.celular_contacto = result.tel_res
             this.fondo_pension_actual = result.pension
             this.ccf_actual = result.caja
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

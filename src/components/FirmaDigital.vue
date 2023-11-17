@@ -2,8 +2,8 @@
   <div>
     <div class="container contenedor">
       <div class="signature">
-        <div class="col-xs-12 col-md-6">
-          <VueSignaturePad id="signature" height="100px" ref="signaturePad" :options="options" />
+        <div class="col-xs-12 col-md-12">
+          <VueSignaturePad id="signature" height="200px" ref="signaturePad" :options="options" />
         </div>
         <div class="buttons">
           <button type="button" @click="back" class="btn btn-primary btn-sm">Deshacer</button>

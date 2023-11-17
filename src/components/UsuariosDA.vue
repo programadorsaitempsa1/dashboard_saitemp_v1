@@ -115,6 +115,8 @@
 <script>
 import axios from 'axios';
 import PiePagina from "./PiePagina.vue";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 export default {
   components: {
     PiePagina
@@ -122,6 +124,7 @@ export default {
   props: {
     menu: []
   },
+  mixins: [Alerts,Token],
   data() {
     return {
       URL_API: process.env.VUE_APP_URL_API,
@@ -262,15 +265,6 @@ export default {
         self.rolId_ = "";
       }
     },
-    showAlert(mensaje, icono) {
-      this.$swal({
-        position: 'top',
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: icono == 'error' ? 3000 : 1500,
-      })
-    },
     getUser(user) {
       let self = this;
       let config = this.configHeader();
@@ -281,14 +275,6 @@ export default {
         // self.paginaActual = result.data.current_page
         self.boton(result)
       });
-    },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
     },
   }
 };

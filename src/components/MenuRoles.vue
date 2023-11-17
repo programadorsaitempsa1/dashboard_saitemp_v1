@@ -47,11 +47,14 @@
 <script>
 import axios from "axios";
 import Tabla from "./Tabla.vue";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 // import PiePagina from "./PiePagina.vue";
 export default {
     props: {
         menu: []
     },
+    mixins: [Token, Alerts],
     components: {
         Tabla
         // PiePagina
@@ -280,23 +283,6 @@ export default {
         },
         check(check) {
             this.checks = check
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };

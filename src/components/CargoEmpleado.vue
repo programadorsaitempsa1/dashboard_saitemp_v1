@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <div class="container">
             <h2>Administrar Cargos</h2>
@@ -38,10 +38,12 @@
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue';
+import { Alerts } from '../Mixins/Alerts.js';
 export default {
     components: {
         Tabla
     },
+    mixins: [Alerts],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -61,8 +63,8 @@ export default {
             endpoint: 'cargos',
             tabla: [
                 { nombre: "#", orden: "DESC" },
-                { nombre: "Cargo", orden: "DESC",tipo:"texto",calculado:'false' },
-                { nombre: "Descripción", orden: "DESC",tipo:"texto",calculado:'false' },
+                { nombre: "Cargo", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Descripción", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
             // Fin info enviada al componente tabla por props
             checks: [],
@@ -133,15 +135,6 @@ export default {
         check(check) {
             this.checks = check
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
         back() {
             this.$router.go(-1);
         },
@@ -175,4 +168,4 @@ h2 {
     font-family: "Montserrat", sans-serif;
     margin: 20px 0px 20px 0px;
 }
-</style>
+</style> -->
