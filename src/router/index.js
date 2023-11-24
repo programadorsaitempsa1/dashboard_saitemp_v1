@@ -8,6 +8,7 @@ import Usuarios from "../components/Usuarios.vue";
 import RolesUsuario from "../components/RolesUsuario.vue";
 import MenuRoles from "../components/MenuRoles.vue";
 import PermisoRoles from "../components/PermisoRoles.vue";
+import Permisos from "../components/Permisos.vue";
 import Zonas from "../components/Zonas.vue";
 import Empleadoss from "../components/Empleadoss.vue";
 import SigContratos from "../components/SigContratos.vue";
@@ -50,6 +51,7 @@ import OrdenServicios from "../components/OrdenServicios.vue";
 import SolicitudesOrdenServicio from "../components/SolicitudesOrdenServicio.vue";
 import PieChar from "../components/PieChar.vue";
 import GraficosGerencia from "../components/GraficosGerencia.vue";
+import UsuariosPermisos from "../components/UsuariosPermisos.vue";
 
 
 
@@ -105,6 +107,11 @@ const routes = [
         path: "permisoRoles",
         name: "permisoRoles",
         component: PermisoRoles,
+      },
+      {
+        path: "permisos",
+        name: "permisos",
+        component: Permisos,
       },
       {
         path: "empleadoss",
@@ -300,6 +307,11 @@ const routes = [
         path: "graficos-gerencia",
         name: "graficos-gerencia",
         component: GraficosGerencia,
+      },
+      {
+        path: "permiso-usuario",
+        name: "permiso-usuario",
+        component: UsuariosPermisos,
       },
      
     ],

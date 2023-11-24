@@ -152,7 +152,7 @@
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
                        <td v-if="empleados() && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
 
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
+                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/permiso-usuario' && ruta != '/navbar/menuroles' && ruta != '/navbar/permisoroles'">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>

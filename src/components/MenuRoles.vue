@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="container">
+            <Loading :loading="loading" />
             <h2>Roles y menús</h2>
             <div class="row">
                 <div class="col-xs-12 col-md-3">
@@ -15,7 +16,7 @@
                     <label style="width: 250px; margin-top: 10px; text-align: left">Menús</label>
                     <select id="inputState1" class="form-select" :disabled="checks.length > 1" v-model="menu_select"
                         @change="menuId(menu_select)">
-                        <option v-for="item, index in menus" :key="index">
+                        <option ref="item_select" v-for="item, index in menus" :key="index">
                             {{ item.nombre }}
                         </option>
                     </select>
@@ -24,6 +25,30 @@
                     style="margin-top: 33px">
                     <i class="bi bi-file-earmark-plus"></i> Asignar menú
                 </button>
+            </div>
+            <div class="row">
+                <div class="mb-3" v-if="asignar_roles.length > 0">
+                    <span>Roles a asignar</span>
+                    <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                        <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                            data-bs-toggle="button" v-for="item, index in asignar_roles" :key="index">{{
+                                item.nombre
+                            }}
+                            <i class="bi bi-x" @click="asignar_roles.splice(index, 1)"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-3" v-if="asignar_menus.length > 0">
+                    <span>Menús a asignar</span>
+                    <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                        <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                            data-bs-toggle="button" v-for="item, index in asignar_menus" :key="index">{{
+                                item.nombre
+                            }}
+                            <i class="bi bi-x" @click="asignar_menus.splice(index, 1)"></i></button>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-3">
@@ -49,15 +74,17 @@ import axios from "axios";
 import Tabla from "./Tabla.vue";
 import { Alerts } from '../Mixins/Alerts.js';
 import { Token } from '../Mixins/Token.js';
-// import PiePagina from "./PiePagina.vue";
+import Loading from './Loading.vue'
+import { Scroll } from '../Mixins/Scroll.js';
+
 export default {
     props: {
         menu: []
     },
-    mixins: [Token, Alerts],
+    mixins: [Token, Alerts, Scroll],
     components: {
-        Tabla
-        // PiePagina
+        Tabla,
+        Loading,
     },
     data() {
         return {
@@ -75,7 +102,7 @@ export default {
             roluserlogued: "",
             result: [],
             actualiced: false,
-
+            loading: false,
             currentUrl: '',
             cantidad: 10, // Cantidad de datos a listar por defecto en el componente tabla
             // Campos formulario
@@ -98,16 +125,14 @@ export default {
             massiveUpdate: false,
             campos: {},
             ruta: '',
+            asignar_menus: [],
+            asignar_roles: [],
+            actualizar_menu: false,
         };
     },
     mounted() {
         this.ruta = this.$route.path.substring(1)
     },
-    // watch: {
-    //     ruta() {
-    //         this.autorizado(this.menu)
-    //     }
-    // },
     created() {
         this.getItems();
         this.getMenu();
@@ -115,18 +140,6 @@ export default {
         this.getRolesMenu()
     },
     methods: {
-        // autorizado(menu) {
-        //     console.log(this.ruta)
-        //     console.log(menu)
-        //     let self = this
-        //     let autoriced = ''
-        //     menu.forEach(function(item){      
-        //         autoriced = item.opciones.filter(menus => menus.url === self.ruta);
-        //     })
-        //     if (autoriced.length == 0) {
-        //         self.$router.go(-1);
-        //     }
-        // },
         getMenuNavbar() {
             this.$emit('getMenu');
         },
@@ -145,6 +158,7 @@ export default {
                 });
         },
         response(response) {
+            this.actualizar_menu = true
             this.currentUrl = response.currentUrl
             this.rol_select = response.rol
             this.menu_select = response.menu
@@ -205,21 +219,22 @@ export default {
             axios
                 .delete(self.URL_API + "api/v1/rolmenu/" + id, config)
                 .then(function (result) {
+                    self.getRolesMenu();
                     self.showAlert(result.data.message, result.data.status);
-                    self.getRolesmenus();
                 });
         },
         asignarMenu() {
+            let self = this;
+            this.loading = true
+            this.scrollTop()
             if (this.checks.length > 0) { // validación para realizar actualización masiva
                 this.massiveUpdate = !this.massiveUpdate
                 this.campos.rol_id = this.rolId_
             } else {
-                let self = this;
                 let urlEndPoint = ''
-                let menu_rol = {
-                    rol_id: self.rolId_,
-                    menu_id: self.menuId_,
-                };
+                let menu_rol = []
+                menu_rol.push(this.asignar_roles)
+                menu_rol.push(this.asignar_menus)
                 if (self.actualizar) {
                     urlEndPoint = self.URL_API + "api/v1/rolmenu/" + self.idItem
                 } else {
@@ -229,9 +244,11 @@ export default {
                 axios
                     .post(urlEndPoint, menu_rol, config)
                     .then(function (result) {
+                        self.loading = false
                         self.showAlert(result.data.message, result.data.status);
                         self.getItems();
                         self.clear()
+                        self.getRolesMenu()
                         self.$emit('getMenu');
                     });
             }
@@ -242,6 +259,15 @@ export default {
             this.roles.forEach(function (element) {
                 if (rol == element.nombre) {
                     self.rolId_ = element.id;
+                    if (!self.actualizar_menu) {
+                        const rol_existe = self.asignar_roles.some(rol => rol.id === element.id);
+                        if (!rol_existe) {
+                            self.asignar_roles.push({ id: element.id, nombre: element.nombre })
+                        }
+                    } else {
+                        self.asignar_menus = []
+                        self.actualizar_menu = false
+                    }
                     cont++;
                 }
             });
@@ -268,6 +294,15 @@ export default {
             this.menus.forEach(function (element) {
                 if (menu == element.nombre) {
                     self.menuId_ = element.id;
+                    if (!self.actualizar_menu) {
+                        const menu_existe = self.asignar_menus.some(menu => menu.id === element.id);
+                        if (!menu_existe) {
+                            self.asignar_menus.push({ id: element.id, nombre: element.nombre })
+                        }
+                    } else {
+                        self.asignar_menus = []
+                        self.actualizar_menu = false
+                    }
                     cont++;
                 }
             });
@@ -304,5 +339,10 @@ h2 {
 
 label {
     float: left;
+}
+
+#btnMenu {
+    background-color: rgb(28, 146, 77);
+    color: white;
 }
 </style>

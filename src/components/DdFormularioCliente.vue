@@ -1292,7 +1292,7 @@
                         type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
                 </div>
                 <div class="col">
-                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success" 
+                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5 || userlogued.id == 15 || userlogued.id == 16" class="btn btn-success" 
                         :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
                 </div>
                 <div v-if="hide_bottons" class="col" style="margin:30px">

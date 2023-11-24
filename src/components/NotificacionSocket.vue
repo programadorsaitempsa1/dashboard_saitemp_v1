@@ -20,7 +20,6 @@ export default {
     },
     data() {
         return {
-            pila_notificaciones: [],
             mensaje_notificacion: '',
             animacion: false
         }

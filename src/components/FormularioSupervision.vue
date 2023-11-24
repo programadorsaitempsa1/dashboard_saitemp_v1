@@ -314,6 +314,8 @@ export default {
     },
     created() {
         this.urlExterna()
+        this.getEstadosConcepto()
+        this.urlExterna()
         this.getCliente()
         if (this.$route.params.id == undefined) {
             this.setSupervisor()
@@ -322,7 +324,6 @@ export default {
         this.getConceptos()
         this.getElementosPP()
         this.getEstadosEPP()
-        this.getEstadosConcepto()
         this.getDepartamentos(43)
         this.loading = true
         this.scrollTop(true)
@@ -333,6 +334,9 @@ export default {
 
     },
     methods: {
+        coordenadas(item){
+            console.log(item)
+        },
         async geolocal() {
             try {
                 // Llamar a obtenerGeolocalizacion y esperar la respuesta
@@ -430,6 +434,7 @@ export default {
 
         },
         limpiarFormulario() {
+            this.getEstadosConcepto()
             this.concepto = []
             this.campos_cliente = ['cod_cli', 'nom_cli']
             this.consulta_cliente = '.';
@@ -462,7 +467,6 @@ export default {
             this.consulta_texto = []
             this.observaciones = [{ body: '', file: [] }]
             this.estados_concepto = []
-            this.getEstadosConcepto()
             this.concepto_estado_formulario = []
             this.concepto_estado_epp_formulario = []
             this.imagen_firma_supervisor = ''
@@ -580,7 +584,6 @@ export default {
                 .then(function (result) {
                     self.elementos_p_p = result.data
                     self.concepto_estado_epp_formulario = new Array(self.elementos_p_p.length)
-                    self.loading = false
                     self.scrollAuto()
                 });
         },
@@ -593,6 +596,12 @@ export default {
                     self.estados_concepto = result.data
 
                 });
+            if (this.$route.params.id == undefined) {
+                setTimeout(() => {
+                    self.loading = false
+                    self.scrollAuto()
+                }, 2000);
+            }
         },
         getEstadosEPP() {
             let self = this;
@@ -617,7 +626,6 @@ export default {
         },
         getDepartamentos(id) {
             let self = this;
-            // this.setLabelPais(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/departamentos/" + id, config)
@@ -627,7 +635,6 @@ export default {
         },
         getMunicipios(item) {
             let self = this;
-            // this.setLabelDepartamento(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/municipios/" + item.id, config)
@@ -692,6 +699,14 @@ export default {
         },
         llenarFormulario(item) {
             var self = this
+            for (let i = 0; i < this.conceptos.length; i++) {
+                for (let j = 0; j < this.estados_concepto.length; j++) {
+                    const refName = `checkbox${i.toString()}${j.toString()}`;
+                    if (item.conceptos[i].estado_concepto_id - 1 == j) {
+                        this.$refs[refName][0].checked = true
+                    }
+                }
+            }
             this.fecha = item.fecha_hora
             this.supervisor = item.supervisor
             this.contacto = item.persona_contactada
@@ -705,21 +720,12 @@ export default {
             this.consulta_departamento = item.departamento
             this.consulta_municipio = item.municipio
 
-            // this.label = 'Ubicación visita'
-            this.latitud = item.latitud //'6.17591'
-            this.longitud = item.longitud //'-75.59174'
+            this.latitud = item.latitud
+            this.longitud = item.longitud
             if (this.latitud != null) {
                 this.showMap = !this.showMap
             }
 
-            for (let i = 0; i < this.conceptos.length; i++) {
-                for (let j = 0; j < this.estados_concepto.length; j++) {
-                    const refName = `checkbox${i.toString()}${j.toString()}`;
-                    if (item.conceptos[i].estado_concepto_id - 1 == j) {
-                        this.$refs[refName][0].checked = true
-                    }
-                }
-            }
             for (let i = 0; i < this.elementos_p_p.length; i++) {
                 for (let j = 0; j < this.estados_epp.length; j++) {
                     const refName = `checkboxs${i.toString()}${j.toString()}`;
@@ -743,11 +749,10 @@ export default {
                 self.observaciones[posicion_observacion].file.push(self.URL_API + item.imagen_observacion)
 
             })
-            self.loading = false
+            setTimeout(() => {
+                self.loading = false;
+            }, 1000);
         },
-        coordenadas() {
-            // console.log(coordenadas)
-        }
     }
 };
 </script>
@@ -758,7 +763,7 @@ export default {
     border-radius: 10px;
 }
 
-/* .notificacion {
+.notificacion {
     position: absolute;
     top: 90px;
     padding: 15px;
@@ -778,7 +783,7 @@ export default {
     padding: 2px;
     margin-right: 10px;
     font-size: 0.7rem;
-} */
+}
 
 .adjunto {
     white-space: nowrap;

@@ -2,15 +2,12 @@
     <div>
         <div class="container">
             <Loading :loading="loading" />
-            <h2>Roles y permisos</h2>
+            <h2>Permisos de usuario</h2>
             <div class="row">
                 <div class="col-xs-12 col-md-3">
-                    <label style="width: 250px; margin-top: 25px; text-align: left">Roles</label>
-                    <select id="inputState1" class="form-select" v-model="rol_select" @change="rolId(rol_select)">
-                        <option v-for="item, index in roles" :key="index">
-                            {{ item.nombre }}
-                        </option>
-                    </select>
+                    <SearchList nombreCampo="Usuario: *" :valida_campo="false" nombreItem="nombre" eventoCampo="getUsuarios"
+                        :consulta="usuario" :registros="usuarios" @getUsuarios="getUsuarios"
+                        placeholder="Seleccione una opción" />
                 </div>
                 <div class="col-xs-12 col-md-3">
                     <label style="width: 250px; margin-top: 25px; text-align: left">Permisos</label>
@@ -21,20 +18,20 @@
                         </option>
                     </select>
                 </div>
-                <button type="button" id="newNews" class="col-xs-12 col-md-2 btn btn-success" @click="asignarPermiso()"
-                    style="margin-top: 33px">
+                <button type="button" id="newNews" class="col-xs-12 col-md-2 btn btn-sm btn-success"
+                    @click="asignarPermiso()" style="margin-top: 33px">
                     <i class="bi bi-file-earmark-plus"></i> Asignar permisos
                 </button>
             </div>
             <div class="row">
-                <div class="mb-3" v-if="asignar_roles.length > 0">
-                    <span>Roles a asignar</span>
+                <div class="mb-3" v-if="asignar_usuarios.length > 0">
+                    <span>Usuarios a asignar</span>
                     <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
                         <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
-                            data-bs-toggle="button" v-for="item, index in asignar_roles" :key="index">{{
+                            data-bs-toggle="button" v-for="item, index in asignar_usuarios" :key="index">{{
                                 item.nombre
                             }}
-                            <i class="bi bi-x" @click="asignar_roles.splice(index, 1)"></i></button>
+                            <i class="bi bi-x" @click="asignar_usuarios.splice(index, 1)"></i></button>
                     </div>
                 </div>
             </div>
@@ -51,15 +48,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-3">
+                <!-- <div class="col-xs-12 col-md-3">
                     <label style="width: 250px; margin-top: 10px; text-align: left">filtrar por rol</label>
                     <select id="inputState1" class="form-select" v-model="rol" @change="filtroRol(rol)">
                         <option v-for="item, index in rolesunicos" :key="index">
                             {{ item.rol }}
                         </option>
                     </select>
+                </div> -->
+                <div class="col-xs-12 col-md-3">
+                    <SearchList nombreCampo="Usuario: *" :valida_campo="false" nombreItem="nombre" eventoCampo="getUsuarios"
+                        :consulta="usuario" :registros="usuarios" @getUsuarios="getUsuarios" :index="1"
+                        placeholder="Seleccione una opción" />
                 </div>
-                <button type="button" id="reset" class="col-xs-12 col-md-2 btn btn-success" style="margin-top: 33px"
+                <button type="button" id="reset" class="col-xs-12 col-md-2 btn btn-success btn-sm" style="margin-top: 33px"
                     @click="getItems(), (rol = '')">
                     <i class="bi bi-arrow-counterclockwise"></i> Borrar busqueda
                 </button>
@@ -76,7 +78,7 @@ import { Alerts } from '../Mixins/Alerts.js';
 import { Token } from '../Mixins/Token.js';
 import Loading from './Loading.vue'
 import { Scroll } from '../Mixins/Scroll.js';
-// import SearchList from './SearchList.vue'
+import SearchList from './SearchList.vue'
 export default {
     props: {
         menu: []
@@ -85,16 +87,13 @@ export default {
     components: {
         Tabla,
         Loading,
-        // SearchList
+        SearchList
     },
     data() {
         return {
-            rolesmenu: [],
-            permisos_roles: [],
             permisos: [],
             rolesunicos: [],
             roles: [],
-            rol_select: "",
             permiso_select: "",
             rolId_: "",
             permisoId_: "",
@@ -115,10 +114,11 @@ export default {
             // Fin campos formulario
             // Info enviada al componente tabla por props
             datos: [],
-            endpoint: 'rolpermiso',
+            endpoint: 'usuariopermiso',
             tabla: [
                 { nombre: "#", orden: "DESC" },
-                { nombre: "Nombre rol", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Nombres", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Appelidos", orden: "DESC", tipo: "texto", calculado: 'false' },
                 { nombre: "Permiso", orden: "DESC", tipo: "texto", calculado: 'false' },
             ],
             // Fin info enviada al componente tabla por props
@@ -128,7 +128,12 @@ export default {
             ruta: '',
             asignar_permisos: [],
             asignar_roles: [],
+            asignar_usuarios: [],
             actualizar_menu: false,
+            asignacion_por: '',
+            usuarios: [],
+            usuario_id: '',
+            usuario: '',
         };
     },
     mounted() {
@@ -136,18 +141,55 @@ export default {
     },
     created() {
         this.getItems();
-        this.getMenu();
-        this.getRoles()
-        this.getRolesMenu()
+        this.getPermisos()
+        this.getUsuarios()
     },
     methods: {
+        getUsuarios(item, index = null) {
+            this.usuario_id = ''
+            this.usuario = ''
+            if (index != null) {
+                console.log(item)
+                this.FiltroPorUsuario(item.id)
+                return
+            }
+            if (item != null && index == null) {
+                this.usuario_id = item.id
+                this.usuario = item.nombre
+                if (!this.actualizar_menu) {
+                    const usuario_existe = this.asignar_usuarios.some(usuario => usuario.id === item.id);
+                    if (!usuario_existe) {
+                        this.asignar_usuarios.push({ id: item.id, nombre: item.nombre })
+                    }
+                } else {
+                    this.asignar_permisos = []
+                    this.actualizar_menu = false
+                }
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/userslist", config)
+                .then(function (result) {
+                    self.usuarios = result.data
+                });
+        },
+        FiltroPorUsuario(id) {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/filtroporusuario/"+id+'/'+self.cantidad, config)
+                .then(function (result) {
+                    self.datos = result
+                });
+        },
         getMenuNavbar() {
             this.$emit('getMenu');
         },
         getItems() {
             let self = this;
             let urlEndPoint = ''
-            urlEndPoint = self.URL_API + "api/v1/rolpermiso/" + self.cantidad
+            urlEndPoint = self.URL_API + "api/v1/usuariopermiso/" + self.cantidad
             if (this.currentUrl != '') {
                 urlEndPoint = this.currentUrl
             }
@@ -161,15 +203,14 @@ export default {
         response(response) {
             this.actualizar_menu = true
             this.currentUrl = response.currentUrl
-            this.rol_select = response.rol
             this.permiso_select = response.permiso
             this.idItem = response.id
             this.actualizar = true
-            this.permisoId(response.menu)
-            this.rolId(response.rol)
+            this.permisoId(response.permiso)
+            this.usuarioId(response.nombres + ' ' + response.apellidos)
             this.checks = []
         },
-        getMenu() {
+        getPermisos() {
             let self = this;
             let config = this.configHeader();
             axios.get(self.URL_API + "api/v1/permisoslista", config).then(function (result) {
@@ -178,20 +219,6 @@ export default {
                 } catch (error) {
                     console.log(error);
                 }
-            });
-        },
-        getRoles() {
-            let self = this;
-            let config = this.configHeader();
-            axios.get(self.URL_API + "api/v1/roleslista", config).then(function (result) {
-                self.roles = result.data;
-            });
-        },
-        getRolesMenu() {
-            let self = this;
-            let config = this.configHeader();
-            axios.get(self.URL_API + "api/v1/rolespermisos", config).then(function (result) {
-                self.rolesunicos = result.data;
             });
         },
         messageDelete(id) {
@@ -216,9 +243,8 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios
-                .delete(self.URL_API + "api/v1/rolpermiso/" + id, config)
+                .delete(self.URL_API + "api/v1/usuariopermiso/" + id, config)
                 .then(function (result) {
-                    self.getRolesMenu();
                     self.showAlert(result.data.message, result.data.status);
                 });
         },
@@ -228,16 +254,16 @@ export default {
             this.scrollTop()
             if (this.checks.length > 0) { // validación para realizar actualización masiva
                 this.massiveUpdate = !this.massiveUpdate
-                this.campos.rol_id = this.rolId_
+                this.campos.usuario_id = this.usuario_id
             } else {
                 let urlEndPoint = ''
                 let permiso_rol = []
-                permiso_rol.push(this.asignar_roles)
+                permiso_rol.push(this.asignar_usuarios)
                 permiso_rol.push(this.asignar_permisos)
                 if (self.actualizar) {
-                    urlEndPoint = self.URL_API + "api/v1/rolpermiso/" + self.idItem
+                    urlEndPoint = self.URL_API + "api/v1/usuariopermiso/" + self.idItem
                 } else {
-                    urlEndPoint = self.URL_API + "api/v1/rolpermiso"
+                    urlEndPoint = self.URL_API + "api/v1/usuariopermiso"
                 }
                 let config = this.configHeader();
                 axios
@@ -247,26 +273,17 @@ export default {
                         self.showAlert(result.data.message, result.data.status);
                         self.getItems();
                         self.clear()
-                        self.getRolesMenu()
                         self.$emit('getMenu');
                     });
             }
         },
-        rolId(rol) {
+        usuarioId(usuario) {
             let self = this;
             var cont = 0;
-            this.roles.forEach(function (element) {
-                if (rol == element.nombre) {
-                    self.rolId_ = element.id;
-                    if (!self.actualizar_menu) {
-                        const rol_existe = self.asignar_roles.some(rol => rol.id === element.id);
-                        if (!rol_existe) {
-                            self.asignar_roles.push({ id: element.id, nombre: element.nombre })
-                        }
-                    } else {
-                        self.asignar_permisos = []
-                        self.actualizar_menu = false
-                    }
+            this.usuarios.forEach(function (element) {
+                if (usuario == element.nombre) {
+                    self.usuario = element.nombre
+                    self.usuario_id = element.id;
                     cont++;
                 }
             });
@@ -280,21 +297,21 @@ export default {
                 if (rol == element.nombre) {
                     let config = self.configHeader();
                     axios
-                        .get(self.URL_API + "api/v1/filtrorol/" + element.id+'/'+self.cantidad, config)
+                        .get(self.URL_API + "api/v1/rolmenuporid/" + element.id, config)
                         .then(function (result) {
                             self.datos = result;
                         });
                 }
             });
         },
-        permisoId(menu) {
+        permisoId(permiso) {
             let self = this;
             var cont = 0;
             this.permisos.forEach(function (element) {
-                if (menu == element.nombre) {
+                if (permiso == element.nombre) {
                     self.permisoId_ = element.id;
                     if (!self.actualizar_menu) {
-                        const permiso_existe = self.asignar_permisos.some(menu => menu.id === element.id);
+                        const permiso_existe = self.asignar_permisos.some(permiso => permiso.id === element.id);
                         if (!permiso_existe) {
                             self.asignar_permisos.push({ id: element.id, nombre: element.nombre })
                         }
@@ -310,7 +327,6 @@ export default {
             }
         },
         clear() {
-            this.rol_select = ''
             this.permiso_select = ''
             this.idItem = ''
             this.actualizar = false

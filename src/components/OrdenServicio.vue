@@ -215,18 +215,6 @@
                                 {{ mensaje_error }}
                             </div>
                         </div>
-                        <!-- <div class="col-sm-12 col-md-6 mb-3">
-                            <label for="formFileMultiple" class="form-label">Adjuntar hoja de vida</label>
-                            <div class="input-group mb-3">
-                                <input class="form-control" ref="inputFile" type="file" @change="cargarArchivo($event)"
-                                    id="formFileMultiple">
-                                <span style="cursor: pointer" class="input-group-text" @click="quitarAdjuntos()"
-                                    id="basic-addon1">Quitar archivo</span>
-                                <div class="invalid-feedback">
-                                    {{ mensaje_error }}
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                     <div id="seccion">
                         <hr>
@@ -284,12 +272,6 @@
                                 <EditorTextoHtml :consulta="consulta_textohtml_especificacion_v" :index="1"
                                     @retornoTexto="retornoTexto" :showToolbar="true" />
                             </div>
-                            <!-- <label class="form-label">Especificaciones a tener en cuenta para selección del
-                                personal:</label>
-                            <div class="col">
-                                <EditorTextoHtml :consulta="consulta_textohtml_especificacion_s" :index="2"
-                                    @retornoTexto="retornoTexto" :showToolbar="true" />
-                            </div> -->
                         </div>
                         <div v-if="this.servicio_solicitado_id != '' && this.servicio_solicitado_id != 1" class="row">
                             <label class="form-label">Especificaciones a tener en cuenta para selección del
@@ -437,31 +419,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="row"
-                    v-if="candidatos.length > 0 && this.servicio_solicitado_id == 2 || this.servicio_solicitado_id == 3 || this.servicio_solicitado_id == 4">
-                    <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
-                        <button type="submit" class="btn btn-success" @click="siguiente()">
-                            Guardar formulario
-                        </button>
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-12  mt-2 mb-3"
-                    v-if="candidatos.length > 0 && this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
+                <div class="col-sm-4 col-md-12  mt-2 mb-3" v-if="candidatos.length > 0 && servicio_solicitado_id == 1">
                     <nav aria-label="Page navigation example" style="padding:0px;margin:0px;">
                         <ul class="pagination">
-                            <!-- <li class="page-item" id="atras"><a class="page-link"
-                                        @click="llenarCampoCandidato(pagina - 1)">Anterior</a></li> -->
                             <li class="page-item" v-for="item, index in candidatos" :key="index"><a
                                     :style="item.actual == true ? 'background-color:#198754;color:white' : 'background-color:white'"
                                     class="page-link" @click="llenarCampoCandidato(index), pagina = index">{{ index + 1
                                     }}</a></li>
-                            <!-- <li class="page-item" id="siguiente"><a class="page-link"
-                                        @click="llenarCampoCandidato(pagina + 1)">Sguiente</a></li> -->
                         </ul>
                     </nav>
                 </div>
-                <div class="row"
-                    v-if="$route.params.id == undefined && this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
+                <div class="col-sm-4 col-md-12  mt-2 mb-3" v-else-if="cargos.length > 0 && servicio_solicitado_id != 1">
+                    <nav aria-label="Page navigation example" style="padding:0px;margin:0px;">
+                        <ul class="pagination">
+                            <li class="page-item" v-for="item, index in cargos" :key="index"><a
+                                    :style="item.actual == true ? 'background-color:#198754;color:white' : 'background-color:white'"
+                                    class="page-link" @click="llenarCampoCargo(index), pagina = index">{{ index + 1
+                                    }}</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="row" v-if="$route.params.id == undefined && this.servicio_solicitado_id == 1">
                     <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
                         <button class="btn btn-success" @click.prevent="siguiente()">
                             Agregar candidato
@@ -477,13 +455,23 @@
                             Eliminar candidato actual
                         </button>
                     </div>
-
-                    <!-- <div class="col-sm-4 col-md-3 mb-3" id="atras">
-                        <i class="bi bi-arrow-left-circle-fill" @click="atras()"></i>
+                </div>
+                <div class="row" v-if="$route.params.id == undefined && this.servicio_solicitado_id != 1">
+                    <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
+                        <button class="btn btn-success" @click.prevent="agregarCargo()">
+                            Agregar cargo
+                        </button>
                     </div>
-                    <div class="col-sm-4 col-md-3 mb-3" id="siguiente">
-                        <i class="bi bi-arrow-right-circle-fill" @click="siguiente()"></i>
-                    </div> -->
+                    <div class="col-sm-4 col-md-4  mt-2 mb-3" id="siguiente">
+                        <button class="btn btn-success" @click.prevent="agregarCargo(pagina)">
+                            Actualizar cargo actual
+                        </button>
+                    </div>
+                    <div class="col-sm-4 col-md-4  mt-2 mb-3">
+                        <button class="btn btn-success" @click.prevent="eliminarCargo()">
+                            Eliminar cargo actual
+                        </button>
+                    </div>
                 </div>
             </form>
             <form class="was-validated " ref="formulario" id="card" @submit.prevent="save()"
@@ -609,6 +597,7 @@ export default {
             bonificaciones: [],
             file: [],
             candidatos: [],
+            cargos: [],
             formulario: [],
             tipo_identificacion_solicitante: '',
             consulta_tipo_identificacion_solicitante: '',
@@ -661,6 +650,7 @@ export default {
 
     },
     created() {
+        // this.getBonificaciones()
         this.getDepartamentos(43)
         this.getRiesgosLaborales()
         this.getCategoriaCargo()
@@ -668,6 +658,7 @@ export default {
         this.getRequsitos()
         this.llenarCampoCliente()
         this.llenarCampoCandidato()
+        this.llenarCampoCargo()
     },
     methods: {
         save() {
@@ -690,6 +681,13 @@ export default {
                 this.candidatos = JSON.parse(localStorage.getItem('candidatos'))
                 this.candidatos.splice(this.pagina, 1)
                 localStorage.setItem('candidatos', JSON.stringify(this.candidatos))
+            }
+        },
+        eliminarCargo() {
+            if (localStorage.getItem('cargos') != null) {
+                this.cargos = JSON.parse(localStorage.getItem('cargos'))
+                this.cargos.splice(this.pagina, 1)
+                localStorage.setItem('cargos', JSON.stringify(this.cargos))
             }
         },
         llenarCampoCliente() {
@@ -758,10 +756,7 @@ export default {
                 this.bonificaciones = this.candidatos[index].bonificaciones
                 this.cargos2 = this.candidatos[index].cargos2
                 this.motivo_cancelacion = this.candidatos[index].motivo_cancelacion
-                // this.actual = true
                 this.candidatos[index].actual = true
-
-                // ************************************************
                 this.tipo_cargo[index] = this.candidatos[index].tipo_cargo_id
                 this.categoria_cargo_id = this.candidatos[index].categoria_cargo_id
                 this.consulta_subcategoria_cargos[index] = this.candidatos[index].categoria
@@ -770,11 +765,63 @@ export default {
                 this.consulta_riesgo_laboral[index] = this.candidatos[index].riesgo_laboral[index]
                 this.array_lista_examenes[index] = this.candidatos[index].examenes
                 this.array_lista_recomendaciones[index] = this.candidatos[index].recomendaciones
-                // ************************************************
-                // console.log(this.candidatos)
-                this.getBonificaciones()
+
             } else {
-                console.log('')
+                this.getBonificaciones()
+            }
+        },
+        llenarCampoCargo(index = 0) {
+            var objeto = JSON.parse(localStorage.getItem('cargos'))
+            if (objeto != undefined && objeto.length > 0) {
+                this.cargos = JSON.parse(localStorage.getItem('cargos'))
+                this.cargos.forEach(function (item) {
+                    item.actual = false
+                })
+                // this.nombres_candidato = this.candidatos[index].nombres
+                // this.apellidos_candidato = this.candidatos[index].apellidos
+                // this.celular_candidato = this.candidatos[index].celular
+                // this.correo_candidato = this.candidatos[index].correo
+                // this.consulta_pais_n = this.candidatos[index].pais_nacimiento
+                // this.consulta_pais_n_id = this.candidatos[index].pais_nacimiento_id
+                // this.consulta_departamento_n = this.candidatos[index].departamento_nacimiento
+                // this.consulta_departamento_n_id = this.candidatos[index].departamento_nacimiento_id
+                // this.consulta_municipio_n = this.candidatos[index].municipio_nacimiento
+                // this.consulta_municipio_n_id = this.candidatos[index].municipio_nacimiento_id
+                // this.consulta_tipo_identificacion_candidato = this.candidatos[index].tipo_identificacion
+                // this.tipo_identificacion_candidato = this.candidatos[index].tipo_identificacion_id
+                // this.documento_identidad_candidato = this.candidatos[index].documento_identidad_candidato
+                this.salario = this.cargos[index].salario
+                this.auxilio_transporte = this.cargos[index].auxilio_transporte
+                this.fecha_inicio_labores = this.cargos[index].fecha_inicio_labores
+                this.consulta_textohtml_especificacion_v = this.cargos[index].especificaciones_vinculacion
+                this.consulta_textohtml_especificacion_s = this.cargos[index].especificaciones_seleccion
+                this.consulta_estado_solicitud = this.cargos[index].estado_solicitud
+                this.estado_solicitud_id = this.cargos[index].estado_solicitud_id
+                this.consulta_laboratorio = this.cargos[index].nombre_laboratorio
+                this.laboratorio_id = this.cargos[index].laboratorio_id
+                this.direccion_laboratorio = this.cargos[index].direccion_laboratorio
+                this.consulta_departamento_u_l = this.cargos[index].departamento_laboratorio
+                this.departamento_u_l_id = this.cargos[index].departamento_laboratorio_id
+                this.consulta_municipio_u_l = this.cargos[index].municipio_laboratorio
+                this.municipio_u_l_id = this.cargos[index].municipio_laboratorio_id
+                this.fecha_examen = this.cargos[index].fecha_examen_medico
+                this.recomendacion_examen_medico = this.cargos[index].recomendaciones_examen_medico
+                this.orientacion_laboratorio = this.cargos[index].orientacion_laboratorio
+                this.bonificaciones = this.cargos[index].bonificaciones
+                this.cargos2 = this.cargos[index].cargos2
+                this.motivo_cancelacion = this.cargos[index].motivo_cancelacion
+                this.cargos[index].actual = true
+                this.tipo_cargo[index] = this.cargos[index].tipo_cargo_id
+                this.categoria_cargo_id = this.cargos[index].categoria_cargo_id
+                this.consulta_subcategoria_cargos[index] = this.cargos[index].categoria
+                this.consulta_lista_cargos[index] = this.cargos[index].cargo
+                this.consulta_textohtml_funciones = this.cargos[index].consulta_textohtml_funciones
+                this.consulta_riesgo_laboral[index] = this.cargos[index].riesgo_laboral[index]
+                this.array_lista_examenes[index] = this.cargos[index].examenes
+                this.array_lista_recomendaciones[index] = this.cargos[index].recomendaciones
+
+            } else {
+                this.getBonificaciones()
             }
         },
         guardarSeccion() {
@@ -856,7 +903,7 @@ export default {
                     actual: this.actual
                 }
 
-                this.cargos2.forEach(function (item,index) {
+                this.cargos2.forEach(function (item, index) {
                     candidato.tipo_cargo = item.tipo_cargo == 1 ? 'Administrativo' : 'Operativo'
                     candidato.tipo_cargo_id = self.tipo_cargo[index]
                     candidato.cargo_id = item.cargo_id
@@ -891,15 +938,81 @@ export default {
                 this.correo_candidato = ''
                 this.documento_identidad_candidato = ''
 
+                document.getElementById('card').className = 'animate__animated animate__fadeOutLeft'
+                setTimeout(() => {
+                    document.getElementById('card').className = 'animate__animated animate__fadeInRight'
+                }, 200);
+            } else {
+                // El formulario no es válido, hacer scroll hasta el primer campo no válido
+                const form = this.$refs.candidato;
+                const firstInvalidField = Array.from(form.elements).find(
+                    element => !element.checkValidity()
+                );
 
-                // let verdadero = true
-                // if(verdadero){
-                //     document.getElementById('siguiente').className = 'col-md-4 animate__animated animate__headShake'
-                //     setTimeout(() => {
-                //         document.getElementById('siguiente').className = 'col-md-4'
-                // }, 400);
-                //     return
-                // }
+                // Hacer scroll al primer campo no válido
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    firstInvalidField.focus();
+                }
+            }
+        },
+        agregarCargo(index = null) {
+            if (this.$refs.candidato.checkValidity()) {
+                var self = this
+                var cargo = {
+                    salario: this.salario,
+                    auxilio_transporte: this.auxilio_transporte,
+                    fecha_inicio_labores: this.fecha_inicio_labores,
+                    especificaciones_vinculacion: this.consulta_textohtml_especificacion_v,
+                    especificaciones_seleccion: this.consulta_textohtml_especificacion_s,
+                    consulta_textohtml_funciones: this.consulta_textohtml_funciones,
+                    nombre_laboratorio: this.consulta_laboratorio,
+                    laboratorio_id: this.laboratorio_id,
+                    direccion_laboratorio: this.direccion_laboratorio,
+                    departamento_laboratorio: this.consulta_departamento_u_l,
+                    departamento_laboratorio_id: this.departamento_u_l_id,
+                    municipio_laboratorio: this.consulta_municipio_u_l,
+                    municipio_laboratorio_id: this.municipio_u_l_id,
+                    fecha_examen_medico: this.fecha_examen,
+                    recomendaciones_examen_medico: this.recomendacion_examen_medico,
+                    orientacion_laboratorio: this.orientacion_laboratorio,
+                    estado_solicitud: this.consulta_estado_solicitud,
+                    estado_solicitud_id: this.estado_solicitud_id,
+                    bonificaciones: this.bonificaciones,
+                    cargos2: this.cargos2,
+                    motivo_cancelacion: this.motivo_cancelacion,
+                    actual: this.actual
+                }
+
+                this.cargos2.forEach(function (item, index) {
+                    cargo.tipo_cargo = item.tipo_cargo == 1 ? 'Administrativo' : 'Operativo'
+                    cargo.tipo_cargo_id = self.tipo_cargo[index]
+                    cargo.cargo_id = item.cargo_id
+                    cargo.cargo = self.consulta_lista_cargos[index]
+                    cargo.riesgo_laboral = self.consulta_riesgo_laboral
+                    cargo.categoria = self.consulta_subcategoria_cargos[index]
+                    cargo.examenes = item.examenes
+                    cargo.recomendaciones = item.recomendaciones
+                })
+
+                this.cargos = []
+                if (localStorage.getItem('cargos') != undefined) {
+                    this.cargos = JSON.parse(localStorage.getItem('cargos'))
+                    if (index != null) {
+                        this.cargos.splice(index, 1, cargo)
+                    } else {
+                        this.cargos.push(cargo)
+                    }
+                    localStorage.setItem('cargos', JSON.stringify(this.cargos))
+                    if (index != null) {
+                        return
+                    }
+                } else {
+                    this.cargos.push(cargo)
+                    localStorage.setItem('cargos', JSON.stringify(this.cargos))
+                    console.log(this.cargos)
+                }
+
                 document.getElementById('card').className = 'animate__animated animate__fadeOutLeft'
                 setTimeout(() => {
                     document.getElementById('card').className = 'animate__animated animate__fadeInRight'
