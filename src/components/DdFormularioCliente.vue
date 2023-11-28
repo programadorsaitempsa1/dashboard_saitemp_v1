@@ -1288,12 +1288,16 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
+                    <button v-if="permisos[1].autorizado" class="btn btn-success"
                         type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
                 </div>
                 <div class="col">
-                    <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5 || userlogued.id == 15 || userlogued.id == 16" class="btn btn-success" 
+                    <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success" 
                         :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
+                </div>
+                <div class="col">
+                    <button v-if="ruta_id != undefined && permisos[3].autorizado" class="btn btn-success" 
+                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Actualizar</button>
                 </div>
                 <div v-if="hide_bottons" class="col" style="margin:30px">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -1330,6 +1334,7 @@ import { Token } from '../Mixins/Token.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import EditorTextoHtml from './EditorTextoHtml.vue';
+import { Permisos } from '../Mixins/Permisos.js';
 
 export default {
 
@@ -1340,7 +1345,7 @@ export default {
         EditorTextoHtml,
         Loading
     },
-    mixins: [Scroll,Alerts,Token],
+    mixins: [Scroll,Alerts,Token,Permisos],
     props: {
         userlogued: {
             default: '',
@@ -1547,7 +1552,8 @@ export default {
             hide_bottons: true,
             campo_dinamico: [],
             cargos_id_: [],
-            deshabilitar_boton: false
+            deshabilitar_boton: false,
+            ruta_id:this.$route.params.id,
         }
     },
     computed: {
