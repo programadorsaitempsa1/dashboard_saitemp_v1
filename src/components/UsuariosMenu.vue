@@ -20,7 +20,7 @@
                 </div>
                 <button type="button" id="newNews" class="col-xs-12 col-md-2 btn btn-sm btn-success" @click=" asignarMenu()"
                     style="margin-top: 33px">
-                    <i class="bi bi-file-earmark-plus"></i> Asignar permisos
+                    <i class="bi bi-file-earmark-plus"></i> Asignar menús
                 </button>
             </div>
             <div class="row">
@@ -171,7 +171,7 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/filtroporusuario/" + id + '/' + self.cantidad, config)
+                .get(self.URL_API + "api/v1/filtromenuporusuario/" + id + '/' + self.cantidad, config)
                 .then(function (result) {
                     self.datos = result
                 });

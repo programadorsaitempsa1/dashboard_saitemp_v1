@@ -125,8 +125,8 @@
         <div class="card col-xs-12 col-md-6" style="overflow: hidden;">
             <form class="was-validated " ref="candidato" id="card" @submit.prevent="save()">
                 <div id="seccion">
-                    <h5 class="tituloseccion">Información personal candidato</h5>
-                    <hr>
+                    <h5 class="tituloseccion" v-if="this.servicio_solicitado_id == 1">Información personal candidato</h5>
+                    <hr v-if="this.servicio_solicitado_id == 1">
                     <div class="row"
                         v-if="this.servicio_solicitado_id != 2 && this.servicio_solicitado_id != 3 && this.servicio_solicitado_id != 4">
                         <h5 style="text-align: left;">Número de candidatos registrados: {{ candidatos.length }}</h5>
