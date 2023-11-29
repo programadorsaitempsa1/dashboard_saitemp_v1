@@ -1,4 +1,4 @@
-// Mixin para mostrar mensajes de alerta como exito o error en una acción
+// Mixin para visualisar los botones con acciones a los cuales el usuario tiene permisos
 import axios from 'axios';
 export const Permisos = {
   data () {

@@ -58,7 +58,7 @@ export default ({
         .then(function (result) {
           if (result.data.access_token != undefined) {
             localStorage.setItem("access_token", result.data.access_token);
-            self.$router.push("/navbar/Estadistica");
+            self.$router.push("/navbar/estadistica");
           }
            else if (result.data.status == "error") {
             self.showAlert(result.data.message,result.data.status);

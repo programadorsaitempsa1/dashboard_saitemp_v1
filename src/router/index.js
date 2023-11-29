@@ -70,6 +70,11 @@ const routes = [
     component: FormularioRegistro,
   },
   {
+    path: "*",
+    name: "*",
+    component: InicioSesion,
+  },
+  {
     path: "/navbar",
     name: "navbar",
     component: NavBar,
@@ -196,12 +201,12 @@ const routes = [
       },
       {
         path: "usuariosDA",
-        name: "UsuariosDA",
+        name: "usuariosDA",
         component: UsuariosDA,
       },
       {
         path: "estadistica",
-        name: "Estadistica",
+        name: "estadistica",
         component: Estadistica,
       },
       {
@@ -319,6 +324,11 @@ const routes = [
         name: "menu-usuarios",
         component: UsuariosMenu,
       },
+      // {
+      //   path: "navbar/*",
+      //   name: "navbar/*",
+      //   component: NavBar,
+      // },
      
     ],
   },

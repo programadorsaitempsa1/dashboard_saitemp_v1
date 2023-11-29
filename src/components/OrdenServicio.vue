@@ -691,8 +691,8 @@ export default {
             }
         },
         llenarCampoCliente() {
-            if (localStorage.getItem('cliente') != undefined) {
-                var cliente = JSON.parse(localStorage.getItem('cliente'))
+            if (localStorage.getItem('clienteos') != undefined) {
+                var cliente = JSON.parse(localStorage.getItem('clienteos'))
                 this.consulta_tipo_persona = cliente.tipo_persona
                 this.tipo_persona_id = cliente.tipo_persona_id
                 this.tipo_persona = cliente.tipo_persona_id
@@ -847,7 +847,7 @@ export default {
                     numero_vacantes_id: this.vacante_id,
                     numero_vacantes: this.consulta_vacantes
                 }
-                localStorage.setItem('cliente', JSON.stringify(this.cliente))
+                localStorage.setItem('clienteos', JSON.stringify(this.cliente))
             } else {
                 // El formulario no es válido, hacer scroll hasta el primer campo no válido
                 const form = this.$refs.candidato;

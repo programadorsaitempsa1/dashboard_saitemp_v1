@@ -142,7 +142,6 @@ export default {
             this.usuario_id = ''
             this.usuario = ''
             if (index != null) {
-                console.log(item)
                 this.FiltroPorUsuario(item.id)
                 return
             }
@@ -194,7 +193,6 @@ export default {
                 });
         },
         response(response) {
-            console.log(response)
             this.actualizar_menu = true
             this.currentUrl = response.currentUrl
             this.menu_select = response.menu

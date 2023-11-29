@@ -116,27 +116,42 @@ export default {
       option: ['One', 'Two', 'Tree', 'Four', 'Five', 'six', 'Seven'],
       categoria_menu: [],
       menu_lateral: true,
-      // menu: [
-      //   { categoria: 'Menú', icon: 'bi bi-speedometer2', opciones: [] },
-      //   {
-      //     categoria: 'Novasoft', icon: 'bi bi-text-indent-left', opciones: [
-      //       { nombre: 'Dashboard', rol: '1', url: 'navbar/Estadistica', urlExterna: '0', oculto: '0', icon: 'bi bi-graph-up' },
-      //       { nombre: 'Ejecución procesos E.', rol: '1', url: 'navbar/procesosespeciales', urlExterna: '0', oculto: '0', icon: 'bi bi-person-plus' },
-      //       { nombre: 'Lista trump', rol: '1', url: 'navbar/trump', urlExterna: '0', oculto: '0', icon: 'bi bi-person-dash' },
-      //     ]
-      //   },
-      //   { categoria: 'Parámetros', icon: 'bi bi-text-indent-left', opciones: [{ nombre: 'opcion1' }] },
-      // ]
     };
   },
+  watch: {
+  },
   created() {
-    //   this.ruta = this.$route.name
-    //   this.userId()
-    //   this.getLogoPagina()
     this.urlExterna()
     this.userLogued()
+    this.validaRuta()
+
+  },
+  destroyed() {
+    localStorage.removeItem("access_token");
   },
   methods: {
+    validaRuta() { // valida si el usuario tiene acceso a la ruta o menú consultado
+      var self = this
+      var rutaAnterior = ''
+      var regex = /\/navbar\/(.*)/;
+      this.$watch(
+        () => this.$route.path,
+        (newPath, oldPath) => {
+          var bandera = false
+          this.menu.forEach(function (item) {
+            item.opciones.forEach(function (item2) {
+              if (newPath.includes(item2.url.split("/")[1])) {
+                bandera = true
+              }
+            })
+          })
+          if (!bandera) {
+            self.$router.push(oldPath.match(regex)[1]);
+          }
+          bandera = false
+        }
+      );
+    },
     collapese() {
       this.collapse = !this.collapse;
     },
@@ -172,31 +187,6 @@ export default {
     actualizar() {
       this.$router.push({ name: "editarUsuario", params: { id: this.user_id } });
     },
-    //   userId() {
-    //     let tokenuser = localStorage.getItem("access_token");
-    //     let fragmentToken = atob(tokenuser.split(".")[1]);
-    //     var data = JSON.parse(fragmentToken);
-    //     this.userid = data.sub
-    //     this.userLogued(data.sub);
-    //   },
-    //   userLogued(id) {
-    //     let self = this;
-    //      let config = this.configHeader();
-    //     axios
-    //       .get(self.URL_API+'api/userlogued/'+ id,config)
-    //       .then(function (result) {
-    //         self.userlogued = result.data[0];
-    //          localStorage.setItem('nombres',result.data[0].nombres)
-    //          localStorage.setItem('apellidos',result.data[0].apellidos)
-    //          localStorage.setItem('rol',result.data[0].rol)
-    //          self.getMenu(self.userlogued.id)
-    //       }).catch(function (error) {
-    //         if (error.response.data == "Unauthorized."){
-    //           self.$router.push("/");
-    //           localStorage.removeItem("access_token");
-    //         }
-    //       });
-    //   },
     userLogued() {
       let self = this;
       let config = this.configHeader();
@@ -225,28 +215,6 @@ export default {
         }).catch(function () {
         });
     },
-    // getCategoriaMenu() {
-    //   let self = this
-    //   let config = this.configHeader();
-    //   axios
-    //     .get(self.URL_API + 'api/v1/categoriaMenu', config)
-    //     .then(function (result) {
-    //       self.categoria_menu = result.data
-    //     }).catch(function () {
-    //     });
-    // },
-    //   getLogoPagina() {
-    //     var self = this;
-    //     axios
-    //       .get(self.URL_API+"api/logopaginaactivo")
-    //       .then(function (result) {
-    //         self.logo = result.data[0];
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //         self.getLogoPagina()
-    //       });
-    //   },
     asideExpand() {
       this.expand = !this.expand;
     },

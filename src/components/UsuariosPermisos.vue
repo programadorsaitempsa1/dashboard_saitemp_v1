@@ -149,7 +149,6 @@ export default {
             this.usuario_id = ''
             this.usuario = ''
             if (index != null) {
-                console.log(item)
                 this.FiltroPorUsuario(item.id)
                 return
             }
@@ -178,7 +177,7 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/filtroporusuario/"+id+'/'+self.cantidad, config)
+                .get(self.URL_API + "api/v1/filtroporusuario/" + id + '/' + self.cantidad, config)
                 .then(function (result) {
                     self.datos = result
                 });
@@ -214,11 +213,7 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios.get(self.URL_API + "api/v1/permisoslista", config).then(function (result) {
-                try {
-                    self.permisos = result.data;
-                } catch (error) {
-                    console.log(error);
-                }
+                self.permisos = result.data;
             });
         },
         messageDelete(id) {

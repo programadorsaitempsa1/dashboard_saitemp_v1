@@ -160,7 +160,6 @@ export default {
       var rolasignado = "";
       this.roles.forEach(function (element) {
         if (item == element.id) {
-          console.log(element.name);
           rolasignado = element.name;
         }
       });
