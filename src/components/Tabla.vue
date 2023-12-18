@@ -135,8 +135,9 @@
                             :key="index">
                             {{ item.nombre }}
                         </th>
+                        <!-- <th v-if="editar || eliminar" -->
                         <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/correo-novedades-nomina'"
-                            colspan="3">Acciones</th>
+                            colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -163,15 +164,17 @@
                                 style="text-decoration: underline; cursor: pointer;" />
                         </td>
 
+                        <!-- v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/permiso-usuario' && ruta != '/navbar/menuroles' && ruta != '/navbar/permisoroles' && ruta != '/navbar/menu-usuarios'"> -->
                         <td
-                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/permiso-usuario' && ruta != '/navbar/menuroles' && ruta != '/navbar/permisoroles' && ruta != '/navbar/menu-usuarios'">
+                            v-if="editar">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
+                        <!-- v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/menus'"> -->
                         <td
-                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
+                            v-if="eliminar">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -291,7 +294,15 @@ export default {
         search2: {
             default: '',
             type: String
-        }
+        },
+        editar: {
+            default: false,
+            type: Boolean
+        },
+        eliminar: {
+            default: false,
+            type: Boolean
+        },
     },
     data() {
         return {
@@ -344,7 +355,7 @@ export default {
         },
     },
     created() {
-       
+
         // if(this.permisos_modulos.includes('p1')){
         // console.log(this.permisos_modulos)
         // }
@@ -506,9 +517,13 @@ export default {
         },
         messageDelete(id) {
             let self = this;
+            var title = "Estas seguro de elimiar el resgistro?"
+            if (self.$route.fullPath.includes('menus')) {
+                title = "Estas seguro de elimiar el resgistro? si elimina esta categoria de menú eliminará también las subcategorias de menú asociadas."
+            }
             this.$swal
                 .fire({
-                    title: "Estas seguro de elimiar el resgistro?",
+                    title: title,
                     text: "Esta operación no se puede revertir!",
                     icon: "warning",
                     showCancelButton: true,
@@ -529,7 +544,11 @@ export default {
                 .delete(self.URL_API + "api/v1/" + self.endpoint + "/" + id, config)
                 .then(function (result) {
                     self.showAlert(result.data.message, result.data.status);
-                    self.getRegistros();
+                    if (self.$route.fullPath.includes('menus')) {
+                        self.$emit('getItems');
+                    } else {
+                        self.getRegistros();
+                    }
                 });
         },
         formatCurrency(valor) {
@@ -703,6 +722,7 @@ export default {
             }
         },
         VerRegistro(item) {
+            // this.$router.push({ name: 'empleado' })
             if (!isNaN(this.search)) {
                 this.$router.push({ name: 'empleado', params: { id: this.search.trim() } })
             } else {

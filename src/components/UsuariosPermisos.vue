@@ -2,7 +2,7 @@
     <div>
         <div class="container">
             <Loading :loading="loading" />
-            <h2>Permisos de usuario</h2>
+            <h2>Usuarios y permisos</h2>
             <div class="row">
                 <div class="col-xs-12 col-md-3">
                     <SearchList nombreCampo="Usuario: *" :valida_campo="false" nombreItem="nombre" eventoCampo="getUsuarios"
@@ -13,7 +13,7 @@
                     <label style="width: 250px; margin-top: 25px; text-align: left">Permisos</label>
                     <select id="inputState1" class="form-select" :disabled="checks.length > 1" v-model="permiso_select"
                         @change="permisoId(permiso_select)">
-                        <option ref="item_select" v-for="item, index in permisos" :key="index">
+                        <option ref="item_select" v-for="item, index in permisos_usuario" :key="index">
                             {{ item.nombre }}
                         </option>
                     </select>
@@ -66,7 +66,7 @@
                     <i class="bi bi-arrow-counterclockwise"></i> Borrar busqueda
                 </button>
             </div>
-            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos"
+            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos" :eliminar="permisos[19].autorizado"
                 @response="response" @clear="clear" @check="check" @getMenuNavbar="getMenuNavbar" />
         </div>
     </div>
@@ -79,11 +79,12 @@ import { Token } from '../Mixins/Token.js';
 import Loading from './Loading.vue'
 import { Scroll } from '../Mixins/Scroll.js';
 import SearchList from './SearchList.vue'
+import { Permisos } from '../Mixins/Permisos.js';
 export default {
     props: {
         menu: []
     },
-    mixins: [Token, Alerts, Scroll],
+    mixins: [Token, Alerts, Scroll,Permisos],
     components: {
         Tabla,
         Loading,
@@ -91,7 +92,7 @@ export default {
     },
     data() {
         return {
-            permisos: [],
+            permisos_usuario: [],
             rolesunicos: [],
             roles: [],
             permiso_select: "",
@@ -141,7 +142,7 @@ export default {
     },
     created() {
         this.getItems();
-        this.getPermisos()
+        this.getPermisos_usuario()
         this.getUsuarios()
     },
     methods: {
@@ -209,11 +210,11 @@ export default {
             this.usuarioId(response.nombres + ' ' + response.apellidos)
             this.checks = []
         },
-        getPermisos() {
+        getPermisos_usuario() {
             let self = this;
             let config = this.configHeader();
             axios.get(self.URL_API + "api/v1/permisoslista", config).then(function (result) {
-                self.permisos = result.data;
+                self.permisos_usuario = result.data;
             });
         },
         messageDelete(id) {
@@ -302,7 +303,7 @@ export default {
         permisoId(permiso) {
             let self = this;
             var cont = 0;
-            this.permisos.forEach(function (element) {
+            this.permisos_usuario.forEach(function (element) {
                 if (permiso == element.nombre) {
                     self.permisoId_ = element.id;
                     if (!self.actualizar_menu) {

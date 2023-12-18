@@ -17,8 +17,8 @@
                                 v-model="descripcion"></textarea>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success" @click="save()">
-                        Guardar
+                    <button v-if="permisos[15].autorizado" type="submit" class="btn btn-success" @click="save()">
+                        {{!actualizar ? 'Guardar':'Actualizar'}}
                     </button>
                     <button type="submit" class="btn btn-warning" @click="clear">
                         Limpiar
@@ -29,7 +29,7 @@
 
                 </form>
             </div>
-            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos"
+            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos" :editar="permisos[16].autorizado" :eliminar="permisos[17].autorizado"
                 @response="response" @clear="clear" @check="check" />
         </div>
     </div>
@@ -39,6 +39,7 @@ import axios from "axios";
 import Tabla from './Tabla.vue';
 import { Alerts } from '../Mixins/Alerts.js';
 import { Token } from '../Mixins/Token.js';
+import { Permisos } from '../Mixins/Permisos.js';
 export default {
     components: {
         Tabla
@@ -46,7 +47,7 @@ export default {
     props: {
         menu: []
     },
-    mixins: [Token, Alerts],
+    mixins: [Token, Alerts,Permisos],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -70,6 +71,7 @@ export default {
             massiveUpdate: false,
             campos: {},
             ruta: '',
+            actualizar:false
         };
     },
     mounted() {

@@ -58,7 +58,7 @@
                     <i class="bi bi-arrow-counterclockwise"></i> Borrar busqueda
                 </button>
             </div>
-            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos"
+            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos" :eliminar="permisos[14].autorizado"
                 @response="response" @clear="clear" @check="check" @getMenuNavbar="getMenuNavbar" />
         </div>
     </div>
@@ -68,14 +68,15 @@ import axios from "axios";
 import Tabla from "./Tabla.vue";
 import { Alerts } from '../Mixins/Alerts.js';
 import { Token } from '../Mixins/Token.js';
-import Loading from './Loading.vue'
+import Loading from './Loading.vue';
 import { Scroll } from '../Mixins/Scroll.js';
-import SearchList from './SearchList.vue'
+import SearchList from './SearchList.vue';
+import { Permisos } from '../Mixins/Permisos.js';
 export default {
     props: {
         menu: []
     },
-    mixins: [Token, Alerts, Scroll],
+    mixins: [Token, Alerts, Scroll, Permisos],
     components: {
         Tabla,
         Loading,

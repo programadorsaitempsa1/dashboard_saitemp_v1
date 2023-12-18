@@ -53,6 +53,7 @@ import PieChar from "../components/PieChar.vue";
 import GraficosGerencia from "../components/GraficosGerencia.vue";
 import UsuariosPermisos from "../components/UsuariosPermisos.vue";
 import UsuariosMenu from "../components/UsuariosMenu.vue";
+import AdministrarMenu from "../components/AdministrarMenu.vue";
 
 
 
@@ -318,6 +319,11 @@ const routes = [
         path: "permiso-usuario",
         name: "permiso-usuario",
         component: UsuariosPermisos,
+      },
+      {
+        path: "menus",
+        name: "menus",
+        component: AdministrarMenu,
       },
       {
         path: "menu-usuarios",

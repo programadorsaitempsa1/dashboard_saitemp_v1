@@ -113,7 +113,7 @@ export default {
       user_id: '',
       URL_API: process.env.VUE_APP_URL_API,
       autoriced: false,
-      option: ['One', 'Two', 'Tree', 'Four', 'Five', 'six', 'Seven'],
+      option: [],
       categoria_menu: [],
       menu_lateral: true,
     };
@@ -130,7 +130,7 @@ export default {
     localStorage.removeItem("access_token");
   },
   methods: {
-    validaRuta() { // valida si el usuario tiene acceso a la ruta o menú consultado
+    validaRuta() { // valida si el usuario tiene acceso a la ruta o menú consultado, incluir los módulos que no están en el menú
       var self = this
       var rutaAnterior = ''
       var regex = /\/navbar\/(.*)/;
@@ -140,7 +140,7 @@ export default {
           var bandera = false
           this.menu.forEach(function (item) {
             item.opciones.forEach(function (item2) {
-              if (newPath.includes(item2.url.split("/")[1])) {
+              if (newPath.includes(item2.url.split("/")[1]) || newPath.includes('empleado') || newPath.includes('editarUsuario')) {
                 bandera = true
               }
             })
@@ -212,6 +212,9 @@ export default {
         .get(self.URL_API + 'api/v1/categoriaMenu', config)
         .then(function (result) {
           self.menu = result.data
+          self.menu.forEach(function (item, index) {
+            self.option.push(index)
+          })
         }).catch(function () {
         });
     },
