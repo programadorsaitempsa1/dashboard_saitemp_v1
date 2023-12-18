@@ -17,8 +17,8 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div :class="collapse
-            ? 'collapse navbar-collapse show'
-            : 'collapse navbar-collapse'
+          ? 'collapse navbar-collapse show'
+          : 'collapse navbar-collapse'
           " id="navbarNav">
           <ul class="navbar-nav">
             <!-- <li id="menucolapsed" class="nav-item" @click="collapese">
@@ -30,6 +30,12 @@
             <li class="nav-item" @click="collapese">
               <router-link class="nav-link active" to="">{{ saludo }}
                 {{ userlogued.nombres }}</router-link>
+            </li>
+            <li class="nav-item contrasena" id="menu-lateral" @click="ocultarMenu(), collapese()">
+              <!-- <router-link class="nav-link active" to="/"> -->
+              <i :class="menu_lateral ? 'bi bi-text-indent-right' : 'bi bi-text-indent-left'"></i> {{ menu_lateral ?
+                'Ocultar menú lateral' : 'Mostrar menú lateral' }}
+              <!-- </router-link> -->
             </li>
             <li class="nav-item contrasena" id="contrasena" @click="actualizar()">
               <!-- <router-link class="nav-link active" to="/"> -->
@@ -69,7 +75,7 @@
           :aria-labelledby="'flush-heading' + option[index]" data-bs-parent="#accordionFlushExample">
           <div v-for="(item, index) in menu[index].opciones" :key="index" class="accordion-body">
             <router-link v-if="item.urlExterna == '0'" class="nav-link active"
-              :to="item.powerbi != '' ? '/' + item.url+'/'+item.nombre : item.url != '' ? '/' + item.url : '/navbar'"
+              :to="item.powerbi != '' ? '/' + item.url + '/' + item.nombre : item.url != '' ? '/' + item.url : '/navbar'"
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
             </router-link>
@@ -88,10 +94,12 @@
 <script>
 /* eslint-disable */
 import axios from "axios";
+import { Token } from '../Mixins/Token'
 export default {
   components: {
     name: 'Navbar',
   },
+  mixins: [Token],
   data() {
     return {
       username: "",
@@ -105,28 +113,45 @@ export default {
       user_id: '',
       URL_API: process.env.VUE_APP_URL_API,
       autoriced: false,
-      option: ['One', 'Two', 'Tree', 'Four', 'Five', 'six', 'Seven'],
+      option: [],
       categoria_menu: [],
-      // menu: [
-      //   { categoria: 'Menú', icon: 'bi bi-speedometer2', opciones: [] },
-      //   {
-      //     categoria: 'Novasoft', icon: 'bi bi-text-indent-left', opciones: [
-      //       { nombre: 'Dashboard', rol: '1', url: 'navbar/Estadistica', urlExterna: '0', oculto: '0', icon: 'bi bi-graph-up' },
-      //       { nombre: 'Ejecución procesos E.', rol: '1', url: 'navbar/procesosespeciales', urlExterna: '0', oculto: '0', icon: 'bi bi-person-plus' },
-      //       { nombre: 'Lista trump', rol: '1', url: 'navbar/trump', urlExterna: '0', oculto: '0', icon: 'bi bi-person-dash' },
-      //     ]
-      //   },
-      //   { categoria: 'Parámetros', icon: 'bi bi-text-indent-left', opciones: [{ nombre: 'opcion1' }] },
-      // ]
+      menu_lateral: true,
     };
   },
+  watch: {
+  },
   created() {
-    //   this.ruta = this.$route.name
-    //   this.userId()
-    //   this.getLogoPagina()
+    this.urlExterna()
     this.userLogued()
+    this.validaRuta()
+
+  },
+  destroyed() {
+    localStorage.removeItem("access_token");
   },
   methods: {
+    validaRuta() { // valida si el usuario tiene acceso a la ruta o menú consultado, incluir los módulos que no están en el menú
+      var self = this
+      var rutaAnterior = ''
+      var regex = /\/navbar\/(.*)/;
+      this.$watch(
+        () => this.$route.path,
+        (newPath, oldPath) => {
+          var bandera = false
+          this.menu.forEach(function (item) {
+            item.opciones.forEach(function (item2) {
+              if (newPath.includes(item2.url.split("/")[1]) || newPath.includes('empleado') || newPath.includes('editarUsuario')) {
+                bandera = true
+              }
+            })
+          })
+          if (!bandera) {
+            self.$router.push(oldPath.match(regex)[1]);
+          }
+          bandera = false
+        }
+      );
+    },
     collapese() {
       this.collapse = !this.collapse;
     },
@@ -148,34 +173,20 @@ export default {
       //     }
       //   });
     },
+    ocultarMenu() {
+      var menu = document.getElementsByClassName('aside')[0];
+
+      if (this.menu_lateral) {
+        menu.style.display = 'none'; // Ocultar el menú
+      } else {
+        menu.style.display = 'block'; // Mostrar el menú
+      }
+      this.menu_lateral = !this.menu_lateral
+      localStorage.setItem("menu_lateral", this.menu_lateral)
+    },
     actualizar() {
       this.$router.push({ name: "editarUsuario", params: { id: this.user_id } });
     },
-    //   userId() {
-    //     let tokenuser = localStorage.getItem("access_token");
-    //     let fragmentToken = atob(tokenuser.split(".")[1]);
-    //     var data = JSON.parse(fragmentToken);
-    //     this.userid = data.sub
-    //     this.userLogued(data.sub);
-    //   },
-    //   userLogued(id) {
-    //     let self = this;
-    //      let config = this.configHeader();
-    //     axios
-    //       .get(self.URL_API+'api/userlogued/'+ id,config)
-    //       .then(function (result) {
-    //         self.userlogued = result.data[0];
-    //          localStorage.setItem('nombres',result.data[0].nombres)
-    //          localStorage.setItem('apellidos',result.data[0].apellidos)
-    //          localStorage.setItem('rol',result.data[0].rol)
-    //          self.getMenu(self.userlogued.id)
-    //       }).catch(function (error) {
-    //         if (error.response.data == "Unauthorized."){
-    //           self.$router.push("/");
-    //           localStorage.removeItem("access_token");
-    //         }
-    //       });
-    //   },
     userLogued() {
       let self = this;
       let config = this.configHeader();
@@ -201,38 +212,11 @@ export default {
         .get(self.URL_API + 'api/v1/categoriaMenu', config)
         .then(function (result) {
           self.menu = result.data
+          self.menu.forEach(function (item, index) {
+            self.option.push(index)
+          })
         }).catch(function () {
         });
-    },
-    // getCategoriaMenu() {
-    //   let self = this
-    //   let config = this.configHeader();
-    //   axios
-    //     .get(self.URL_API + 'api/v1/categoriaMenu', config)
-    //     .then(function (result) {
-    //       self.categoria_menu = result.data
-    //     }).catch(function () {
-    //     });
-    // },
-    //   getLogoPagina() {
-    //     var self = this;
-    //     axios
-    //       .get(self.URL_API+"api/logopaginaactivo")
-    //       .then(function (result) {
-    //         self.logo = result.data[0];
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //         self.getLogoPagina()
-    //       });
-    //   },
-    configHeader() {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      };
-      return config;
     },
     asideExpand() {
       this.expand = !this.expand;
@@ -257,7 +241,7 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 300;
+  z-index: 2000;
   color: white;
   transition: width 1s;
   overflow-x: hidden;
@@ -269,7 +253,7 @@ export default {
   pointer-events: auto;
 }
 
-.aside i{
+.aside i {
   font-size: 1.2rem;
 }
 
@@ -347,7 +331,7 @@ export default {
 }
 
 .aside:hover {
-  width: 240px;
+  width: 280px;
 }
 
 /* .aside2 {
@@ -387,6 +371,15 @@ export default {
   cursor: pointer;
 }
 
+#menu-lateral {
+  position: absolute;
+  right: 300px;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
 @media screen and (max-width: 991px) {
   #logout {
     position: relative;
@@ -396,8 +389,12 @@ export default {
   #contrasena {
     position: relative;
     right: 0px;
+  }
 
-    /* right: 0px; */
+  #menu-lateral {
+    position: relative;
+    right: 0px;
+    visibility: visible;
   }
 
   /* #menucolapsed{

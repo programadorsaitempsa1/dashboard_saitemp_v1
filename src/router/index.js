@@ -8,6 +8,7 @@ import Usuarios from "../components/Usuarios.vue";
 import RolesUsuario from "../components/RolesUsuario.vue";
 import MenuRoles from "../components/MenuRoles.vue";
 import PermisoRoles from "../components/PermisoRoles.vue";
+import Permisos from "../components/Permisos.vue";
 import Zonas from "../components/Zonas.vue";
 import Empleadoss from "../components/Empleadoss.vue";
 import SigContratos from "../components/SigContratos.vue";
@@ -39,6 +40,21 @@ import DdClientes from "../components/DdClientes.vue";
 import DdFormularioCliente from "../components/DdFormularioCliente.vue";
 import FormularioRegistro from "../components/FormularioRegistro.vue";
 import NovedadesNomina from "../components/NovedadesNomina.vue";
+import SolicitudNovedadesNomina from "../components/SolicitudNovedadesNomina.vue";
+import ConsultaNN from "../components/ConsultaNN.vue";
+import GestionCliente from "../components/GestionCliente.vue";
+import FormularioSupervision from "../components/FormularioSupervision.vue";
+import MapaVue from "../components/MapaVue.vue";
+import ClienteSupervision from "../components/ClienteSupervision.vue";
+import OrdenServicio from "../components/OrdenServicio.vue";
+import OrdenServicios from "../components/OrdenServicios.vue";
+import SolicitudesOrdenServicio from "../components/SolicitudesOrdenServicio.vue";
+import PieChar from "../components/PieChar.vue";
+import GraficosGerencia from "../components/GraficosGerencia.vue";
+import UsuariosPermisos from "../components/UsuariosPermisos.vue";
+import UsuariosMenu from "../components/UsuariosMenu.vue";
+import AdministrarMenu from "../components/AdministrarMenu.vue";
+
 
 
 Vue.use(VueRouter);
@@ -53,6 +69,11 @@ const routes = [
     path: "/formularioregistro",
     name: "formularioregistro",
     component: FormularioRegistro,
+  },
+  {
+    path: "*",
+    name: "*",
+    component: InicioSesion,
   },
   {
     path: "/navbar",
@@ -93,6 +114,11 @@ const routes = [
         path: "permisoRoles",
         name: "permisoRoles",
         component: PermisoRoles,
+      },
+      {
+        path: "permisos",
+        name: "permisos",
+        component: Permisos,
       },
       {
         path: "empleadoss",
@@ -176,12 +202,12 @@ const routes = [
       },
       {
         path: "usuariosDA",
-        name: "UsuariosDA",
+        name: "usuariosDA",
         component: UsuariosDA,
       },
       {
         path: "estadistica",
-        name: "Estadistica",
+        name: "estadistica",
         component: Estadistica,
       },
       {
@@ -234,6 +260,82 @@ const routes = [
         name: "gestion-novedades-nomina",
         component: NovedadesNomina,
       },
+      {
+        path: "solicitud-novedades-nomina",
+        name: "solicitud-novedades-nomina",
+        component: SolicitudNovedadesNomina,
+      },
+      {
+        path: "correo-novedades-nomina",
+        name: "correo-novedades-nomina",
+        component: ConsultaNN,
+      },
+      {
+        path: "estados-cliente",
+        name: "estados-cliente",
+        component: GestionCliente,
+      },
+      {
+        path: "formulario-supervision/:id?",
+        name: "formulario-supervision",
+        component: FormularioSupervision,
+      },
+      {
+        path: "mapa",
+        name: "mapa",
+        component: MapaVue,
+      },
+      {
+        path: "cliente-supervision",
+        name: "cliente-supervision",
+        component: ClienteSupervision,
+      },
+      {
+        path: "orden-servicio",
+        name: "orden-servicio",
+        component: OrdenServicio,
+      },
+      {
+        path: "orden-servicios/:id?",
+        name: "orden-servicios",
+        component: OrdenServicios,
+      },
+      {
+        path: "solicitudes-os",
+        name: "solicitudes-os",
+        component: SolicitudesOrdenServicio,
+      },
+      {
+        path: "piechar",
+        name: "piechar",
+        component: PieChar,
+      },
+      {
+        path: "graficos-gerencia",
+        name: "graficos-gerencia",
+        component: GraficosGerencia,
+      },
+      {
+        path: "permiso-usuario",
+        name: "permiso-usuario",
+        component: UsuariosPermisos,
+      },
+      {
+        path: "menus",
+        name: "menus",
+        component: AdministrarMenu,
+      },
+      {
+        path: "menu-usuarios",
+        name: "menu-usuarios",
+        component: UsuariosMenu,
+      },
+      // {
+      //   path: "navbar/*",
+      //   name: "navbar/*",
+      //   component: NavBar,
+      // },
+     
     ],
   },
 

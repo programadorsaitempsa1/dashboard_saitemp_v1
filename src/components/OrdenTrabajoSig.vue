@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <div v-if="spinner">
       <div class="lds-ring">
@@ -1021,4 +1021,4 @@ th {
   font-size: 1.3rem;
 }
 
-</style>
+</style> -->

@@ -1,13 +1,17 @@
 <template>
-    <div>
+    <div class="was-validated">
         <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">{{ nombreCampo }}:</label>
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon3"><i class="bi bi-search"></i></span>
                 <input type="text" @focus="consultaEndPoint()" @click="modal = true" autocomplete="off" class="form-control"
-                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro" />
-                    <span class="input-group-text" style="cursor:pointer" @click="registro = '',retornoValorCampo()" id="basic-addon3"><i class="bi bi-x"></i></span>
-                <!-- <span class="input-group-text" id="basic-addon3"><i class="bi bi-chevron-compact-down"></i></span> -->
+                    id="exampleInputEmail2" :placeholder="placeholder" aria-describedby="emailHelp" v-model="registro"
+                    :required="valida_campo" />
+                <span class="input-group-text" style="cursor:pointer" @click="registro = '', retornoValorCampo()"
+                    id="basic-addon3"><i class="bi bi-x"></i></span>
+                <div class="invalid-feedback">
+                    {{ mensaje_error }}
+                </div>
             </div>
         </div>
 
@@ -32,10 +36,12 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <button type="button" @click="buscarRegistro()" class="btn btn-success" data-bs-dismiss="modal">Buscar</button>
+                                <button type="button" @click="buscarRegistro()" class="btn btn-success"
+                                    data-bs-dismiss="modal">Buscar</button>
                             </div>
                             <div class="col">
-                                <button type="button" @click="consultaEndPoint(), search = ''" class="btn btn-success" data-bs-dismiss="modal">Borrar búsqueda</button>
+                                <button type="button" @click="consultaEndPoint(), search = ''" class="btn btn-success"
+                                    data-bs-dismiss="modal">Borrar búsqueda</button>
                             </div>
                         </div>
                         <div v-if="!sin_registros" class="table-responsive">
@@ -49,7 +55,8 @@
                                 <tbody>
                                     <tr v-for="(item) in items_tabla2" :key="item.id">
                                         <td v-for="(item2) in campos2" :key="item2.id" style="text-align:justify"
-                                            @click="registro = item[campos2[0]]+' '+item[campos2[1]], retornoValorCampo(item[campos2[0]]), modal = !modal">{{ item[item2] }}
+                                            @click="registro = item[campos2[0]] + ' ' + item[campos2[1]], retornoValorCampo(item[campos2[0]]), modal = !modal">
+                                            {{ item[item2] }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -58,11 +65,10 @@
                                 <nav class="pagin" aria-label="Page navigation example">
                                     <ul class="pagination">
                                         <li class="page-item">
-                                            <a :style="
-                                                item.active == true
+                                            <a :style="item.active == true
                                                     ? 'background-color:#d06519'
                                                     : 'background-color:#006b3f'
-                                            " class="page-link" v-for="(item, index) in links" :key="index"
+                                                " class="page-link" v-for="(item, index) in links" :key="index"
                                                 @click="pagination(item.url), currentUrl = item.url">{{
                                                     index == 0
                                                     ? "Anterior"
@@ -100,7 +106,9 @@
 </template>
 <script>
 import axios from 'axios'
+import {Token} from '../Mixins/Token'
 export default {
+    mixins:[Token],
     props: {
         datos: [],
         nombreCampo: {},
@@ -111,31 +119,29 @@ export default {
         },
         nombreItem: [],
         endpoint: {},
-        item:{
+        item: {
             type: String,
-            default:''
+            default: ''
         },
-        item1:{
+        item1: {
             type: String,
-            default:''
+            default: ''
         },
-        item2:{
+        item2: {
             type: String,
-            default:''
+            default: ''
+        },
+        valida_campo: {
+            type: Boolean,
+            default: true
         },
         eventoCampo: {},
-        ubicacion:{},
-        posicion:{},
+        ubicacion: {},
+        posicion: {},
         consulta: {
             type: String,
             default: ''
         },
-
-        // *****************
-        // tabla: [],
-        // datos: [],
-        // campos: {},
-        // listas: []
     },
     data() {
         return {
@@ -152,6 +158,7 @@ export default {
             listaItem: [],
             sin_registros: true,
             spinner: true,
+            mensaje_error: '¡Este campo debe ser diligenciado!'
         }
     },
 
@@ -161,29 +168,31 @@ export default {
         },
         datos: function () {
             this.spinner = false
-            if (this.datos.data.length > 0) {
+            if (this.datos.data != undefined) {
                 this.llenarTabla(this.datos)
                 this.sin_registros = false
             }
+
         },
     },
 
     created() {
+        this.urlExterna()
         this.registro = this.consulta
     },
     methods: {
-        buscarRegistro(){
+        buscarRegistro() {
             let self = this;
             let config = this.configHeader();
             let url = ''
-            if(this.item){
-                url = self.URL_API + "api/v1/"+ this.endpoint +'/'+ this.item+'/'+ this.search+'/'+this.item1+'/'+this.item2, config
-            }else{
-                url = self.URL_API + "api/v1/"+this.endpoint+'/'+this.search, config
+            if (this.item) {
+                url = self.URL_API + "api/v1/" + this.endpoint + '/' + this.item + '/' + this.search + '/' + this.item1 + '/' + this.item2, config
+            } else {
+                url = self.URL_API + "api/v1/" + this.endpoint + '/' + this.search, config
             }
             axios.get(url)
                 .then(function (result) {
-                  self.llenarTabla(result.data)
+                    self.llenarTabla(result.data)
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -192,9 +201,9 @@ export default {
             this.$emit(this.eventoCampo)
         },
         retornoValorCampo(item) {
-            if(this.registro != undefined){
+            if (this.registro != undefined) {
                 this.$emit(this.eventoCampo, this.registro)
-                this.$emit('getValue',  item+'posicion'+this.posicion)
+                this.$emit('getValue', item + 'posicion' + this.posicion)
             }
         },
         codigoItem(item) {
@@ -227,14 +236,6 @@ export default {
             this.items_tabla2 = datos.data; // lista de registros
             self.links = datos.links;
             self.siguiente = this.links.length;
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };
@@ -324,5 +325,4 @@ label {
     }
 }
 
-/* fin spinner*/
-</style>
+/* fin spinner*/</style>

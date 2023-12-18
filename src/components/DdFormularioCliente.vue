@@ -1,8 +1,6 @@
 <template>
     <div class="container" id="contenedor-formulario">
-        <div v-if="loading" class="loading">
-            <div class="loader" id="loader">Loading...</div>
-        </div>
+        <Loading :loading="loading" />
         <div class="row">
             <div class="col-2">
                 <img style="width: 80%;" src="@/assets/logo1.png" alt="">
@@ -18,23 +16,20 @@
                 <p>Versión 5</p>
             </div>
         </div>
-        <form @submit.prevent="save()">
+        <form class="was-validated" @submit.prevent="save()">
             <h6 class="tituloseccion">Información general</h6>
             <div id="seccion">
+                <p v-if="$route.params.id != undefined">Radicado: {{ $route.params.id }}</p>
                 <div class="row">
                     <div class="col-4">
                         <SearchList nombreCampo="Tipo de cliente: *" @getTipoCliente="getTipoCliente"
                             eventoCampo="getTipoCliente" nombreItem="nombre" :consulta="consulta_tipo_cliente"
                             :registros="cliente_proveedor" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_cliente == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col" v-if="tipo_cliente == 2">
                         <SearchList nombreCampo="Tipo de proveedor: *" @getTipoProveedor="getTipoProveedor"
                             eventoCampo="getTipoProveedor" nombreItem="nombre" :consulta="consulta_tipo_proveedor"
                             :registros="tipo_proveedores" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_proveedor == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col"></div>
                 </div>
@@ -43,8 +38,6 @@
                         <SearchList nombreCampo="Operación: *" @getOperacion="getOperacion" eventoCampo="getOperacion"
                             nombreItem="nombre" :consulta="consulta_operacion" :registros="operaciones"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="operacion == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label class="form-check-label" for="flexSwitchCheckChecked">Tipo de servicio
@@ -68,8 +61,6 @@
                         <SearchList nombreCampo="Tipo de persona: *" @getTipoPersona="getTipoPersona"
                             eventoCampo="getTipoPersona" nombreItem="nombre" :registros="tiposPersona"
                             :consulta="consulta_tipo_persona" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_persona == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
@@ -77,8 +68,6 @@
                             @setTipoIdentificacion="setTipoIdentificacion" :registros="tiposIdentificacion"
                             :consulta="consulta_tipo_identificacion" placeholder="Seleccione una opción"
                             :disabled="!persona_natural" />
-                        <span id="validate" v-if="tipo_persona == 1 && tipo_identificacion == '' && submitted"
-                            class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Número de
@@ -86,27 +75,30 @@
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="numero_identificacion"
                             @input="numero_identificacion = validarNumero(numero_identificacion), calcularDigitoVerificacion(numero_identificacion)"
-                            @blur="getCliente(numero_identificacion, 1)" :disabled="!persona_natural" />
-                        <span id="validate" v-if="numero_identificacion === '' && tipo_persona == 1 && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            @blur="getCliente(numero_identificacion, 1)" :disabled="!persona_natural" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Fecha de expedición: *</label>
                         <input type="date" class="form-control" autocomplete="off" id="fecha_expedicion"
-                            aria-describedby="emailHelp" v-model="fecha_expedicion" :disabled="!persona_natural" />
-                        <span id="validate" v-if="fecha_expedicion == '' && tipo_persona == 1 && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="fecha_expedicion" :disabled="!persona_natural" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">NIT: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="nit" :disabled="!persona_juridica"
-                            @input="nit = validarNumero(nit), calcularDigitoVerificacion(nit)" @blur="getCliente(nit, 2)" />
-                        <span id="validate" v-if="nit == '' && tipo_persona == 2 && submitted" class="error">{{
-                            mensaje_error }}</span>
-
+                            @input="nit = validarNumero(nit), calcularDigitoVerificacion(nit)" @blur="getCliente(nit, 2)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Dígito de verificación: *</label>
@@ -117,21 +109,20 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Nombre completo / Razón social: *</label>
-                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
-                            @input="razon_social = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
-                            v-model="razon_social" /> -->
-                        <textarea name="" id="razon_social" rows="1" v-model="razon_social"
+                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social"
                             @input="razon_social = formatInputUpperCase($event.target.value)"></textarea>
-                        <span id="validate" v-if="razon_social == '' && submitted" class="error">{{ mensaje_error }}</span>
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Fecha de constitución: *
                         </label>
                         <input type="date" class="form-control" autocomplete="off" aria-describedby="emailHelp"
-                            id="fecha_constitucion" v-model="fecha_constitucion" />
-                        <!-- :disabled="!persona_juridica" -->
-                        <span id="validate" v-if="fecha_constitucion == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            id="fecha_constitucion" v-model="fecha_constitucion" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Cuantos empleados conforman la
@@ -139,9 +130,10 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="6"
                             aria-describedby="emailHelp" v-model="empleados_empresa" :disabled="proveedor"
-                            @input="empleados_empresa = validarNumero(empleados_empresa)" />
-                        <span id="validate" v-if="empleados_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="empleados_empresa = validarNumero(empleados_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -150,45 +142,34 @@
                             eventoCampo="getCodigosCiiu" nombreItem="codigo" :registros="codigos_ciiu"
                             :consulta="consulta_codigo_ciiu" @getActividadesCiiu="getActividadesCiiu"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="codigo_ciiu_id == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <SearchTable nombreCampo="Actividad ciiu: *" eventoCampo="setActividadesCiiu"
                             @setActividadesCiiu="setActividadesCiiu" endpoint="actividadciiu/filetr"
                             :consulta="consulta_actvidad_ciiu" :nombreItem="campos_actividad_ciiu" :datos="actividades_ciiu"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="actividad_ciiu == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
-
                     </div>
                     <div class="col mb-3">
                         <SearchList nombreCampo="Estrato socio económico (ubicación empresa): *" @getEstratos="getEstratos"
                             eventoCampo="getEstratos" :consulta="consulta_estrato" nombreItem="nombre" :registros="estratos"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="estrato == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Pais: *" @getPaises="getPaises" eventoCampo="getPaises" nombreItem="nombre"
-                            :consulta="consulta_pais" :registros="paises" @getDepartamentos="getDepartamentos"
-                            placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
+                            :consulta="consulta_pais" :registros="paises" :ordenCampo="1"
+                            @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento: *" nombreItem="nombre" eventoCampo="getDepartamentos"
-                            :consulta="consulta_departamento" :registros="departamentos" @getMunicipios="getMunicipios"
-                            placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
+                            :consulta="consulta_departamento" :registros="departamentos" :ordenCampo="1"
+                            @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad: *" nombreItem="nombre" :registros="municipios"
                             :consulta="consulta_municipio" @setMunicipios="setMunicipios" eventoCampo="setMunicipios"
                             :ordenCampo="1" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="variables[0].municipio === undefined && submitted" class="error">{{
-                            mensaje_error }}</span> -->
                     </div>
                 </div>
                 <div class="row">
@@ -197,28 +178,30 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="direccion_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="direccion_empresa" />
-                        <span id="validate" v-if="direccion_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
-
+                            aria-describedby="emailHelp" v-model="direccion_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Persona contacto empresa: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="150"
                             @input="contacto_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="contacto_empresa" />
-                        <span id="validate" v-if="contacto_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            aria-describedby="emailHelp" v-model="contacto_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Correo electrónico: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="correo_electronico_empresa = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="correo_electronico_empresa" />
-                        <span id="validate" v-if="correo_electronico_empresa == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="correo_electronico_empresa" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -227,26 +210,26 @@
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="telefono_empresa"
-                            @input="telefono_empresa = validarNumero(telefono_empresa)" />
-                        <span id="validate" v-if="telefono_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="telefono_empresa = validarNumero(telefono_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Número celular: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="celular_empresa"
-                            @input="celular_empresa = validarNumero(celular_empresa)" />
-                        <span id="validate" v-if="celular_empresa == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="celular_empresa = validarNumero(celular_empresa)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Actividad Económica: Sociedad Comercial: *" nombreItem="nombre"
                             :consulta="consulta_sociedad_comercial" :registros="sociedades_comerciales"
                             eventoCampo="getSociedadesComerciales" @getSociedadesComerciales="getSociedadesComerciales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="sociedad_comercial == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                 </div>
                 <div class="row">
@@ -262,38 +245,34 @@
                             :consulta="consulta_periodicidad_pago" :registros="periodicidades_liquidacion"
                             eventoCampo="getPeriodicidadPago" @getPeriodicidadPago="getPeriodicidadPago"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="periodicidad_liquidacion_id == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Plazo pago (días): *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
                             aria-describedby="emailHelp" v-model="plazo_pago"
-                            @input="plazo_pago = validarNumero(plazo_pago)" />
-                        <span id="validate" v-if="periodicidad_liquidacion_id == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            @input="plazo_pago = validarNumero(plazo_pago)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="Pais prestación servicio: *" @getPaises="getPaises" eventoCampo="getPaises"
-                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :registros="paises"
-                            @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato == '' && submitted" class="error">{{ mensaje_error }}</span> -->
+                            nombreItem="nombre" :consulta="consulta_pais_prestacion_servicio" :ordenCampo="2"
+                            :registros="paises" @getDepartamentos="getDepartamentos" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Departamento prestación servicio: *" nombreItem="nombre"
                             eventoCampo="getDepartamentos" :consulta="consulta_departamento_prestacion_servicio"
-                            :registros="departamentos" @getMunicipios="getMunicipios" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="estrato === undefined && submitted" class="error">{{ mensaje_error }}</span> -->
+                            :ordenCampo="2" :registros="departamentos" @getMunicipios="getMunicipios"
+                            placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ciudad prestación servicio: *" nombreItem="nombre" :registros="municipios"
                             :consulta="consulta_municipio_prestacion_servicio" @setMunicipios="setMunicipios"
                             eventoCampo="setMunicipios" :ordenCampo="2" placeholder="Seleccione una opción" />
-                        <!-- <span id="validate" v-if="variables[0].municipio === undefined && submitted" class="error">{{
-                            mensaje_error }}</span> -->
                     </div>
                 </div>
                 <div class="row" v-if="tipo_cliente == 1">
@@ -301,25 +280,23 @@
                         <label class="form-label">AIU negociado: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="aiu_negociado" />
-                        <span id="validate" v-if="aiu_negociado == '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="aiu_negociado" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Ejecutivo comercial: *" nombreItem="nom_ven"
                             :registros="ejecutivos_comerciales" :consulta="consulta_ejecutivo_comercial"
                             eventoCampo="getEjecutivos_comerciales" @getEjecutivos_comerciales="getEjecutivos_comerciales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="ejecutivo_comercial == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Observaciones a acuerdos
                             comerciales:
                         </label>
-                        <!-- <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
-                            @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="acuerdos_comerciales" /> -->
-                        <textarea name="" id="acuerdos_comerciales" rows="1" v-model="acuerdos_comerciales"
+                        <textarea name="" id="acuerdos_comerciales" class="form-control" rows="1"
+                            v-model="acuerdos_comerciales"
                             @input="acuerdos_comerciales = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                 </div>
@@ -328,43 +305,37 @@
                         <SearchList nombreCampo="Jornada Laboral: *" nombreItem="nombre" :registros="jornadas_laborales"
                             :consulta="consulta_jornada_laboral" eventoCampo="getJornadasLaborales"
                             @getJornadasLaborales="getJornadasLaborales" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="jornada_laboral == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Rotación de personal *" nombreItem="nombre"
                             :consulta="consulta_rotacion_personal" :registros="rotaciones_personal"
                             eventoCampo="getRotacionesPersonal" @getRotacionesPersonal="getRotacionesPersonal"
                             ubicacion="ciudad nacimiento" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="rotacion_personal == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col">
                     </div>
                 </div>
             </div>
             <h6 class="tituloseccion" v-if="tipo_cliente == 1">Cargos empresa</h6>
-            <div id="seccion" v-if="tipo_cliente == 1">
+            <div id="seccion" v-if="tipo_cliente == 1 && cargos[0].requisitos.length > 0">
                 <div class="row">
                     <div class="row">
                         <div class="col-3">
                             <SearchList nombreCampo="Riesgo de la empresa: (ARL)" eventoCampo="getRiesgosLaborales"
                                 nombreItem="nombre" :registros="riesgos_laborales" :consulta="consulta_riesgo_cliente"
                                 @getRiesgosLaborales="getRiesgosLaborales" placeholder="Seleccionar" />
-                            <span id="validate" v-if="riesgo_laboral == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Nombre del cargo: *</label>
+                            <label for="exampleInputEmail1" class="form-label">Categoria cargo: *</label>
 
                         </div>
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Requisito:</label>
+                            <label for="exampleInputEmail1" class="form-label">Requisitos:</label>
                         </div>
                         <div class="col">
-                            <label for="exampleInputEmail1" class="form-label">Examen:</label>
+                            <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
@@ -374,26 +345,117 @@
                         <div class="col-3">
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.cargo = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.cargo" />
-                            <span id="validate" v-if="item.cargo == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
+                                aria-describedby="emailHelp" v-model="item.cargo" required />
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
                         </div>
                         <ListaMultiple @setLista="setLista" :verLista="verLista" :index="index" tipolista="requisitos"
                             :elementoslist="requisitosList" :elementos="requisitos[index]" :hover="hover" />
                         <ListaMultiple :elementoslist="examenesList" :verLista="verLista" @setLista="setLista"
                             :index="index" tipolista="examenes" :elementos="examenes[index]" :hover="hover" />
-                        <!-- <span id="validate" v-if="item.riesgo === '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         <div class="col-2">
-                            <SearchList eventoCampo="getRiesgosLaborales" :index="index" nombreItem="nombre"
-                                :registros="riesgos_laborales" @getRiesgosLaborales="getRiesgosLaborales"
+                            <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
+                                :registros="riesgos_laborales" @getRiesgosLaborales2="getRiesgosLaborales2"
                                 placeholder="Seleccionar" :consulta="consulta_riesgo_laboral[index]" />
-                            <span id="validate" v-if="item.riesgo == '' && submitted" class="error">{{ mensaje_error
-                            }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(cargos, index)"></i>
                         </div>
+                    </div>
+                </div>
+                <span id="clasificador" @click="agregarCargo()" style="cursor: pointer"><i
+                        class="bi bi-plus-circle-fill"></i>
+                    Agregar cargo
+                </span>
+            </div>
+            <div id="seccion" v-if="tipo_cliente == 1 && cargos[0].requisitos.length <= 0">
+                <div class="row cargos">
+                    <div class="row">
+                        <h5 style="text-align: left;">Número de cargos registrados: {{ cargos2.length }}</h5>
+                        <div class="col-3">
+                            <SearchList nombreCampo="Riesgo de la empresa: (ARL)" eventoCampo="getRiesgosLaborales"
+                                nombreItem="nombre" :disabled="true" :registros="riesgos_laborales"
+                                :consulta="consulta_riesgo_cliente" @getRiesgosLaborales="getRiesgosLaborales"
+                                placeholder="Seleccionar" />
+                        </div>
+                    </div>
+                    <div class="row" id="contenedor-select" v-for="item, index in cargos2" :key="item.id">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-check-label" for="flexSwitchCheckChecked">Por favor seleccione si el tipo
+                                    de
+                                    cargo:</label>
+                            </div>
+                            <div style="display: flex;">
+                                <div class="form-check m-2" v-for="item, index2 in tipo_cargos" :key="index2">
+                                    <input class="form-check-input" type="radio" required
+                                        @click="getSubCategoriaCargo(item.id, index)" :value="item.id"
+                                        v-model="tipo_cargo[index]" :name="'radio' + index" id="radio3">
+                                    {{ item.nombre }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Categoria cargo: *</label>
+
+                            </div>
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Cargo:</label>
+                            </div>
+                            <div class="col">
+                                <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <SearchList nombreItem="nombre" :registros="arry_subcategoria_cargos[index]"
+                                :consulta="consulta_subcategoria_cargos[index]" eventoCampo="getListaCargos" :index="index"
+                                @getListaCargos="getListaCargos" placeholder="Seleccionar" />
+                        </div>
+                        <div class="col">
+                            <SearchList nombreItem="nombre" :registros="array_lista_cargos[index]"
+                                :consulta="consulta_lista_cargos[index]" eventoCampo="getExamenesRecomendaciones"
+                                @getExamenesRecomendaciones="getExamenesRecomendaciones" :index="index"
+                                placeholder="Seleccionar" />
+                        </div>
+                        <div class="col">
+                            <SearchList eventoCampo="getRiesgosLaborales2" :index="index" nombreItem="nombre"
+                                :registros="riesgos" @getRiesgosLaborales2="getRiesgosLaborales2" placeholder="Seleccionar"
+                                :consulta="consulta_riesgo_laboral[index]" />
+                        </div>
+                        <div class="row">
+                            <label for="exampleInputEmail1" class="form-label">Funciones del cargo:</label>
+                            <div class="col">
+                                <EditorTextoHtml :consulta="consulta_textohtml[index]" :index="index"
+                                    @retornoTexto="retornoTexto" :showToolbar="true" />
+                            </div>
+                            <div class="col-1 trash">
+                                <i class="bi bi-trash-fill" v-if="index > 0"
+                                    @click="deleteDynamic(cargos2, index, 'identificador')"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="exampleInputEmail1" class="form-label">Exámenes:</label>
+                            <div class="col">
+                                <div class="col-12 lista-multiple">
+                                    <button style="margin:5px" class="btn btn-success btn-sm"
+                                        v-for="(item, index) in array_lista_examenes[index]" :key="index" type="button">{{
+                                            item.nombre }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" v-for="item, index3 in array_lista_recomendaciones[index]" :key="index3">
+                            <div class="col orientacion"><label style="width: 100%;">ORIENTACIONES ESPECIFICAS PARA LOS
+                                    EXAMENES:</label>
+                                <span>{{ item.recomendacion1 }}</span>
+                            </div>
+                            <div class="col orientacion"><label style="width: 100%;">PATOLOGIAS QUE RESTRINGEN LA
+                                    LABOR:</label>
+                                <span>{{ item.recomendacion2 }}</span>
+                            </div>
+                        </div>
+                        <hr v-if="cargos2.length > 1">
                     </div>
                 </div>
                 <span id="clasificador" @click="agregarCargo()" style="cursor: pointer"><i
@@ -409,31 +471,27 @@
                                 class="btn btn-sm ver"><i class="bi bi-eye"> ver</i></button></a>
                     </div>
                     <div class="col">
-                        <!-- <SearchList @getTipoArhivo="getTipoArhivo" eventoCampo="getTipoArhivo" nombreItem="nombre"
-                            :registros="fileInputsCount" :archivos="true" :index="index" @setTipoArchivo="setTipoArchivo"
-                            placeholder="Seleccione una opción" :consulta="consulta_file[index]" /> -->
                         <div class="mb-3">
                             <textarea class="form-control" id="exampleFormControlTextarea1" :disabled="true"
                                 v-model="item.nombre"></textarea>
                         </div>
-                        <span id="validate"
+                        <!-- <span id="validate"
                             v-if="file[index] == undefined && index != 0 && index != 3 && tipo_cliente == 1 && submitted"
-                            class="error">¡Por favor adjunte el archivo!</span>
-                        <span id="validate" v-if="file[index] == undefined && tipo_cliente == 2 && submitted"
-                            class="error">¡Por favor adjunte el archivo!</span>
+                            class="error">¡Por favor adjunte el archivo!</span> -->
                     </div>
                     <div class="col">
                         <div class="input-group">
                             <input type="file" class="form-control" :id="'seleccionArchivos' + index"
                                 :accept="fileInputsCount[index].tipo_archivo" @change="cargarArchivo($event, index)"
-                                aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                aria-describedby="inputGroupFileAddon04" aria-label="Upload"
+                                :required="item.nombre.includes('*') && item.ruta == undefined">
                             <button class="btn btn-outline-secondary" type="button" @click="deleteFile(index)"
                                 id="inputGroupFileAddon04">Quitar
                                 archivo</button>
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
                         </div>
-                        <!-- <span id="validate"
-                        v-if="file[index] === undefined && submitted"
-                        class="error">{{ mensaje_error }}</span> -->
                     </div>
                 </div>
             </div>
@@ -454,41 +512,38 @@
                                 @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                                 nombreItem="des_tip" :ordenCampo="2" :index="index" :registros="tiposIdentificacion"
                                 @setTipoIdentificacion="setTipoIdentificacion" placeholder="Seleccione una opción"
-                                :consulta="consulta_tipo_identificacion_ac[index]" />
-                            <span id="validate" v-if="item.tipo_identificacion_id == '' && submitted" class="error">{{
-                                mensaje_error }}</span>
+                                :consulta="consulta_tipo_identificacion_ac[index]" required />
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Identificación: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
-                                @input="item.identificacion = validarNumero(item.identificacion)" />
+                                @input="item.identificacion = validarNumero(item.identificacion)"
+                                :required="item.identificacion == '' && item.tipo_identificacion_id.trim() != '' && item.tipo_identificacion_id.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.identificacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{
-                                    mensaje_error }}</span>
+                                v-if="item.identificacion == '' && item.tipo_identificacion_id.trim() != '' && item.tipo_identificacion_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
-                        <!-- </div> -->
-                        <!-- <div class="row" style="margin-bottom: 30px;"> -->
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Socio/Accionista: *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.socio = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.socio" />
+                                aria-describedby="emailHelp" v-model="item.socio" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.socio == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.socio == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != ''"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <label for="exampleInputEmail1" class="form-label">Porcentaje Participación (%):</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" maxlength="3" v-model="item.participacion"
-                                @input="item.participacion = validarNumero(item.participacion)" />
+                                aria-describedby="emailHelp" maxlength="10" v-model="item.participacion"
+                                :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.participacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != '' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.participacion == '' && item.tipo_identificacion_id.trim() != '0' && item.tipo_identificacion_id.trim() != ''"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(accionistas, index)"></i>
@@ -508,40 +563,41 @@
                             <label for="exampleInputEmail1" class="form-label">Representante(s) Legal(es): *</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.nombre = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.nombre" />
+                                aria-describedby="emailHelp" v-model="item.nombre"
+                                :required="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.nombre == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Tipo de Identificación: *"
                                 @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                                 nombreItem="des_tip" :ordenCampo="3" :index="index" :registros="tiposIdentificacion"
                                 @setTipoIdentificacion="setTipoIdentificacion" placeholder="Seleccione una opción"
-                                :consulta="consulta_tipo_identificacion_rl[index]" />
-                            <span id="validate" v-if="item.tipo_identificacion == '' && submitted" class="error">{{
-                                mensaje_error }}</span>
+                                :consulta="consulta_tipo_identificacion_rl[index]" required />
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Identificación:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
-                                @input="item.identificacion = validarNumero(item.identificacion)" />
+                                @input="item.identificacion = validarNumero(item.identificacion)"
+                                :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.identificacion === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
+                                v-if="item.identificacion == '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
                                 class="error">{{
-                                    mensaje_error }}</span>
+                                    validaCamposDinamicos(index) }}</span><span v-else>{{ validaCamposDinamicos(index, 1)
+    }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Número celular:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" v-model="item.telefono"
-                                @input="item.telefono = validarNumero(item.telefono)" />
+                                @input="item.telefono = validarNumero(item.telefono)" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.telefono === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.telefono === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -553,16 +609,16 @@
                             <label for="exampleInputEmail1" class="form-label">correo electrónico</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.correo = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.correo" />
+                                aria-describedby="emailHelp" v-model="item.correo" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.correo === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.correo === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Pais de expedición: *" @getPaises="getPaises" eventoCampo="getPaises"
-                                nombreItem="nombre" :registros="paises" @getDepartamentos="getDepartamentos"
-                                placeholder="Seleccione una opción" :consulta="consulta_pais_rl[index]" />
+                                nombreItem="nombre" :registros="paises" @getDepartamentos="getDepartamentos" :ordenCampo="3"
+                                :index="index" placeholder="Seleccione una opción" :consulta="consulta_pais_rl[index]" />
 
                         </div>
                         <div class="col mb-3">
@@ -576,7 +632,7 @@
                                 @setMunicipios="setMunicipios" eventoCampo="setMunicipios" :ordenCampo="3" :index="index"
                                 placeholder="Seleccione una opción" :consulta="consulta_municipio_rl[index]" />
                             <span id="validate"
-                                v-if="item.municipio_id === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0' && submitted"
+                                v-if="item.municipio_id === '' && item.tipo_identificacion != '' && item.tipo_identificacion.trim() != '0'"
                                 class="error">{{ mensaje_error }}</span>
                         </div>
                     </div>
@@ -606,7 +662,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="row"> -->
                 <div class="row" v-if="junta_directiva == true">
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Nombres y apellidos: *</label>
@@ -624,10 +679,6 @@
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="150" @input="item.nombre = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.nombre" />
-                            <span id="validate"
-                                v-if="item.nombre == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
                         </div>
                         <div class="col">
                             <SearchList @getTipoIdentificacion="getTipoIdentificacion" eventoCampo="getTipoIdentificacion"
@@ -635,16 +686,11 @@
                                 :registros="tiposIdentificacion" :ordenCampo="4" :index="index"
                                 :consulta="consulta_tipo_identificacion_miembros_junta[index]"
                                 placeholder="Seleccione una opción" />
-                            <span id="validate" v-if="item.tipo_identificacion_id === '' && submitted" class="error">{{
-                                mensaje_error }}</span>
                         </div>
                         <div class="col">
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.identificacion"
                                 @input="item.identificacion = validarNumero(item.identificacion)" />
-                            <span id="validate"
-                                v-if="item.identificacion == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(miembros_Junta, index)"></i>
@@ -654,7 +700,6 @@
                             class="bi bi-plus-circle-fill"></i>
                         Agregar miembro junta directiva
                     </span>
-                    <!-- </div> -->
                 </div>
             </div>
             <h6 class="tituloseccion">1.5. Calidad tributaria</h6>
@@ -665,25 +710,20 @@
                             @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
                             :registros="afirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion" :ordenCampo="1"
                             :consulta="consulta_responsable_impuesto_ventas" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="responsable_impuesto_ventas == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Correo para factura electrónica: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
                             @input="correo_factura_electronica = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="correo_factura_electronica" />
-                        <span id="validate"
-                            v-if="correo_factura_electronica === '' && responsable_impuesto_ventas == 1 && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="correo_factura_electronica" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Sucursal para facturación: *" eventoCampo="getSucursales"
                             @getSucursales="getSucursales" nombreItem="nom_suc" :registros="sucursales"
                             placeholder="Seleccione una opción" :consulta="consulta_sucursal_facturacion" />
-                        <span id="validate" v-if="sucursal === '' && responsable_impuesto_ventas == 1 && submitted"
-                            class="error">{{
-                                mensaje_error }}</span>
                     </div>
                 </div>
                 <div class="row" v-for="item, index in calidad_tributaria" :key="index">
@@ -693,22 +733,21 @@
                             @setAfirmacionNegacion="setAfirmacionNegacion" :orden-campo="2" :index="index"
                             :registros="afirmacionNegacion" placeholder="Seleccione una opción"
                             :consulta="consulta_calidad_tributaria[index]" />
-                        <span id="validate" v-if="item.opcion == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de resolución:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="item.numero_resolucion" />
-                        <span id="validate"
-                            v-if="item.numero_resolucion == '' && calidad_tributaria[index].opcion == 1 && submitted"
+                            aria-describedby="emailHelp" v-model="item.numero_resolucion"
+                            :required="item.numero_resolucion == '' && item.opcion == 1" />
+                        <span id="validate" v-if="item.numero_resolucion == '' && calidad_tributaria[index].opcion == 1"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Fecha</label>
                         <input type="date" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="item.fecha" />
-                        <span id="validate" v-if="item.fecha == '' && calidad_tributaria[index].opcion == 1 && submitted"
+                            aria-describedby="emailHelp" v-model="item.fecha"
+                            :required="item.fecha == '' && item.opcion == 1" />
+                        <span id="validate" v-if="item.fecha == '' && calidad_tributaria[index].opcion == 1"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                 </div>
@@ -720,37 +759,37 @@
                         <label for="exampleInputEmail1" class="form-label">Nombre completo:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="nombre_completo_contador = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="nombre_completo_contador" />
+                            aria-describedby="emailHelp" v-model="nombre_completo_contador"
+                            :required="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="nombre_completo_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
                             @setTipoIdentificacion="setTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                             :consulta="consulta_contador" nombreItem="des_tip" :ordenCampo="5"
-                            :registros="tiposIdentificacion" placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_identificacion_contador == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
+                            :registros="tiposIdentificacion" placeholder="Seleccione una opción"
+                            :required="tipo_identificacion_contador == ''" />
                     </div>
-                    <!-- </div>
-                <div class="row"> -->
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Identificación:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="identificacion_contador"
-                            @input="identificacion_contador = validarNumero(identificacion_contador)" />
+                            @input="identificacion_contador = validarNumero(identificacion_contador)"
+                            :required="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="identificacion_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="telefono_contador"
-                            @input="telefono_contador = validarNumero(telefono_contador)" />
+                            @input="telefono_contador = validarNumero(telefono_contador)"
+                            :required="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'" />
                         <span id="validate"
-                            v-if="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0' && submitted"
+                            v-if="telefono_contador == '' && tipo_identificacion_contador != '' && tipo_identificacion_contador.trim() != '0'"
                             class="error">{{ mensaje_error }}</span>
                     </div>
                 </div>
@@ -764,27 +803,18 @@
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="nombre_completo_tesorero = formatInputUpperCase($event.target.value)"
                             aria-describedby="emailHelp" v-model="nombre_completo_tesorero" />
-                        <!-- <span id="validate"
-                            v-if="nombre_completo_tesorero == '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="telefono_tesorero"
                             @input="telefono_tesorero = validarNumero(telefono_tesorero)" />
-                        <!-- <span id="validate"
-                            v-if="telefono_tesorero == '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Correo:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             @input="correo_tesorero = formatInputUpperCase($event.target.value)"
                             aria-describedby="emailHelp" v-model="correo_tesorero" />
-                        <!-- <span id="validate"
-                            v-if="correo_tesorero === '' && submitted"
-                            class="error">{{ mensaje_error }}</span> -->
                     </div>
                 </div>
             </div>
@@ -795,23 +825,28 @@
                         <label for="exampleInputEmail1" class="form-label">Ingreso Mensual: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="ingreso_mensual"
-                            @input="ingreso_mensual = validarNumero(ingreso_mensual)" />
-                        <span id="validate" v-if="ingreso_mensual === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="ingreso_mensual = validarNumero(ingreso_mensual)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Costos y Gastos Mensual: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="costos_gastos"
-                            @input="costos_gastos = validarNumero(costos_gastos)" />
-                        <span id="validate" v-if="costos_gastos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="costos_gastos = validarNumero(costos_gastos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Activos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="activos" @input="activos = validarNumero(activos)" />
-                        <span id="validate" v-if="activos === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="activos" @input="activos = validarNumero(activos)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -819,22 +854,27 @@
                         <label for="exampleInputEmail1" class="form-label">Otros Ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="otros_ingresos"
-                            @input="otros_ingresos = validarNumero(otros_ingresos)" />
-                        <span id="validate" v-if="otros_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="otros_ingresos = validarNumero(otros_ingresos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Detalle de otros ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="detalle_otros_ingresos" />
-                        <span id="validate" v-if="detalle_otros_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            aria-describedby="emailHelp" v-model="detalle_otros_ingresos" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Pasivos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="pasivos" @input="pasivos = validarNumero(pasivos)" />
-                        <span id="validate" v-if="pasivos === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            aria-describedby="emailHelp" v-model="pasivos" @input="pasivos = validarNumero(pasivos)"
+                            required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -842,24 +882,28 @@
                         <label for="exampleInputEmail1" class="form-label">Total Ingresos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="total_ingresos"
-                            @input="total_ingresos = validarNumero(total_ingresos)" />
-                        <span id="validate" v-if="total_ingresos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="total_ingresos = validarNumero(total_ingresos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Reintegro de costos y gastos: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="reintegro_costos"
-                            @input="reintegro_costos = validarNumero(reintegro_costos)" />
-                        <span id="validate" v-if="reintegro_costos === '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
+                            @input="reintegro_costos = validarNumero(reintegro_costos)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Patrimonio: *</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="patrimonio"
-                            @input="patrimonio = validarNumero(patrimonio)" />
-                        <span id="validate" v-if="patrimonio === '' && submitted" class="error">{{ mensaje_error }}</span>
+                            @input="patrimonio = validarNumero(patrimonio)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -871,7 +915,7 @@
                             @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
                             :consulta="consulta_operacion_moneda_extranjera" :registros="afirmacionNegacion"
                             @setAfirmacionNegacion="setAfirmacionNegacion" :orden-campo="3" placeholder="Seleccionar" />
-                        <span id="validate" v-if="operaciones_modena_extranjera == '' && submitted" class="error">{{
+                        <span id="validate" v-if="operaciones_modena_extranjera == ''" class="error">{{
                             mensaje_error }}</span>
                     </div>
                     <div class="col">
@@ -880,8 +924,6 @@
                             eventoCampo="getTiposOperacionesInternacionales" nombreItem="nombre"
                             :consulta="consulta_operacion_internacional" :registros="tipos_operaciones_internacionales"
                             placeholder="Seleccione una opción" />
-                        <span id="validate" v-if="tipo_operacion_internacional == '' && submitted" class="error">{{
-                            mensaje_error }}</span>
                     </div>
                 </div>
             </div>
@@ -893,27 +935,23 @@
                             <SearchList nombreCampo="Banco" @getBancos="getBancos" eventoCampo="getBancos"
                                 @setBanco="setBanco" :ordenCampo="1" :index="index" nombreItem="nom_ban" :registros="bancos"
                                 placeholder="Seleccione una opción" :consulta="consulta_banco_rb[index]" />
-                            <span id="validate" v-if="referencias_bancarias[index].banco_id == '' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Número de cuenta:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.numero_cuenta"
-                                @input="item.numero_cuenta = validarNumero(item.numero_cuenta)" />
+                                @input="item.numero_cuenta = validarNumero(item.numero_cuenta)"
+                                :required="item.numero_cuenta == '' && item.banco_id != '' && item.banco_id.trim() != '0'" />
                             <span id="validate"
-                                v-if="item.numero_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.numero_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col">
                             <SearchList nombreCampo="Tipo cuenta" @getTipoCuentaBancos="getTipoCuentaBancos"
                                 @setTipoCuentaBancos="setTipoCuentaBancos" eventoCampo="getTipoCuentaBancos" :ordenCampo="1"
                                 :index="index" nombreItem="nombre" :registros="tipos_cuenta_bancos"
                                 placeholder="Seleccione una opción" :consulta="consulta_tipo_cuenta_banco_rb[index]" />
-                            <span id="validate"
-                                v-if="referencias_bancarias[index].tipo_cuenta == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error }}</span>
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -925,31 +963,31 @@
                             <label for="exampleInputEmail1" class="form-label">Sucursal:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.sucursal = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.sucursal" />
+                                aria-describedby="emailHelp" v-model="item.sucursal" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.sucursal == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.sucursal == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.telefono"
-                                @input="item.telefono = validarNumero(item.telefono)" />
+                                @input="item.telefono = validarNumero(item.telefono)" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.telefono == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.telefono == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Contacto:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.contacto = formatInputUpperCase($event.target.value)"
-                                aria-describedby="emailHelp" v-model="item.contacto" />
+                                aria-describedby="emailHelp" v-model="item.contacto" :required="campo_dinamico[index]" />
                             <span id="validate"
-                                v-if="item.contacto == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0' && submitted"
-                                class="error">{{ mensaje_error
-                                }}</span>
+                                v-if="item.contacto == '' && referencias_bancarias[index].banco_id != '' && referencias_bancarias[index].banco_id.trim() != '0'"
+                                class="error">{{ validaCamposDinamicos(index)
+                                }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                         </div>
                     </div>
                 </div>
@@ -967,24 +1005,18 @@
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="200" @input="item.nombre = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.nombre" />
-                            <!-- <span id="validate" v-if="item.nombre == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Contacto:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="100" @input="item.contacto = formatInputUpperCase($event.target.value)"
                                 aria-describedby="emailHelp" v-model="item.contacto" />
-                            <!-- <span id="validate" v-if="item.contacto == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col mb-3">
                             <label for="exampleInputEmail1" class="form-label">Teléfono:</label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                                 maxlength="20" aria-describedby="emailHelp" v-model="item.telefono"
                                 @input="item.telefono = validarNumero(item.telefono)" />
-                            <!-- <span id="validate" v-if="item.telefono == '' && submitted" class="error">{{ mensaje_error
-                            }}</span> -->
                         </div>
                         <div class="col-1 trash">
                             <i class="bi bi-trash-fill" v-if="index > 0"
@@ -1040,38 +1072,39 @@
                         <label for="exampleInputEmail1" class="form-label">Nombres y apelldos:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="100"
                             @input="item.nombre = formatInputUpperCase($event.target.value)" aria-describedby="emailHelp"
-                            v-model="item.nombre" />
+                            v-model="item.nombre"
+                            :required="item.nombre == '' && item.tipo_identificacion_id != '' && item.tipo_identificacion_id.trim() != '0'" />
                         <span id="validate"
-                            v-if="item.nombre == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error }}</span>
+                            v-if="item.nombre == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Tipo de Identificación: *" @getTipoIdentificacion="getTipoIdentificacion"
                             @setTipoIdentificacion="setTipoIdentificacion" eventoCampo="getTipoIdentificacion"
                             nombreItem="des_tip" :ordenCampo="6" :index="index" :registros="tiposIdentificacion"
                             placeholder="Seleccione una opción" :consulta="consultas_personas_expuestas[index]" />
-                        <span id="validate" v-if="personas_expuestas[index].tipo_identificacion_id == '' && submitted"
-                            class="error">{{ mensaje_error }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Número de identificacion:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
                             aria-describedby="emailHelp" v-model="item.identificacion"
-                            @input="item.identificacion = validarNumero(item.identificacion)" />
+                            @input="item.identificacion = validarNumero(item.identificacion)"
+                            :required="campo_dinamico[index]" />
                         <span id="validate"
-                            v-if="item.identificacion == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error
-                            }}</span>
+                            v-if="item.identificacion == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col">
                         <label for="exampleInputEmail1" class="form-label">Parentesco:</label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
                             @input="item.parentesco = formatInputUpperCase($event.target.value)"
-                            aria-describedby="emailHelp" v-model="item.parentesco" />
+                            aria-describedby="emailHelp" v-model="item.parentesco" :required="campo_dinamico[index]" />
                         <span id="validate"
-                            v-if="item.parentesco == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0' && submitted"
-                            class="error">{{ mensaje_error
-                            }}</span>
+                            v-if="item.parentesco == '' && personas_expuestas[index].tipo_identificacion_id != '' && personas_expuestas[index].tipo_identificacion_id.trim() != '0'"
+                            class="error">{{ validaCamposDinamicos(index)
+                            }}</span><span v-else>{{ validaCamposDinamicos(index, 1) }}</span>
                     </div>
                     <div class="col-1 trash">
                         <i class="bi bi-trash-fill" v-if="index > 0" @click="deleteDynamic(personas_expuestas, index)"></i>
@@ -1104,11 +1137,9 @@
                         </li>
                     </ul>
                     <div class="col">
-                        <SearchList nombreCampo="Selecciones una opción" @getTipoOrigenFondos="getTipoOrigenFondos"
+                        <SearchList nombreCampo="Seleccione una opción" @getTipoOrigenFondos="getTipoOrigenFondos"
                             eventoCampo="getTipoOrigenFondos" nombreItem="nombre" :registros="tipos_origen_fondos"
                             placeholder="Origen de fondos" :consulta="consulta_origen_fondos" />
-                        <span id="validate" v-if="tipo_origen_fondo == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col mb-3">
                         <label for="exampleInputEmail1" class="form-label">Otra ¿Cuál?:</label>
@@ -1138,16 +1169,12 @@
                             @setTipoOrigenMedios="setTipoOrigenMedios" nombreItem="nombre" :ordenCampo="1"
                             :registros="tipos_origenes_medios" placeholder="seleccione una opción"
                             :consulta="consulta_origen_medios1" />
-                        <span id="validate" v-if="tipo_origen_medios == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <div class="col">
                         <SearchList @getTipoOrigenMedios="getTipoOrigenMedios" eventoCampo="getTipoOrigenMedios"
                             @setTipoOrigenMedios="setTipoOrigenMedios" nombreItem="nombre" :ordenCampo="2"
                             :registros="tipos_origenes_medios" placeholder="seleccione una opción"
                             :consulta="consulta_origen_medios2" />
-                        <span id="validate" v-if="otro_tipo_origen_medios == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <ul>
                         <li>
@@ -1159,8 +1186,6 @@
                             eventoCampo="getAfirmacionNegacion" :registros="afirmacionNegacion"
                             @setAfirmacionNegacion="setAfirmacionNegacion" :ordenCampo="4"
                             placeholder="Seleccione una opción" :consulta="consulta_origen_manejo_efectivo" />
-                        <span id="validate" v-if="alto_manejo_efectivo == '' && submitted" class="error">{{ mensaje_error
-                        }}</span>
                     </div>
                     <p>En nombre propio y/o de mi representado, declaro que no estoy impedido para realizar cualquier tipo
                         de operación y que conozco y acepto las normas que regulan el comercio colombiano y me obligo a
@@ -1256,10 +1281,44 @@
                     </div>
                 </div>
             </div>
-            <button v-if="userlogued != '' && userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="button" style="margin:30px" @click="generarPDF">Generar pdf</button>
-            <button v-if="userlogued == '' || userlogued.id == 1 || userlogued.id == 5" class="btn btn-success"
-                type="submit" style="margin:30px" :disabled="btn_save">Guardar</button>
+            <div class="col-3" v-if="hide_bottons">
+                <SearchList nombreCampo="Registros guardados" :valida_campo="false" nombreItem="nombre"
+                    :registros="razon_social_cliente" consulta="" eventoCampo="setFormularioGuardado"
+                    @setFormularioGuardado="setFormularioGuardado" placeholder="Seleccionar" />
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button v-if="permisos[1].autorizado" class="btn btn-success"
+                        type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
+                </div>
+                <div class="col">
+                    <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success" 
+                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
+                </div>
+                <div class="col">
+                    <button v-if="ruta_id != undefined && permisos[3].autorizado" class="btn btn-success" 
+                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Actualizar</button>
+                </div>
+                <div v-if="hide_bottons" class="col" style="margin:30px">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button type="button" class="btn btn-success" @click="guardadoParcial">Guardado parcial</button>
+
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Eliminar registro
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li v-for="item, index in razon_social_cliente" :key="index"><a class="dropdown-item"
+                                        style="cursor:pointer" @click="eliminarItem(item)">{{
+                                            item.nombre }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </form>
     </div>
 </template>
@@ -1268,8 +1327,14 @@ import axios from 'axios';
 import SearchList from './SearchList.vue';
 import SearchTable from './SearchTable.vue';
 import ListaMultiple from './ListaMultiple.vue';
+import Loading from './Loading.vue';
+import { Scroll } from '../Mixins/Scroll.js';
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import EditorTextoHtml from './EditorTextoHtml.vue';
+import { Permisos } from '../Mixins/Permisos.js';
 
 export default {
 
@@ -1277,8 +1342,10 @@ export default {
         SearchList,
         SearchTable,
         ListaMultiple,
+        EditorTextoHtml,
+        Loading
     },
-    mixins: [],
+    mixins: [Scroll,Alerts,Token,Permisos],
     props: {
         userlogued: {
             default: '',
@@ -1370,6 +1437,7 @@ export default {
             riesgo_laboral: '',
             consulta_riesgo_cliente: '',
             cargos: [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }],
+            cargos2: [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }],
             fileInputsCount: [],
             consulta_tipo_identificacion_ac: [],
             accionistas: [{ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' }],
@@ -1461,48 +1529,410 @@ export default {
             tipo_archivo_: '',
             registroCliente: {},
             cliente_existe: false,
-            btn_save: false,
             loading: false,
             limite: 3 * 1024 * 1024,
-
+            riesgos: [],
+            tipo_cargo: [],
+            subcategoria_cargos: [],
+            arry_subcategoria_cargos: [],
+            lista_cargos: [],
+            array_lista_cargos: [],
+            lista_examenes: [],
+            array_lista_examenes: [],
+            lista_recomendaciones: [],
+            array_lista_recomendaciones: [],
+            categoria_cargo_id: '',
+            consulta_subcategoria_cargos: [],
+            consulta_lista_cargos: [],
+            consulta_textohtml: [],
+            enviar_correo: false,
+            tipo_cargos: [],
+            formularios_guardados: [],
+            razon_social_cliente: [],
+            hide_bottons: true,
+            campo_dinamico: [],
+            cargos_id_: [],
+            deshabilitar_boton: false,
+            ruta_id:this.$route.params.id,
         }
     },
     computed: {
+        errorMessages() {
+            return this.items.map(item => {
+                if (
+                    item.socio === '' &&
+                    item.tipo_identificacion_id.trim() !== '0' &&
+                    item.tipo_identificacion_id.trim() !== '' &&
+                    this.submitted
+                ) {
+                    return 'Mensaje de error: La condición no se cumple';
+                } else {
+                    return ''; // No hay error
+                }
+            });
+        }
 
     },
     watch: {
         $route() {
             this.limpiarformulario()
-        }
+        },
+        // tipo_cargo() {
+        //     this.getSubCategoriaCargo(this.tipo_cargo)
+        // }
 
     },
     mounted() {
+        window.addEventListener('keydown', this.convinacionGuardado);
+        window.addEventListener('keydown', this.convinacionAutoRelleno);
 
     },
+    beforeDestroy() {
+        window.removeEventListener('keydown', this.convinacionGuardado);
+        window.removeEventListener('keydown', this.convinacionAutoRelleno);
 
+    },
     created() {
-        // console.log(this.$route.path)
+        // const urlCompleta = window.location.href;
+        this.urlExterna()
+        // if (urlCompleta.includes('debidadiligencia.saitempsa.com')) {
+        //     this.URL_API = 'http://debidadiligencia.saitempsa.com:8484/aplicaciones/api/public/'
+        // }
         this.estabilidad_laboral == false
         this.getExamenes()
         this.getRequsitos()
         this.fileInputsCountCopia = [...this.fileInputsCount]
+        this.scrollTop()
         if (this.$route.params.id != undefined && this.$route.path != '/formularioregistro') {
             this.loading = true
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-            });
-            document.body.style.overflow = 'hidden';
+           this.scrollTop(true)
             this.consultaFormulario(this.$route.params.id)
         }
-        // else {
-        //     this.variables = [{}]
-        // }
+        this.getRiesgosLaborales()
+        this.getCategoriaCargo()
+        var self = this
+        if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
+            self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
+            self.razon_social_cliente = []
+            self.formularios_guardados.forEach(function (item, index) {
+                self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+            })
+        }
     },
     methods: {
+        validaCamposDinamicos(index, bandera = null) {
+            if (bandera != null) {
+                this.campo_dinamico[index] = false
+                return ''
+            }
+            this.campo_dinamico[index] = true
+            return '¡Este campo debe ser diligenciado!'
+        },
+        setLabelPais(item = null, campo = null, index = null) {
+            if (item != null) {
+                switch (campo) {
+                    case 1:
+                        // this.tipo_identificacion = item.cod_tip;
+                        this.consulta_pais = item.nombre
+                        break
+                    case 2:
+                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_pais_prestacion_servicio = item.nombre
+                        break
+                    case 3:
+                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_pais_rl[index] = item.nombre
+                        break
+                }
+            }
+        },
+        setLabelDepartamento(item = null, campo = null, index = null) {
+            if (item != null) {
+                switch (campo) {
+                    case 1:
+                        // this.tipo_identificacion = item.cod_tip;
+                        this.consulta_departamento = item.nombre
+                        break
+                    case 2:
+                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_departamento_prestacion_servicio = item.nombre
+                        break
+                    case 3:
+                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_departamento_rl[index] = item.nombre
+                        break
+                }
+            }
+        },
+
+        eliminarItem(registro) {
+            var self = this
+            if (localStorage.getItem("cliente") != null && localStorage.getItem("cliente") != '') {
+                self.formularios_guardados = JSON.parse(localStorage.getItem("cliente"))
+                self.formularios_guardados.forEach(function (item, index) {
+                    if (item.razon_social == registro.nombre) {
+                        self.formularios_guardados.splice(index, 1)
+                        self.razon_social_cliente.splice(index, 1)
+                        localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                    }
+                })
+            }
+        },
+        convinacionAutoRelleno(event) {
+            if (event.ctrlKey && event.altKey && event.key >= '1' && event.key <= '9') {
+                event.preventDefault();
+                this.limpiarformulario()
+                const numero = parseInt(event.key);
+                this.setFormularioGuardado(null, numero)
+            }
+        },
+        setFormularioGuardado(item = null, numero) {
+            var self = this
+            if (item != null) {
+                this.limpiarformulario()
+                this.formularios_guardados.forEach(function (item2) {
+                    if (item2.razon_social == item.nombre) {
+                        self.llenarFormularioGuardado(item2)
+                    }
+                });
+            } else {
+                this.formularios_guardados.forEach(function (item2, index) {
+                    if (index == numero - 1) {
+                        self.llenarFormularioGuardado(item2)
+                    }
+                });
+            }
+
+        },
+        convinacionGuardado(event) {
+            if (event.ctrlKey && event.key.toLowerCase() === 's') {
+                event.preventDefault();
+                this.guardadoParcial()
+            }
+        },
+        guardadoParcial() {
+
+            var self = this
+            if (this.razon_social == '') {
+                this.showAlert('Debe diligenciar el campo razón social para guardar el formulario de forma parcial', 'error')
+                return
+            } else {
+                this.showAlert('Se realizó un guardado de forma parcial exitosamente', 'success')
+            }
+            this.crearCliente()
+            this.agregarCamposCliente()
+            if (localStorage.getItem("cliente") === null || localStorage.getItem("cliente") === '') {
+                self.formularios_guardados.push(self.registroCliente)
+                localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+            } else {
+                self.formularios_guardados = (JSON.parse(localStorage.getItem("cliente")))
+                var bandera = 0
+                var posicion = 0
+                self.formularios_guardados.forEach(function (item, index) {
+                    if (item.razon_social == self.registroCliente.razon_social) {
+                        bandera++
+                        posicion = index
+                    }
+                })
+
+                if (bandera > 0) {
+                    self.formularios_guardados.splice(posicion, 1, self.registroCliente)
+                    localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                } else {
+                    self.formularios_guardados.push(self.registroCliente)
+                    localStorage.setItem("cliente", JSON.stringify(self.formularios_guardados));
+                }
+
+            }
+            self.razon_social_cliente = []
+            self.formularios_guardados.forEach(function (item, index) {
+                self.razon_social_cliente.push({ codigo: index, nombre: item.razon_social })
+            })
+
+        },
+        agregarCamposCliente() {
+            var self = this
+            self.registroCliente.consulta_tipo_cliente = this.consulta_tipo_cliente
+            self.registroCliente.consulta_tipo_proveedor = this.consulta_tipo_proveedor
+            self.registroCliente.consulta_operacion = this.consulta_operacion
+            self.registroCliente.contratacion_directa = this.contratacion_directa
+            self.registroCliente.atraccion_seleccion = this.atraccion_seleccion
+            self.registroCliente.consulta_tipo_persona = this.consulta_tipo_persona
+            self.registroCliente.consulta_tipo_identificacion = this.consulta_tipo_identificacion
+            self.registroCliente.numero_identificacion = this.numero_identificacion
+            self.registroCliente.fecha_expedicion = this.fecha_expedicion
+            self.registroCliente.nit = this.nit
+            self.registroCliente.digito_verificacion = this.digito_verificacion
+            self.registroCliente.razon_social = this.razon_social
+            self.registroCliente.fecha_constitucion = this.fecha_constitucion
+            self.registroCliente.empleados_empresa = this.empleados_empresa
+            self.registroCliente.consulta_codigo_ciiu = this.consulta_codigo_ciiu
+            self.registroCliente.consulta_actvidad_ciiu = this.consulta_actvidad_ciiu
+            self.registroCliente.consulta_estrato = this.consulta_estrato
+            self.registroCliente.consulta_pais = this.consulta_pais
+            self.registroCliente.consulta_departamento = this.consulta_departamento
+            self.registroCliente.consulta_municipio = this.consulta_municipio
+            self.registroCliente.direccion_empresa = this.direccion_empresa
+            self.registroCliente.contacto_empresa = this.contacto_empresa
+            self.registroCliente.correo_electronico_empresa = this.correo_electronico_empresa
+            self.registroCliente.telefono_empresa = this.telefono_empresa
+            self.registroCliente.celular_empresa = this.celular_empresa
+            self.registroCliente.consulta_sociedad_comercial = this.consulta_sociedad_comercial
+            self.registroCliente.otra_cual = this.otra_cual
+            self.registroCliente.consulta_periodicidad_pago = this.consulta_periodicidad_pago
+            self.registroCliente.plazo_pago = this.plazo_pago
+            self.registroCliente.consulta_pais_prestacion_servicio = this.consulta_pais_prestacion_servicio
+            self.registroCliente.consulta_departamento_prestacion_servicio = this.consulta_departamento_prestacion_servicio
+            self.registroCliente.consulta_municipio_prestacion_servicio = this.consulta_municipio_prestacion_servicio
+            self.registroCliente.aiu_negociado = this.aiu_negociado
+            self.registroCliente.consulta_ejecutivo_comercial = this.consulta_ejecutivo_comercial
+            self.registroCliente.acuerdos_comerciales = this.acuerdos_comerciales
+            self.registroCliente.consulta_jornada_laboral = this.consulta_jornada_laboral
+            self.registroCliente.consulta_rotacion_personal = this.consulta_rotacion_personal
+            self.registroCliente.consulta_riesgo_cliente = this.consulta_riesgo_cliente
+            self.registroCliente.junta_directiva = this.junta_directiva
+            self.registroCliente.consulta_responsable_impuesto_ventas = this.consulta_responsable_impuesto_ventas
+            self.registroCliente.correo_factura_electronica = this.correo_factura_electronica
+            self.registroCliente.consulta_sucursal_facturacion = this.consulta_sucursal_facturacion
+            self.registroCliente.nombre_completo_contador = this.nombre_completo_contador
+            self.registroCliente.consulta_contador = this.consulta_contador
+            self.registroCliente.identificacion_contador = this.identificacion_contador
+            self.registroCliente.telefono_contador = this.telefono_contador
+            self.registroCliente.nombre_completo_tesorero = this.nombre_completo_tesorero
+            self.registroCliente.telefono_tesorero = this.telefono_tesorero
+            self.registroCliente.correo_tesorero = this.correo_tesorero
+            self.registroCliente.ingreso_mensual = this.ingreso_mensual
+            self.registroCliente.costos_gastos = this.costos_gastos
+            self.registroCliente.activos = this.activos
+            self.registroCliente.otros_ingresos = this.otros_ingresos
+            self.registroCliente.detalle_otros_ingresos = this.detalle_otros_ingresos
+            self.registroCliente.pasivos = this.pasivos
+            self.registroCliente.total_ingresos = this.total_ingresos
+            self.registroCliente.reintegro_costos = this.reintegro_costos
+            self.registroCliente.patrimonio = this.patrimonio
+            self.registroCliente.consulta_operacion_moneda_extranjera = this.consulta_operacion_moneda_extranjera
+            self.registroCliente.consulta_operacion_internacional = this.consulta_operacion_internacional
+            self.registroCliente.declaraciones_autorizaciones = this.declaraciones_autorizaciones
+            self.registroCliente.consulta_origen_fondos = this.consulta_origen_fondos
+            self.registroCliente.otro_tipo_origen_fondos = this.otro_tipo_origen_fondos
+            self.registroCliente.consulta_origen_medios1 = this.consulta_origen_medios1
+            self.registroCliente.consulta_origen_medios2 = this.consulta_origen_medios2
+            self.registroCliente.consulta_origen_manejo_efectivo = this.consulta_origen_manejo_efectivo
+            self.registroCliente.tratamiento_datos_personales = this.tratamiento_datos_personales
+            self.registroCliente.codigo_ciiu_id = this.codigo_ciiu_id
+            self.registroCliente.consulta_tipo_identificacion_ac = this.consulta_tipo_identificacion_ac
+            self.registroCliente.consulta_tipo_identificacion_rl = this.consulta_tipo_identificacion_rl
+            self.registroCliente.consulta_tipo_identificacion_miembros_junta = this.consulta_tipo_identificacion_miembros_junta
+            self.registroCliente.consultas_personas_expuestas = this.consultas_personas_expuestas
+            self.registroCliente.consulta_banco_rb = this.consulta_banco_rb
+            self.registroCliente.consulta_tipo_cuenta_banco_rb = this.consulta_tipo_cuenta_banco_rb
+            self.registroCliente.consulta_pais = this.consulta_pais
+            self.registroCliente.consulta_departamento = this.consulta_departamento
+            self.registroCliente.consulta_municipio = this.consulta_municipio
+            self.registroCliente.consulta_pais_prestacion_servicio = this.consulta_pais_prestacion_servicio
+            self.registroCliente.consulta_municipio_prestacion_servicio = this.consulta_municipio_prestacion_servicio
+            self.registroCliente.consulta_pais_rl = this.consulta_pais_rl
+            self.registroCliente.consulta_departamento_rl = this.consulta_departamento_rl
+            self.registroCliente.consulta_municipio_rl = this.consulta_municipio_rl
+
+
+            this.cargos2.forEach(function (item, index) {
+                item.tipo_cargo = self.tipo_cargo[index] == 1 ? 'Administrativo' : 'Operativo'
+                item.tipo_cargo_id = self.tipo_cargo[index]
+                item.cargo_id = self.cargos2[index].cargo_id
+                item.cargo = self.consulta_lista_cargos[index]
+                item.riesgo_laboral = self.consulta_riesgo_laboral[index]
+                item.categoria = self.consulta_subcategoria_cargos[index]
+            })
+        },
+        retornoTexto(index, texto) {
+            this.cargos2[index].funcion_cargo = texto
+            this.consulta_textohtml[index] = texto
+        },
+        getCategoriaCargo() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/categoriacargo", config)
+                .then(function (result) {
+                    self.tipo_cargos = result.data
+
+                });
+        },
+        getSubCategoriaCargo(id, index = null) {
+            if (index != null) {
+                if (this.cargos2[index].cargo_id != '') {
+                    this.consulta_subcategoria_cargos[index] = ' '
+                    this.consulta_lista_cargos[index] = ' '
+                    this.cargos2[index].cargo_id = ''
+                }
+
+
+                this.array_lista_cargos[index] = []
+                this.arry_subcategoria_cargos[index] = []
+                this.array_lista_examenes[index] = []
+                this.cargos2[index].examenes = []
+            }
+
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/subcategoriacargo/" + id, config)
+                .then(function (result) {
+                    self.arry_subcategoria_cargos.splice(index, 1, result.data)
+
+                });
+        },
+        getListaCargos(item = null, index = null) {
+            if (item != null) {
+                this.categoria_cargo_id = item.id
+                this.consulta_subcategoria_cargos[index] = item.nombre
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listacargos/" + item.id, config)
+                    .then(function (result) {
+                        self.array_lista_cargos.splice(index, 1, result.data)
+
+                    });
+            }
+        },
+        getExamenesRecomendaciones(item = null, index = null) {
+            if (index != null) {
+                this.cargos2[index].cargo_id = item.id
+                this.consulta_lista_cargos[index] = item.nombre
+            }
+            this.getListaRecomendaciones(index)
+            this.getListaExamenes(index)
+        },
+        getListaExamenes(index = null) {
+            if (index != null) {
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listaexamenes/" + this.categoria_cargo_id, config)
+                    .then(function (result) {
+                        self.array_lista_examenes.splice(index, 1, result.data)
+                        self.cargos2[index].examenes = result.data
+
+                    });
+            }
+        },
+        getListaRecomendaciones(index = null) {
+            if (index != null) {
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/listarecomendaciones/" + this.categoria_cargo_id, config)
+                    .then(function (result) {
+                        self.array_lista_recomendaciones.splice(index, 1, result.data)
+                        self.cargos2[index].recomendaciones = result.data
+
+                    });
+            }
+        },
         getCliente(id, tipo_id) {
-            if (id.trim() != '') {
+            if (id != null && id.trim() != '') {
                 let self = this;
                 let config = this.configHeader();
                 return axios
@@ -1563,6 +1993,15 @@ export default {
 
             this.digito_verificacion = (y > 1) ? 11 - y : y;
             console.log('')
+        },
+        hideBottons() {
+            var self = this
+            this.hide_bottons = false
+            setTimeout(() => {
+                self.generarPDF()
+                self.hide_bottons = true
+            }, "10");
+
         },
         generarPDF() {
             const elemento = document.getElementById('contenedor-formulario');
@@ -1693,13 +2132,31 @@ export default {
             if (this.cargos.length <= 4) {
                 this.cargos.push({ cargo: '', requisitos: [], examenes: [], riesgo: '' })
             }
+            if (this.cargos2.length <= 9) {
+                this.cargos2.push({ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' })
+            }
         },
         agregarAccionista() {
             if (this.accionistas.length <= 4) {
                 this.accionistas.push({ tipo_identificacion_id: '', identificacion: '', socio: '', participacion: '' })
             }
         },
-        deleteDynamic(array, index) {
+        deleteDynamic(array, index, identificador = null) {
+            if (identificador != null) {
+                this.tipo_cargo.splice(index, 1)
+                this.consulta_subcategoria_cargos[index] = ' '
+                this.consulta_lista_cargos[index] = ' '
+                this.consulta_textohtml[index] = ' '
+                this.cargos2[index].riesgo_laboral_id = ''
+                this.arry_subcategoria_cargos.splice(index, 1)
+                this.array_lista_cargos.splice(index, 1)
+                this.consulta_riesgo_laboral.splice(index, 1)
+                this.consulta_textohtml.splice(index, 1)
+                this.consulta_lista_cargos.splice(index, 1)
+                this.consulta_subcategoria_cargos.splice(index, 1)
+                this.array_lista_examenes.splice(index, 1)
+             
+            }
             array.splice(index, 1)
         },
         agregarRepresentanteLegal() {
@@ -1740,21 +2197,25 @@ export default {
                 switch (campo) {
                     case 1:
                         this.responsable_impuesto_ventas = item.id;
+                        this.consulta_responsable_impuesto_ventas = item.nombre
                         break
                     case 2:
                         this.calidad_tributaria[index].opcion = item.id;
                         break
                     case 3:
                         this.operaciones_modena_extranjera = item.id;
+                        this.consulta_operacion_moneda_extranjera = item.nombre
                         break
                     case 4:
                         this.alto_manejo_efectivo = item.id;
+                        this.consulta_origen_manejo_efectivo = item.nombre
                         break
                 }
             }
         },
         getTipoCliente(item = null) {
             if (item != null) {
+                this.consulta_tipo_cliente = item.nombre
                 this.tipo_cliente = item.id
                 if (this.tipo_cliente == 1) {
                     this.getTipoArchivo(item.id)
@@ -1784,6 +2245,7 @@ export default {
         },
         getTipoProveedor(item = null) {
             if (item != null) {
+                this.consulta_tipo_proveedor = item.nombre
                 this.tipo_proveedor = item.id
                 this.getTipoArchivo(item.id)
             }
@@ -1814,6 +2276,7 @@ export default {
         },
         getOperacion(item = null) {
             if (item != null) {
+                this.consulta_operacion = item.nombre
                 this.operacion = item.id;
             }
             // if (this.operacion == '') {
@@ -1828,6 +2291,7 @@ export default {
         },
         getTipoPersona(item = null) {
             if (item != null) {
+                this.consulta_tipo_persona = item.nombre
                 this.tipo_persona = item.id;
                 this.persona_natural = item.id == 1 ? false : true
                 this.opcionesTipoPersona(!this.persona_natural)
@@ -1862,27 +2326,6 @@ export default {
                     self.consulta_tipo_identificacion = 'No aplica'
                 }, "10");
             }
-            // let self = this
-            // if (persona_natural) {
-            // this.nit = undefined
-            // this.fecha_constitucion = undefined
-            // this.digito_verificacion = ''
-            // this.consulta_tipo_identificacion = undefined
-            // setTimeout(() => {
-            //     self.consulta_tipo_identificacion = ''
-            // }, "10");
-            // document.getElementById("fecha_constitucion").value = "";
-            // } else if (!persona_natural) {
-            // this.consulta_tipo_identificacion = ''
-            // this.tipo_identificacion = undefined
-            // this.digito_verificacion = ''
-            // this.fecha_expedicion = undefined
-            // this.numero_identificacion = undefined
-            // document.getElementById("fecha_expedicion").value = "";
-            // setTimeout(() => {
-            //     self.consulta_tipo_identificacion = 'No aplica'
-            // }, "10");
-            // }
         },
         getTipoIdentificacion() {
             if (this.tiposIdentificacion == '') {
@@ -1899,9 +2342,6 @@ export default {
             self.tiposArchivo = this.fileInputsCount
         },
         setTipoArchivo(item, index) {
-            // if(item != null){
-            //    this.tipo_archivo_ = item.id
-            // }
             let self = this
             this.id_archivo.splice(index, 1, item.id)
             if (typeof item == 'string') {
@@ -1922,21 +2362,27 @@ export default {
                 switch (campo) {
                     case 1:
                         this.tipo_identificacion = item.cod_tip;
+                        this.consulta_tipo_identificacion = item.des_tip
                         break
                     case 2:
                         this.accionistas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_tipo_identificacion_ac[index] = item.des_tip
                         break
                     case 3:
                         this.representantes_legales[index].tipo_identificacion = item.cod_tip;
+                        this.consulta_tipo_identificacion_rl[index] = item.des_tip
                         break
                     case 4:
                         this.miembros_Junta[index].tipo_identificacion_id = item.cod_tip;
+                        this.consulta_tipo_identificacion_miembros_junta[index] = item.des_tip
                         break
                     case 5:
                         this.tipo_identificacion_contador = item.cod_tip;
+                        this.consulta_contador = item.des_tip
                         break
                     case 6:
                         this.personas_expuestas[index].tipo_identificacion_id = item.cod_tip;
+                        this.consultas_personas_expuestas[index] = item.des_tip
                         break
 
                 }
@@ -1945,6 +2391,7 @@ export default {
         getEstratos(item = null) {
             if (item != null) {
                 this.estrato = item.id;
+                this.consulta_estrato = item.nombre
             }
             if (this.estratos == '') {
                 let self = this;
@@ -1978,8 +2425,9 @@ export default {
                     });
             }
         },
-        getDepartamentos(item) {
+        getDepartamentos(item, ordenCampo, index) {
             let self = this;
+            this.setLabelPais(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/departamentos/" + item.id, config)
@@ -1990,6 +2438,7 @@ export default {
         getSociedadesComerciales(item = null) {
             if (item != null) {
                 this.sociedad_comercial = item.id;
+                this.consulta_sociedad_comercial = item.nombre
             }
             if (this.sociedades_comerciales == '') {
                 let self = this;
@@ -2001,8 +2450,9 @@ export default {
                     });
             }
         },
-        getMunicipios(item = null) {
+        getMunicipios(item, ordenCampo, index) {
             let self = this;
+            this.setLabelDepartamento(item, ordenCampo, index)
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/municipios/" + item.id, config)
@@ -2013,6 +2463,7 @@ export default {
         getEjecutivos_comerciales(item = null) {
             if (item != null) {
                 this.ejecutivo_comercial = item.cod_ven;
+                this.consulta_ejecutivo_comercial = item.nom_ven
             }
             if (this.ejecutivos_comerciales == '') {
                 let self = this;
@@ -2025,13 +2476,18 @@ export default {
             }
         },
         getActividadesCiiu(item = null) {
-            if (item != null) {
-                this.codigo_ciiu_id = item.codigo
+            var id = ''
+            if (item != null && item.codigo != undefined) {
+                this.codigo_ciiu_id = item.id
+                this.consulta_codigo_ciiu = item.codigo
+                id = item.id
+            } else {
+                id = item
             }
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/actividadciiu/" + item.id, config)
+                .get(self.URL_API + "api/v1/actividadciiu/" + id, config)
                 .then(function (result) {
                     self.actividades_ciiu = result.data
                 });
@@ -2039,6 +2495,7 @@ export default {
         getJornadasLaborales(item = null) {
             if (item != null) {
                 this.jornada_laboral = item.id;
+                this.consulta_jornada_laboral = item.nombre
             }
             if (this.jornadas_laborales == '') {
                 let self = this;
@@ -2053,6 +2510,7 @@ export default {
         getRotacionesPersonal(item = null) {
             if (item != null) {
                 this.rotacion_personal = item.id;
+                this.consulta_rotacion_personal = item.nombre
             }
             if (this.rotaciones_personal == '') {
                 let self = this;
@@ -2067,6 +2525,7 @@ export default {
         getRiesgosLaborales(item = null, index = null) {
             if (item != null && index != null) {
                 this.cargos[index].riesgo = item.id;
+                this.cargos2[index].riesgo_laboral_id = item.id;
             }
             if (item != null && index == null) {
                 this.riesgo_laboral = item.id;
@@ -2080,6 +2539,25 @@ export default {
                         self.riesgos_laborales = result.data
                     });
             }
+        },
+        getRiesgosLaborales2(item = null, index = null) {
+            if (item != null) {
+                this.cargos2[index].riesgo_laboral_id = item.id
+                this.consulta_riesgo_laboral[index] = item.nombre
+            }
+            var self = this
+            self.riesgos = []
+            var riesgo = ''
+            this.actividades_ciiu.data.forEach(function (item) {
+                self.riesgos_laborales.forEach(function (item2) {
+                    if (item.codigo_actividad.split("")[0] == item2.id) {
+                        if (riesgo != item2.nombre) {
+                            self.riesgos.push({ id: item2.id, nombre: item2.nombre })
+                            riesgo = item2.nombre
+                        }
+                    }
+                })
+            })
         },
         getExamenes(item = null) {
             if (item != null) {
@@ -2112,6 +2590,7 @@ export default {
         getPeriodicidadPago(item = null) {
             if (item != null) {
                 this.periodicidad_liquidacion_id = item.id;
+                this.consulta_periodicidad_pago = item.nombre
             }
             if (this.periodicidades_liquidacion == '') {
                 let self = this;
@@ -2139,6 +2618,7 @@ export default {
                 switch (campo) {
                     case 1:
                         this.referencias_bancarias[index].banco_id = item.cod_ban;
+                        this.consulta_banco_rb[index] = item.nom_ban
                         break
                 }
             }
@@ -2159,6 +2639,7 @@ export default {
                 switch (campo) {
                     case 1:
                         this.referencias_bancarias[index].tipo_cuenta = item.id;
+                        this.consulta_tipo_cuenta_banco_rb[index] = item.nombre
                         break
                 }
             }
@@ -2166,6 +2647,7 @@ export default {
         getSucursales(item = null) {
             if (item != null) {
                 this.sucursal = item.cod_suc;
+                this.consulta_sucursal_facturacion = item.nom_suc
             }
             if (this.sucursales == '') {
                 let self = this;
@@ -2180,6 +2662,7 @@ export default {
         getTiposOperacionesInternacionales(item = null) {
             if (item != null) {
                 this.tipo_operacion_internacional = item.id;
+                this.consulta_operacion_internacional = item.nombre
             }
             if (this.tipos_operaciones_internacionales == '') {
                 let self = this;
@@ -2194,6 +2677,7 @@ export default {
         getTipoOrigenFondos(item = null) {
             if (item != null) {
                 this.tipo_origen_fondo = item.id;
+                this.consulta_origen_fondos = item.nombre
             }
             if (this.tipos_origen_fondos == '') {
                 let self = this;
@@ -2221,9 +2705,11 @@ export default {
                 switch (campo) {
                     case 1:
                         this.tipo_origen_medios = item.id;
+                        this.consulta_origen_medios1 = item.nombre
                         break
                     case 2:
                         this.otro_tipo_origen_medios = item.id;
+                        this.consulta_origen_medios2 = item.nombre
                         break
                 }
             }
@@ -2233,19 +2719,30 @@ export default {
                 switch (campo) {
                     case 1:
                         this.municipio = item.id;
+                        this.consulta_municipio = item.nombre
                         break
                     case 2:
                         this.municipio_prestacion_servicio = item.id;
+                        this.consulta_municipio_prestacion_servicio = item.nombre
                         break
                     case 3:
                         this.representantes_legales[index].municipio_id = item.id;
+                        this.consulta_municipio_rl[index] = item.nombre
                         break
                 }
             }
         },
         setActividadesCiiu(item) {
+            var self = this
             if (item != null) {
-                this.actividad_ciiu = item.split(" ")[0]
+                this.consulta_actvidad_ciiu = item
+                self.actividad_ciiu = item.split(" ")[0]
+                self.riesgos_laborales.forEach(function (item) {
+                    if (item.id == self.actividad_ciiu.split("")[0]) {
+                        self.riesgo_laboral = self.actividad_ciiu.split("")[0]
+                        self.consulta_riesgo_cliente = item.nombre
+                    }
+                })
             }
         },
         filterResults(value, array, nombrearray) {
@@ -2275,6 +2772,27 @@ export default {
         },
         limpiarformulario() {
             this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }]
+            this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            for (let i = 0; i < this.cargos2.length; i++) {
+                // this.tipo_cargo[i] = ''
+                // this.categoria_cargo_id = ''
+                // this.consulta_subcategoria_cargos[i] = ''
+                // this.consulta_lista_cargos[i] = ''
+                // this.cargos2[i].cargo_id = ''
+                // this.consulta_textohtml[i] = ''
+                // this.consulta_riesgo_laboral[i] = ''
+                // this.array_lista_examenes[i] = []
+                // this.array_lista_recomendaciones[i] = []
+                this.tipo_cargo.splice(i,1)
+                this.categoria_cargo_id = ''
+                this.consulta_subcategoria_cargos.splice(i,1)
+                this.consulta_lista_cargos.splice(i,1)
+                this.cargos2[i].cargo_id = ''
+                this.consulta_textohtml.splice(i,1)
+                this.consulta_riesgo_laboral.splice(i,1)
+                this.array_lista_examenes.splice(i,1)
+                this.array_lista_recomendaciones.splice(i,1)
+            }
             this.tipo_cliente = ''
             this.cliente = false
             this.consulta_tipo_cliente = ''
@@ -2353,7 +2871,7 @@ export default {
             this.jornada_laboral = ''
             this.consulta_rotacion_personal = ''
             this.rotaciones_personal = []
-            this.riesgos_laborales = []
+            // this.riesgos_laborales = []
             this.consulta_riesgo_laboral = []
             this.riesgo_laboral = ''
             this.consulta_riesgo_cliente = ''
@@ -2444,15 +2962,29 @@ export default {
             this.tipo_archivo_ = ''
             this.registroCliente = {}
             this.cliente_existe = false
-            this.btn_save = false
+
         },
         valida_campos() {
             var self = this
+
             if (this.tipo_cliente == '') {
                 this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
                 return true
             }
+            if (this.tipo_cliente == 2 && this.tipo_proveedor == '') {
+                this.showAlert('Error, debe diligenciar el tipo de proveedor.', 'error')
+                return true
+            }
+            if (this.tipo_cliente == 1 && this.operacion == '') {
+                this.showAlert('Error, debe diligenciar el tipo de operación.', 'error')
+                return true
+            }
+
             if (this.tipo_persona == '' && this.tipo_cliente == 1) {
+                this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
+                return true
+            }
+            if (this.tipo_persona == '' && this.tipo_cliente == 2) {
                 this.showAlert('Error, debe diligenciar el tipo de persona.', 'error')
                 return true
             }
@@ -2469,7 +3001,7 @@ export default {
                 this.showAlert('Error, debe diligenciar la fecha de expedicion.', 'error')
                 return true
             }
-            if (this.nit == '' && this.tipo_persona == 2 || this.tipo_persona == 3) {
+            if (this.tipo_persona != 1 && this.nit == '') {
                 this.showAlert('Error, debe diligenciar el campo NIT.', 'error')
                 return true
             }
@@ -2502,6 +3034,10 @@ export default {
                 this.showAlert('Error, debe diligenciar el Estrato socio económico (ubicación empresa).', 'error')
                 return true
             }
+            if (this.municipio == '' || this.municipio == undefined) {
+                this.showAlert('Error, debe diligenciar el campo ciudad en informacion general.', 'error')
+                return true
+            }
             if (this.direccion_empresa == '') {
                 this.showAlert('Error, debe diligenciar la dirección de la empresa en información general.', 'error')
                 return true
@@ -2523,7 +3059,7 @@ export default {
                 return true
             }
             if (this.sociedad_comercial == '') {
-                this.showAlert('Error, debe diligenciar la actividad erconómica: sociedad comercial.', 'error')
+                this.showAlert('Error, debe diligenciar la actividad económica: sociedad comercial.', 'error')
                 return true
             }
             if (this.periodicidad_liquidacion_id == '') {
@@ -2543,17 +3079,37 @@ export default {
                 this.showAlert('Error, debe diligenciar el AIU negociado.', 'error')
                 return true
             }
-            if (this.ejecutivo_comercial == '' || this.ejecutivo_comercial == undefined && this.tipo_cliente == 1) {
+            if (this.ejecutivo_comercial == '' && this.tipo_cliente == 1 || this.ejecutivo_comercial == undefined) {
                 this.showAlert('Error, debe diligenciar el campo ejecutivo comercial.', 'error')
                 return true
             }
-            if (this.jornada_laboral == '' || this.jornada_laboral == undefined && this.tipo_cliente == 1) {
+            if (this.jornada_laboral == '' && this.tipo_cliente == 1 || this.jornada_laboral == undefined) {
                 this.showAlert('Error, debe diligenciar el campo jornada laboral.', 'error')
                 return true
             }
-            if (this.rotacion_personal == '' || this.rotacion_personal == undefined && this.tipo_cliente == 1) {
+
+            if (this.rotacion_personal == '' && this.tipo_cliente == 1 || this.rotacion_personal == undefined) {
                 this.showAlert('Error, debe diligenciar el campo rotación de personal.', 'error')
                 return true
+            }
+
+            if (this.tipo_cliente != 2 && this.cargos[0].cargo == '') {
+                if (this.cargos2[0].cargo_id == '' || this.cargos2[0].riesgo_laboral_id == '') {
+                    this.showAlert('Error, debe diligenciar los campos para cargos e ingresar minimo un cargo.', 'error')
+                    return true
+                }
+
+                var contador = 0
+                this.cargos2.forEach(function (item) {
+                    if (item.cargo_id == '' || item.riesgo_laboral_id == '') {
+                        contador++
+                    }
+
+                })
+                if (contador > 0) {
+                    self.showAlert('Error, debe diligenciar los campos para cargos.', 'error')
+                    return true
+                }
             }
 
             var mensaje_error = ''
@@ -2575,74 +3131,90 @@ export default {
             })
 
             var valida_campo = 0
+            var valida_campo_dependiente = 0
             this.accionistas.forEach(function (item) {
                 if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
                     valida_campo++
                 }
+                if (item.identificacion == '' && item.socio == '' && item.participacion == '' && item.tipo_identificacion_id != 0) {
+                    valida_campo_dependiente++
+                }
             })
+
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar el tipo de identificacion para los accionistas', 'error')
                 return true
             }
-
+            if (valida_campo_dependiente > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para accionistas', 'error')
+                return true
+            }
             valida_campo = 0
+            valida_campo_dependiente = 0
             this.representantes_legales.forEach(function (item) {
                 if (item.tipo_identificacion == '' || item.tipo_identificacion == undefined) {
                     valida_campo++
-                } if (item.municipio_id == '' || item.municipio_id == undefined) {
+                }
+                if (item.municipio_id == '' || item.municipio_id == undefined) {
                     valida_campo++
                 }
+                if (item.nombre == '' && item.correo == '' && item.identificacion == '' && item.telefono == '' && item.tipo_identificacion != 0) {
+                    valida_campo_dependiente++
+                }
+
             })
             if (valida_campo > 0) {
                 self.showAlert('Error, debe diligenciar los campos obligatorios para los representantes legales', 'error')
                 return true
             }
-
-            valida_campo = 0
-            this.referencias_bancarias.forEach(function (item) {
-                if (item.banco_id == '' || item.banco_id == undefined) {
-                    valida_campo++
-                }
-                if (item.tipo_cuenta == '' || item.tipo_cuenta == undefined) {
-                    valida_campo++
-                }
-            })
-            if (valida_campo > 0) {
-                self.showAlert('Error, debe diligenciar los campos obligatorios para las referencias bancarias', 'error')
+            if (valida_campo_dependiente > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para los representantes legales', 'error')
                 return true
             }
-
-            valida_campo = 0
-            this.personas_expuestas.forEach(function (item) {
-               if(item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined){
-                valida_campo++
-               }
-            })
-            if (valida_campo > 0) {
-                self.showAlert('Error, debe diligenciar los campos obligatorios para personas expuestas', 'error')
-                return true
-            }
-
-
-            // if (this.file.length < this.fileInputsCount.length - 3 && this.tipo_cliente == 1) {
-            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-            //     return true
-            // }
-            // if (this.file.length < this.fileInputsCount.length - 1 && this.tipo_cliente == 2) {
-            //     this.showAlert('Error, Debe adjuntar los archivos pdf.', 'error')
-            //     return true
-            // }
 
             if (this.responsable_impuesto_ventas == '') {
-                this.showAlert('Error, debe diligenciar el responsable de impuestos a las ventas.', 'error')
+                this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
                 return true
             }
             if (this.correo_factura_electronica == '') {
                 this.showAlert('Error, debe diligenciar el Correo para factura electrónica.', 'error')
                 return true
             }
-            if (this.tipo_identificacion_contador == '') {
+            if (this.sucursal == '') {
+                this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
+                return true
+            }
+
+            if (this.calidad_tributaria[0].opcion == '' || this.calidad_tributaria[0].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[0].opcion == 1 && this.calidad_tributaria[0].numero_resolucion == '' && this.calidad_tributaria[0].fecha == '') {
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[1].opcion == '' || this.calidad_tributaria[1].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[1].opcion == 1 && this.calidad_tributaria[1].numero_resolucion == '' && this.calidad_tributaria[1].fecha == '') {
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[2].opcion == '' || this.calidad_tributaria[2].opcion == undefined) {
+                this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
+                return true
+            }
+            if (this.calidad_tributaria[2].opcion == 1 && this.calidad_tributaria[2].numero_resolucion == '' && this.calidad_tributaria[2].fecha == '') {
+                this.showAlert('Error, debe diligenciar el numero de resulucion y la fecha en calidad tributaria.', 'error')
+                return true
+            }
+            if (this.tipo_identificacion_contador == '' || this.tipo_identificacion_contador == undefined) {
                 this.showAlert('Error, debe diligenciar el tipo de identificación en datos del contador.', 'error')
+                return true
+            }
+            if (this.tipo_identificacion_contador != 0 && this.nombre_completo_contador == '' && this.identificacion_contador == '' && this.telefono_contador == '') {
+                this.showAlert('Error, debe diligenciar todos los campos en datos del contador.', 'error')
                 return true
             }
             if (this.ingreso_mensual == '') {
@@ -2689,35 +3261,71 @@ export default {
                 this.showAlert('Error, debe diligenciar el tipo de operacion internacional.', 'error')
                 return true
             }
+
+            valida_campo = 0
+            var valida_campos_bancarias = 0
+            this.referencias_bancarias.forEach(function (item) {
+                if (item.banco_id == '' || item.banco_id == undefined) {
+                    valida_campo++
+                }
+                if (item.tipo_cuenta == '' || item.tipo_cuenta == undefined) {
+                    valida_campo++
+                }
+                if (item.contacto == '' && item.numero_cuenta == '' && item.sucursal == '' && item.telefono == '' && item.banco_id != 0) {
+                    valida_campos_bancarias++
+                }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar los campos obligatorios para las referencias bancarias', 'error')
+                return true
+            }
+            if (valida_campos_bancarias > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para referencias bancarias', 'error')
+                return true
+            }
             if (this.declaraciones_autorizaciones == false) {
                 this.showAlert('Error, debe aceptar las declaraciones y autorizaciones.', 'error')
+                return true
+            }
+
+            valida_campo = 0
+            var valida_campos_expuestas = 0
+            this.personas_expuestas.forEach(function (item) {
+                if (item.tipo_identificacion_id == '' || item.tipo_identificacion_id == undefined) {
+                    valida_campo++
+                }
+                if (item.nombre == '' && item.identificacion == '' && item.parentesco == '' && item.tipo_identificacion_id != 0) {
+                    valida_campos_expuestas++
+                }
+            })
+            if (valida_campo > 0) {
+                self.showAlert('Error, debe diligenciar los campos obligatorios para personas expuestas', 'error')
+                return true
+            }
+            if (valida_campos_expuestas > 0) {
+                self.showAlert('Error, debe diligenciar los campos correspondientes para personas expuestas', 'error')
+                return true
+            }
+            if (this.tipo_origen_fondo == '') {
+                this.showAlert('Error, debe diligenciar el tipo de origen de los fondos.', 'error')
+                return true
+            }
+            if (this.tipo_origen_medios == '') {
+                this.showAlert('Error, debe diligenciar el tipo de origen de los medios .', 'error')
+                return true
+            }
+            if (this.otro_tipo_origen_medios == '') {
+                this.showAlert('Error, debe diligenciar el otro tipo de origen de los medios .', 'error')
+                return true
+            }
+            if (this.alto_manejo_efectivo == '') {
+                this.showAlert('Error, debe diligenciar si las operaciones que realiza por su actividad implican un alto manejo de efectivo .', 'error')
                 return true
             }
             if (this.tratamiento_datos_personales == false) {
                 this.showAlert('Error, debe aceptar el tratamiento de datos personales.', 'error')
                 return true
             }
-            if (this.sucursal == ''){
-                this.showAlert('Error, debe seleccionar la sucursal de facturación.', 'error')
-                return true
-            } 
-            if(this.responsable_impuesto_ventas == ''){
-                this.showAlert('Error, debe diligenciar el campo responsable de impuesto a las ventas.', 'error')
-                return true
-            } 
-            if(this.calidad_tributaria[0].opcion == ''){
-                this.showAlert('Error, debe seleccionar el campo ¿es gran contribuyente?.', 'error')
-                return true
-            }
-            if(this.calidad_tributaria[1].opcion == ''){
-                this.showAlert('Error, debe seleccionar el campo ¿Es Auto-Retenedor?.', 'error')
-                return true
-            } 
-            if(this.calidad_tributaria[2].opcion == '') {
-                this.showAlert('Error, debe seleccionar el campo ¿Exento de Impuesto a la Renta?.', 'error')
-                return true
-            }
-
             this.calidad_tributaria.forEach(function (item) {
                 if (item.opcion == '') {
                     return true
@@ -2728,20 +3336,18 @@ export default {
 
         },
         save() {
-
-            this.btn_save = true;
+            let self = this;
             this.submitted = true;
-
+            this.deshabilitar_boton = true;
             setTimeout(() => {
-                this.btn_save = false;
-            }, "10000");
+                this.deshabilitar_boton = false;
+            }, 3000);
 
             if (this.valida_campos()) {
                 return
             }
 
             try {
-                let self = this;
                 this.crearCliente()
                 let config = this.configHeader();
 
@@ -2837,6 +3443,7 @@ export default {
                 municipio_prestacion_servicio: this.municipio_prestacion_servicio
             }
             this.registroCliente.cargos = this.cargos
+            this.registroCliente.cargos2 = this.cargos2
             this.registroCliente.accionistas = this.accionistas
             this.registroCliente.representantes_legales = this.representantes_legales
             this.registroCliente.miembros_Junta = this.miembros_Junta
@@ -2868,9 +3475,213 @@ export default {
                     return archivo;
                 });
         },
+        llenarFormularioGuardado(item = null) {
+            var self = this
+            this.cliente_existe = false
+            if (item.numero_identificacion != '') {
+                this.getCliente(item.numero_identificacion, 1)
+            }if (item.nit != '') {
+                this.getCliente(item.nit, 2)
+            }
+            if (item.tipo_cliente_id != '') {
+                if (item.tipo_cliente_id == 1) {
+                    this.getTipoArchivo(item.tipo_cliente_id)
+                } else {
+                    this.getTipoArchivo(item.tipo_proveedor_id)
+                }
+            }
+            if (item.codigo_ciiu_id != '') {
+                this.getActividadesCiiu(item.codigo_ciiu_id)
+            }
+            this.consulta_tipo_cliente = item.consulta_tipo_cliente
+            this.consulta_tipo_proveedor = item.consulta_tipo_proveedor
+            this.consulta_operacion = item.consulta_operacion
+            this.contratacion_directa = item.contratacion_directa
+            this.atraccion_seleccion = item.atraccion_seleccion
+            this.consulta_tipo_persona = item.consulta_tipo_persona
+            this.consulta_tipo_identificacion = item.consulta_tipo_identificacion
+            this.numero_identificacion = item.numero_identificacion
+            this.fecha_expedicion = item.fecha_expedicion
+            this.nit = item.nit
+            this.digito_verificacion = item.digito_verificacion
+            this.razon_social = item.razon_social
+            this.fecha_constitucion = item.fecha_constitucion
+            this.empleados_empresa = item.empleados_empresa
+            this.consulta_codigo_ciiu = item.consulta_codigo_ciiu
+            this.consulta_actvidad_ciiu = item.consulta_actvidad_ciiu
+            this.consulta_estrato = item.consulta_estrato
+            this.consulta_pais = item.consulta_pais
+            this.consulta_departamento = item.consulta_departamento
+            this.consulta_municipio = item.consulta_municipio
+            this.direccion_empresa = item.direccion_empresa
+            this.contacto_empresa = item.contacto_empresa
+            this.correo_electronico_empresa = item.correo_electronico_empresa
+            this.telefono_empresa = item.telefono_empresa
+            this.celular_empresa = item.celular_empresa
+            this.consulta_sociedad_comercial = item.consulta_sociedad_comercial
+            this.otra_cual = item.otra_cual
+            this.consulta_periodicidad_pago = item.consulta_periodicidad_pago
+            this.plazo_pago = item.plazo_pago
+            this.consulta_departamento_prestacion_servicio = item.consulta_departamento_prestacion_servicio
+            this.consulta_municipio_prestacion_servicio = item.consulta_municipio_prestacion_servicio
+            this.aiu_negociado = item.aiu_negociado
+            this.consulta_ejecutivo_comercial = item.consulta_ejecutivo_comercial
+            this.acuerdos_comerciales = item.acuerdos_comerciales
+            this.consulta_jornada_laboral = item.consulta_jornada_laboral
+            this.consulta_rotacion_personal = item.consulta_rotacion_personal
+            this.consulta_riesgo_cliente = item.consulta_riesgo_cliente
+            this.junta_directiva = item.junta_directiva
+            this.consulta_responsable_impuesto_ventas = item.consulta_responsable_impuesto_ventas
+            this.correo_factura_electronica = item.correo_factura_electronica
+            this.consulta_sucursal_facturacion = item.consulta_sucursal_facturacion
+            this.nombre_completo_contador = item.nombre_completo_contador
+            this.consulta_contador = item.consulta_contador
+            this.identificacion_contador = item.identificacion_contador
+            this.telefono_contador = item.telefono_contador
+            this.nombre_completo_tesorero = item.nombre_completo_tesorero
+            this.telefono_tesorero = item.telefono_tesorero
+            this.correo_tesorero = item.correo_tesorero
+            this.ingreso_mensual = item.ingreso_mensual
+            this.costos_gastos = item.costos_gastos
+            this.activos = item.activos
+            this.otros_ingresos = item.otros_ingresos
+            this.detalle_otros_ingresos = item.detalle_otros_ingresos
+            this.pasivos = item.pasivos
+            this.total_ingresos = item.total_ingresos
+            this.reintegro_costos = item.reintegro_costos
+            this.patrimonio = item.patrimonio
+            this.consulta_operacion_moneda_extranjera = item.consulta_operacion_moneda_extranjera
+            this.consulta_operacion_internacional = item.consulta_operacion_internacional
+            this.declaraciones_autorizaciones = item.declaraciones_autorizaciones
+            this.consulta_origen_fondos = item.consulta_origen_fondos
+            this.otro_tipo_origen_fondos = item.otro_tipo_origen_fondos
+            this.consulta_origen_medios1 = item.consulta_origen_medios1
+            this.consulta_origen_medios2 = item.consulta_origen_medios2
+            this.consulta_origen_manejo_efectivo = item.consulta_origen_manejo_efectivo
+            this.tratamiento_datos_personales = item.tratamiento_datos_personales
+            this.referencias_comerciales = item.referencias_comerciales
+            this.tipo_cliente = item.tipo_cliente_id
+            this.consulta_pais = item.consulta_pais
+            this.consulta_departamento = item.consulta_departamento
+            this.consulta_municipio = item.consulta_municipio
+            this.consulta_pais_prestacion_servicio = item.consulta_pais_prestacion_servicio
+            this.consulta_departamento_prestacion_servicio = item.consulta_departamento_prestacion_servicio
+            this.consulta_municipio_prestacion_servicio = item.consulta_municipio_prestacion_servicio
+            this.consulta_pais_rl = item.consulta_pais_rl
+            this.consulta_departamento_rl = item.consulta_departamento_rl
+            this.consulta_municipio_rl = item.consulta_municipio_rl
+            this.operacion = item.operacion
+            this.tipo_persona = item.tipo_persona
+            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+            this.tipo_identificacion = item.tipo_identificacion
+            this.actividad_ciiu = item.actividad_ciiu
+            this.codigo_ciiu_id = item.codigo_ciiu_id
+            this.estrato = item.estrato
+            this.municipio = item.municipio
+            this.sociedad_comercial = item.sociedad_comercial
+            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+            this.ejecutivo_comercial = item.vendedor
+            this.jornada_laboral = item.jornada_laboral
+            this.rotacion_personal = item.rotacion_personal
+            this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
+            this.sucursal = item.sucursal_facturacion
+            this.tipo_operacion_internacional = item.tipo_operacion_internacional
+            this.operaciones_modena_extranjera = item.operaciones_internacionales
+            this.tipo_origen_fondo = item.tipo_origen_fondo
+            this.tipo_origen_medios = item.tipo_origen_medios
+            this.otro_tipo_origen_medios = item.otro_tipo_origen_medios
+            this.alto_manejo_efectivo = item.alto_manejo_efectivo
+            this.tipo_identificacion_contador = item.tipo_identificacion_contador
+            this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
 
-        llenarFormulario(item) {
+
+            if (item.tipo_persona == 1) {
+                this.persona_natural = true
+                this.persona_juridica = false
+            } else {
+                this.persona_juridica = true
+                this.persona_natural = false
+            }
+
+            if (item.cargos.length > 0) {
+                this.cargos = item.cargos
+                for (let i = 0; i < item.cargos.length; i++) {
+                    this.requisitos[i] = item.cargos[i].requisitos
+                    this.examenes[i] = item.cargos[i].examenes
+                    this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
+                    this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                }
+            } else {
+                this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
+            }
+
+            if (item.cargos2.length > 0) {
+                this.cargos2 = item.cargos2
+                for (let i = 0; i < item.cargos2.length; i++) {
+                    this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
+                    this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
+                    this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                    this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                    this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
+                    this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
+                    this.array_lista_examenes[i] = item.cargos2[i].examenes
+                    this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                }
+            } else {
+                this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            }
+
+            this.representantes_legales = item.representantes_legales
+            item.consulta_tipo_identificacion_rl.forEach(function (item) {
+                self.consulta_tipo_identificacion_rl.push(item)
+            })
+
+            this.accionistas = item.accionistas;
+            item.consulta_tipo_identificacion_ac.forEach(function (item, index) {
+                self.consulta_tipo_identificacion_ac[index] = item
+            })
+
+            this.referencias_bancarias = item.referencias_bancarias
+            item.consulta_banco_rb.forEach(function (item) {
+                self.consulta_banco_rb.push(item)
+            })
+            item.consulta_tipo_cuenta_banco_rb.forEach(function (item) {
+                self.consulta_tipo_cuenta_banco_rb.push(item)
+            })
+
+            self.personas_expuestas = item.personas_expuestas
+
+            self.miembros_Junta = item.miembros_Junta
+
+            item.miembros_Junta.forEach(function (item, index) {
+                self.consulta_tipo_identificacion_miembros_junta[index] = item.des_tip
+            })
+
+
+            item.consultas_personas_expuestas.forEach(function (item) {
+                self.consultas_personas_expuestas.push(item)
+            })
+
+            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
+            this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha
+
+            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
+            this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha
+
+            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].opcion == '1' ? 'Si' : item.calidad_tributaria[0].opcion == '0' ? 'No' : ''
+            this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].opcion
+            this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
+            this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha
+
+
+        },
+        llenarFormulario(item = null) {
             let self = this
+            this.getActividadesCiiu(item.codigo_ciiu_id)
             this.operacion = item.operacion_id
             this.consulta_operacion = item.tipo_operacion
             this.tipo_persona = item.tipo_persona_id
@@ -2986,19 +3797,39 @@ export default {
                         self.file.push(archivo);
                     })
                     .catch(error => {
-                        // Ocurrió un error durante la conversión
-                        console.error('Error al convertir el archivo:', error);
+                        this.showAlert('Error al convertir el archivo:', 'error')
+                        console.log(error)
                     });
             })
 
-            this.cargos = item.cargos
-            for (var i = 0; i < item.cargos.length; i++) {
-                this.requisitos[i] = item.cargos[i].requisitos
-                this.examenes[i] = item.cargos[i].examenes
-                this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
-                this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+            if (item.cargos.length > 0) {
+                this.cargos = item.cargos
+                for (let i = 0; i < item.cargos.length; i++) {
+                    this.requisitos[i] = item.cargos[i].requisitos
+                    this.examenes[i] = item.cargos[i].examenes
+                    this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
+                    this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                }
+            } else {
+                this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
             }
 
+            if (item.cargos2.length > 0) {
+                this.cargos2 = item.cargos2
+                for (let i = 0; i < item.cargos2.length; i++) {
+                    this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
+                    this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
+                    this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                    this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                    this.cargos2[i].cargo_id = item.cargos2[i].id_cargo
+                    this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
+                    this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
+                    this.array_lista_examenes[i] = item.cargos2[i].examenes
+                    this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                }
+            } else {
+                this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+            }
             item.documentos_adjuntos.forEach(function (item) {
                 self.id_archivo.push(item.tipo_documento_id)
             })
@@ -3032,17 +3863,17 @@ export default {
                 self.consultas_personas_expuestas.push(item.des_tip)
             })
 
-            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : item.calidad_tributaria[0].gran_contribuyente == '0' ? 'No' : ''
             this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].gran_contribuyente
             this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].resolucion_gran_contribuyente
             this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha_gran_contribuyente
 
-            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : item.calidad_tributaria[0].auto_retenedor == '0' ? 'No' : ''
             this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].auto_retenedor
             this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].resolucion_auto_retenedor
             this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha_auto_retenedor
 
-            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : 'No'
+            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : item.calidad_tributaria[0].exento_impuesto_rent == '0' ? 'No' : ''
             this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].exento_impuesto_rent
             this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].resolucion_exento_impuesto_rent
             this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha_exento_impuesto_rent
@@ -3059,23 +3890,7 @@ export default {
             this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
 
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: icono == 'error' ? 3000 : 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
+       
     }
 };
 </script>
@@ -3109,7 +3924,8 @@ label {
     margin: 20px 0px 5px 0px;
 }
 
-#seccion {
+#seccion,
+.orientacion {
     border: solid #D5DBDB 0.5px;
     padding: 30px;
     border-radius: 10px;
@@ -3183,9 +3999,10 @@ ul li {
 }
 
 #validate {
-    color: red;
-    font-size: 0.7rem;
+    color: rgb(211, 5, 5);
+    font-size: 0.9rem;
     float: left;
+    margin-top: 3px;
 }
 
 .error {
@@ -3197,103 +4014,20 @@ ul li {
     width: 100%;
     height: 37px;
     border-radius: 5px;
-    border-color: rgb(191, 199, 199);
-    outline: none;
+    /* border-color: rgb(191, 199, 199); */
+    /* outline: none; */
     padding: 5px;
 }
 
-.loading {
-    background-color: rgba(252, 252, 252, 0.63);
-    position: fixed;
-    width: 100%;
-    height: 1000px;
-    /* top: 0%; */
-    left: 0%;
-    z-index: 200;
-}
-
-.loader {
-    font-size: 15px;
-    margin: 20% auto;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
+.lista-multiple {
+    border: 0.7px rgba(207, 205, 205, 0.815) solid;
+    border-radius: 7px;
     position: relative;
-    text-indent: -9999em;
-    -webkit-animation: load4 1.3s infinite linear;
-    animation: load4 1.3s infinite linear;
-    z-index: 500;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-@-webkit-keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-}
-
-@keyframes load4 {
-
-    0%,
-    100% {
-        box-shadow: 0em -3em 0em 0.2em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    12.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 0.2em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    25% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 0em #006b3f, 3em 0em 0 0.2em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    37.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 0em #006b3f, 2em 2em 0 0.2em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 -0.5em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    50% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 0em #006b3f, 0em 3em 0 0.2em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 -0.5em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    62.5% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 0em #006b3f, -2em 2em 0 0.2em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 -0.5em #006b3f;
-    }
-
-    75% {
-        box-shadow: 0em -3em 0em -0.5em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0.2em #006b3f, -2em -2em 0 0em #006b3f;
-    }
-
-    87.5% {
-        box-shadow: 0em -3em 0em 0em #006b3f, 2em -2em 0 -0.5em #006b3f, 3em 0em 0 -0.5em #006b3f, 2em 2em 0 -0.5em #006b3f, 0em 3em 0 -0.5em #006b3f, -2em 2em 0 0em #006b3f, -3em 0em 0 0em #006b3f, -2em -2em 0 0.2em #006b3f;
-    }
-}
+/* .orientacion{
+    text-align: justify;
+} */
 </style>

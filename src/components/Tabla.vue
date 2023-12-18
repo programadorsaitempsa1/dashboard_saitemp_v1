@@ -1,5 +1,6 @@
 <template>
     <div id="container2">
+        <Loading :loading="loading" />
         <div class="row" id="container" style="float: left; clear: both; color: #d06519">
             <div class="col-xs-12 col-md-12">
                 <h5 v-if="!sin_registros">
@@ -80,7 +81,8 @@
                 <div v-if="ruta == '/navbar/debida-diligencia/clientes' && this.campo != '' && this.operador && this.valor_comparar || this.valor_comparar2"
                     class="col-xs-3 col-md-3">
                     <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
-                        <a :href="URL_API + 'api/v1/'+endpointexport+'/' + base64consulta" rel="noopener noreferrer">Exportar excel</a>
+                        <a :href="URL_API + 'api/v1/' + endpointexport + '/' + base64consulta"
+                            rel="noopener noreferrer">Exportar excel</a>
                     </button>
                 </div>
                 <div class="col-xs-3 col-md-3">
@@ -104,7 +106,8 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && !empleados()  && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" class="col-xs-3 col-md-3">
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'"
+                class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
                     Seleccionar todo
@@ -126,17 +129,21 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'" scope="col">Seleccionar</th>
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'"
+                            scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
                             :key="index">
                             {{ item.nombre }}
                         </th>
-                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales'" colspan="3">Acciones</th>
+                        <!-- <th v-if="editar || eliminar" -->
+                        <th v-if="ruta != '/navbar/reporteitems' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/correo-novedades-nomina'"
+                            colspan="2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <td
+                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -149,15 +156,25 @@
                                 item[item2] }}
                         </td>
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
-                       <td v-if="empleados() && !isNaN(search) "><Modal :datos="analista" :texto="item['analista'] != undefined ? item['analista'].split('-')[0]:''" titulo="Analista" eventoCampo="getAnalista" @getAnalista="getAnalista(item['analista'].split('-')[1])" style="text-decoration: underline; cursor: pointer;" /></td>
+                        <td v-if="empleados() && !isNaN(search)">
+                            <Modal :datos="analista"
+                                :texto="item['analista'] != undefined ? item['analista'].split('-')[0] : ''"
+                                titulo="Analista" eventoCampo="getAnalista"
+                                @getAnalista="getAnalista(item['analista'].split('-')[1])"
+                                style="text-decoration: underline; cursor: pointer;" />
+                        </td>
 
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <!-- v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/permiso-usuario' && ruta != '/navbar/menuroles' && ruta != '/navbar/permisoroles' && ruta != '/navbar/menu-usuarios'"> -->
+                        <td
+                            v-if="editar">
                             <button type="button" class="btn btn-warning btn-sm" @click="update(item), goScroll('edit')"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </td>
-                        <td v-if="ruta != '/navbar/reporteitems'  && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes'">
+                        <!-- v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/menus'"> -->
+                        <td
+                            v-if="eliminar">
                             <button type="button" class="btn btn-danger btn-sm " @click="messageDelete(item.id)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 <i class="bi bi-trash"></i>
@@ -175,8 +192,20 @@
                                 <i class="bi bi-eye"></i> Ver registro
                             </button>
                         </td>
-                        <td v-if="ruta == '/navbar/debida-diligencia/clientes' &&  userlogued.id == 1 ||  userlogued.id == 5">
-                            <ConsultaContrato :item="item"/>
+                        <td v-if="ruta == '/navbar/cliente-supervision'">
+                            <button type="button" class="btn btn-success btn-sm " @click="verFormularioSuper(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> Ver registro
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/solicitudes-os'">
+                            <button type="button" class="btn btn-success btn-sm " @click="verOrdenServicio(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> Ver registro
+                            </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/debida-diligencia/clientes' && permisos[0].autorizado">
+                            <ConsultaContrato :item="item" />
                         </td>
                         <!-- <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
                             <button type="button" class="btn btn-success btn-sm ">
@@ -184,9 +213,10 @@
                             </button>
                         </td> -->
                         <td v-if="ruta == '/navbar/reportes'">
-                            <button type="button" class="btn btn-success btn-sm "
-                                v-if="item.nombre != 'S. Administrador'">
-                                <i class="bi bi-eye"></i> <a :href="'http://srv-saitemp03:81/ReportServer/Pages/ReportViewer.aspx?%2fSaitemp_V3/ReportesWeb/'+item.cod_rep.substring(0, 3)+'/'+item.cod_rep+'&rs:Command=Render'" target="_blank">Ver reporte</a>
+                            <button type="button" class="btn btn-success btn-sm " v-if="item.nombre != 'S. Administrador'">
+                                <i class="bi bi-eye"></i> <a
+                                    :href="'http://srv-saitemp03:81/ReportServer/Pages/ReportViewer.aspx?%2fSaitemp_V3/ReportesWeb/' + item.cod_rep.substring(0, 3) + '/' + item.cod_rep + '&rs:Command=Render'"
+                                    target="_blank">Ver reporte</a>
                             </button>
                         </td>
                     </tr>
@@ -199,11 +229,10 @@
                 <nav class="pagin" aria-label="Page navigation example">
                     <ul class="pagination">
                         <li class="page-item">
-                            <a :style="
-                                item.active == true
-                                    ? 'background-color:#d06519'
-                                    : 'background-color:#21618C'
-                            " class="page-link" v-for="(item, index) in links.links" :key="index"
+                            <a :style="item.active == true
+                                ? 'background-color:#d06519'
+                                : 'background-color:#21618C'
+                                " class="page-link" v-for="(item, index) in links.links" :key="index"
                                 @click="pagination(item.url), currentUrl = item.url, goScroll('up')">{{
                                     index == 0
                                     ? "Anterior"
@@ -234,11 +263,17 @@
 import axios from 'axios'
 import Modal from './Modal.vue'
 import ConsultaContrato from './ConsultaContrato.vue'
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
+import { Permisos } from '../Mixins/Permisos.js';
+import Loading from './Loading.vue'
 export default {
-    components:{
+    components: {
         Modal,
-        ConsultaContrato
+        ConsultaContrato,
+        Loading
     },
+    mixins: [Token, Alerts, Permisos],
     props: {
         tabla: [],
         datos: [],
@@ -248,18 +283,26 @@ export default {
         massiveUpdate: {},
         campos: {},
         listas: [],
-        userlogued:{
-            default:'',
-           
+        userlogued: {
+            default: '',
+
         },
-        search:{
-            default:'',
-            type:String
+        search: {
+            default: '',
+            type: String
         },
-        search2:{
-            default:'',
-            type:String
-        }
+        search2: {
+            default: '',
+            type: String
+        },
+        editar: {
+            default: false,
+            type: Boolean
+        },
+        eliminar: {
+            default: false,
+            type: Boolean
+        },
     },
     data() {
         return {
@@ -288,8 +331,9 @@ export default {
             ruta: this.$route.path,
             base64consulta: '',
             sinregistros: 'No hay resgistros guardados',
-            url:'',
-            analista:[],
+            url: '',
+            analista: [],
+            loading: false,
         };
     },
 
@@ -299,32 +343,36 @@ export default {
             if (this.datos.data.data.length > 0) {
                 this.llenarTabla(this.datos)
                 this.sin_registros = false
-            }else{
+            } else {
                 this.sin_registros = true
                 // if(this.ruta == '/navbar/empleados' || this.ruta == '/navbar/trump'){
-                 this.sinregistros = 'No se encontraron registros'
-            // }
+                this.sinregistros = 'No se encontraron registros'
+                // }
             }
         },
         massiveUpdate: function () {
             this.massiveUpdateMessage()
         },
     },
-    created(){
+    created() {
+
+        // if(this.permisos_modulos.includes('p1')){
+        // console.log(this.permisos_modulos)
+        // }
         this.empleados()
-        if(this.empleados() || this.ruta == '/navbar/trump'){
-                 this.spinner = false
-                 this.sinregistros = 'Realiza una búsqueda para ver los registros'
-            }
+        if (this.empleados() || this.ruta == '/navbar/trump') {
+            this.spinner = false
+            this.sinregistros = 'Realiza una búsqueda para ver los registros'
+        }
     },
     methods: {
-         empleados() {
-          if(this.ruta.split("/")[2] == 'empleados'){
+        empleados() {
+            if (this.ruta.split("/")[2] == 'empleados') {
                 return true;
             }
         },
 
-        getAnalista(id){
+        getAnalista(id) {
             let self = this;
             let config = this.configHeader();
             axios
@@ -333,7 +381,7 @@ export default {
                     self.analista = result.data
                 });
         },
-        validaColumnasTabla(){
+        validaColumnasTabla() {
 
         },
         filtroComponente() {
@@ -344,9 +392,12 @@ export default {
             else if (this.ruta.includes('reporteitems')) {
                 return true
             }
-            // else if (this.ruta.includes('sigcontratos')) {
-            //     return true
-            // }
+            else if (this.ruta.includes('correo-novedades-nomina')) {
+                return true
+            }
+            else if (this.ruta.includes('cliente-supervision')) {
+                return true
+            }
             // else if (this.ruta.includes('zonas')) {
             //     return true
             // }
@@ -407,7 +458,7 @@ export default {
                 claves.forEach((element) => {
                     self.campos2.push(element)
                 });
-                if(this.empleados() && !isNaN(this.search)){
+                if (this.empleados() && !isNaN(this.search)) {
                     self.campos2.pop()
                 }
             } else {
@@ -466,9 +517,13 @@ export default {
         },
         messageDelete(id) {
             let self = this;
+            var title = "Estas seguro de elimiar el resgistro?"
+            if (self.$route.fullPath.includes('menus')) {
+                title = "Estas seguro de elimiar el resgistro? si elimina esta categoria de menú eliminará también las subcategorias de menú asociadas."
+            }
             this.$swal
                 .fire({
-                    title: "Estas seguro de elimiar el resgistro?",
+                    title: title,
                     text: "Esta operación no se puede revertir!",
                     icon: "warning",
                     showCancelButton: true,
@@ -489,7 +544,11 @@ export default {
                 .delete(self.URL_API + "api/v1/" + self.endpoint + "/" + id, config)
                 .then(function (result) {
                     self.showAlert(result.data.message, result.data.status);
-                    self.getRegistros();
+                    if (self.$route.fullPath.includes('menus')) {
+                        self.$emit('getItems');
+                    } else {
+                        self.getRegistros();
+                    }
                 });
         },
         formatCurrency(valor) {
@@ -581,17 +640,17 @@ export default {
             let self = this;
             let config = this.configHeader();
             let url = ''
-            if(this.search != '' && this.search2 == ''){
-                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +'/'+self.cantidad
-            } else if(this.search2 != ''){
-                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search +"/" + self.search2 +"/"+ self.cantidad
-            }else{
+            if (this.search != '' && this.search2 == '') {
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search + '/' + self.cantidad
+            } else if (this.search2 != '') {
+                url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.search + "/" + self.search2 + "/" + self.cantidad
+            } else {
                 url = self.URL_API + "api/v1/" + self.endpoint + "/" + self.cantidad
             }
             axios
-                .get(url,config)
+                .get(url, config)
                 .then(function (result) {
-                    if(self.$route.fullPath.includes('menuroles')){
+                    if (self.$route.fullPath.includes('menuroles')) {
                         self.$emit('getMenuNavbar');
                     }
                     self.llenarTabla(result)
@@ -617,6 +676,7 @@ export default {
             });
         },
         pagination(pag) {
+            this.loading = true
             if (pag != null) {
                 let self = this;
                 let config = this.configHeader();
@@ -625,6 +685,7 @@ export default {
                     // self.llenarTabla(result)
                     self.items_tabla2 = Object.values(result.data.data); // se está llenando la tabla con los datos cuando se pagina
                     // desde acá porque en la función llenartabla() está dando error al llenar la tabla
+                    self.loading = false
                 });
             }
         },
@@ -660,41 +721,31 @@ export default {
                 this.$emit('check', this.check)
             }
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: "top",
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
-        VerRegistro(item){
-            if(!isNaN(this.search)){
-                this.$router.push({ name: 'empleado', params: { id: this.search.trim() }})
-            }else{
+        VerRegistro(item) {
+            // this.$router.push({ name: 'empleado' })
+            if (!isNaN(this.search)) {
+                this.$router.push({ name: 'empleado', params: { id: this.search.trim() } })
+            } else {
                 this.$emit('getUser', item.ter_nit.trim())
             }
         },
         verContrato(item) {
             this.$router.push({ name: 'debida-diligencia/formulario-clientes', params: { id: item.id } })
         },
-        exportFormularioDD(item){
+        verFormularioSuper(item) {
+            this.$router.push({ name: 'formulario-supervision', params: { id: item.id } })
+        },
+        verOrdenServicio(item) {
+            this.$router.push({ name: 'orden-servicios', params: { id: item.id } })
+        },
+        exportFormularioDD(item) {
             console.log(item)
             let self = this;
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/formularioddexport", config)
                 .then(function (result) {
-                   console.log(result.data)
+                    console.log(result.data)
                 });
         }
     },
@@ -795,7 +846,7 @@ th {
     text-decoration: none;
 }
 
-a{
+a {
     color: white;
     text-decoration: none;
 }

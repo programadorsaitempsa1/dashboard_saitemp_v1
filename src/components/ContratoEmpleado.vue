@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <div class="container">
             <h2>Administrar contratos - empleados</h2>
@@ -324,4 +324,4 @@ h2 {
 select {
     margin-bottom: 20px;
 }
-</style>
+</style> -->

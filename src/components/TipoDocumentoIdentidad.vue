@@ -38,10 +38,13 @@
 <script>
 import axios from 'axios'
 import Tabla from './Tabla.vue';
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 export default {
     components: {
         Tabla
     },
+    mixins: [Token, Alerts],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -98,17 +101,6 @@ export default {
             this.accion = 'Editar tipo de documento de identidad'
             this.checks = []
         },
-
-
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
         save() {
             if (this.checks.length > 0) { // validación para realizar actualización masiva
                 this.massiveUpdate = !this.massiveUpdate
@@ -146,14 +138,6 @@ export default {
         },
         back() {
             this.$router.go(-1);
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     },
 };
