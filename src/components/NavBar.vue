@@ -79,7 +79,7 @@
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
             </router-link>
-            <a v-else :href="item.url" target="_blank" rel="noopener noreferrer" style="color:white; text-decoration:none"
+            <a v-else :href="item.url" target="_blank" rel="noopener noreferrer" style="color:white; text-decoration:none" class="nav-link active"
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i> <span>{{ item.nombre }}</span>
             </a>

@@ -34,8 +34,8 @@ export default {
         this.socket('channel', 'EventoPrueba')
     },
     created() {
-        if (localStorage.getItem("pila_notificaciones") != '') {
-            this.pila_notificaciones = JSON.parse(localStorage.getItem("pila_notificaciones"))
+        if (localStorage.getItem("pila") != '') {
+            this.pila_notificaciones = JSON.parse(localStorage.getItem("pila"))
         }
     },
     methods: {
@@ -47,7 +47,7 @@ export default {
             }
             setTimeout(() => {
                 this.pila_notificaciones.splice(index, 1)
-                localStorage.setItem("pila_notificaciones", JSON.stringify(this.pila_notificaciones));
+                localStorage.setItem("pila", JSON.stringify(this.pila_notificaciones));
             }, 1000);
         },
     }

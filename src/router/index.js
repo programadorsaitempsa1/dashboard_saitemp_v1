@@ -54,6 +54,7 @@ import GraficosGerencia from "../components/GraficosGerencia.vue";
 import UsuariosPermisos from "../components/UsuariosPermisos.vue";
 import UsuariosMenu from "../components/UsuariosMenu.vue";
 import AdministrarMenu from "../components/AdministrarMenu.vue";
+import TimeLine from "../components/TimeLine.vue";
 
 
 
@@ -329,6 +330,11 @@ const routes = [
         path: "menu-usuarios",
         name: "menu-usuarios",
         component: UsuariosMenu,
+      },
+      {
+        path: "TimeLine/:id?",
+        name: "TimeLine",
+        component: TimeLine,
       },
       // {
       //   path: "navbar/*",

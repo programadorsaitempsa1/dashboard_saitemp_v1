@@ -19,7 +19,7 @@
         <form class="was-validated" @submit.prevent="save()">
             <h6 class="tituloseccion">Información general</h6>
             <div id="seccion">
-                <p v-if="$route.params.id != undefined">Radicado: {{ $route.params.id }}</p>
+                <p v-if="$route.params.id != undefined">Radicado: {{ numero_radicado }}</p>
                 <div class="row">
                     <div class="col-4">
                         <SearchList nombreCampo="Tipo de cliente: *" @getTipoCliente="getTipoCliente"
@@ -108,8 +108,8 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">Nombre completo / Razón social: *</label>
-                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social"
+                        <label class="form-label">{{persona_natural ? 'Nombre completo':'Razón social'}}: *</label>
+                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social" :placeholder="persona_natural ? 'Apellidos Nombres':'Nombre completo empresa'"
                             @input="razon_social = formatInputUpperCase($event.target.value)"></textarea>
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
@@ -125,8 +125,8 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Cuantos empleados conforman la
-                            empresa: *
+                        <label class="form-label">¿Cuántos empleados conforman la
+                            empresa?: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="6"
                             aria-describedby="emailHelp" v-model="empleados_empresa" :disabled="proveedor"
@@ -307,16 +307,150 @@
                             @getJornadasLaborales="getJornadasLaborales" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Rotación de personal *" nombreItem="nombre"
+                        <SearchList nombreCampo="Rotación de personal: *" nombreItem="nombre"
                             :consulta="consulta_rotacion_personal" :registros="rotaciones_personal"
                             eventoCampo="getRotacionesPersonal" @getRotacionesPersonal="getRotacionesPersonal"
                             ubicacion="ciudad nacimiento" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
+                        <SearchList nombreCampo="La empresa es extranjera: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="5"
+                            :consulta="consulta_empresa_extranjera" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                    </div>
+                </div>
+                <div class="row" v-if="tipo_cliente == 1">
+                    <div class="col-4">
+                        <SearchList nombreCampo="¿Es empresa del exterior radicada en colombia?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="6" :consulta="consulta_empresa_exterior"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" />
+                    </div>
+                    <div class="col-4">
+                        <SearchList nombreCampo="¿Tiene vinculos con alguna empresa activa en saitemp?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="7" :consulta="consulta_vinculos_empresa"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" />
+                    </div>
+                    <div class="col-4">
+                        <div class="col mb-3">
+                            <label class="form-label">¿Cuántos empleados directos tiene la empresa usuaria?: *
+                            </label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                                maxlength="50" aria-describedby="emailHelp" v-model="numero_empleados_directos" @input="numero_empleados_directos = validarNumero(numero_empleados_directos)" required />
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" v-if="tipo_cliente == 1">
+                    <div class="col-4">
+                        <SearchList nombreCampo="¿Actualmente tienen personal vinculado con empresa temporal?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="8" :consulta="consulta_personal_vinculado_temporal"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" />
+                    </div>
+                    <div class="col-4">
+                        <SearchList nombreCampo="¿Se realizó la visita presencial a las instalaciones del cliente?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="9" :consulta="consulta_visita_presencial"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" />
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion" v-if="tipo_cliente == 1">Cargos empresa</h6>
+            <h6 class="tituloseccion">Facturación</h6>
+            <div id="seccion" v-if="tipo_cliente == 1">
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Contacto: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_contacto"  @input="facturacion_contacto = formatInputUpperCase($event.target.value)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Cargo: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_cargo" @input="facturacion_cargo = formatInputUpperCase($event.target.value)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Teléfono: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_telefono" @input="facturacion_telefono = validarNumero(facturacion_telefono)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Celular: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_celular" @input="facturacion_celular = validarNumero(facturacion_celular)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Correo electrónico: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_correo" @input="facturacion_correo = formatInputUpperCase($event.target.value)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Factura única o por CECO: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_factura" @input="facturacion_factura = formatInputUpperCase($event.target.value)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Fecha de corte para recibir las facturas: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_fecha_corte" required @input="facturacion_fecha_corte = formatInputUpperCase($event.target.value)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">Persona encargada de recibir la factura: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
+                            aria-describedby="emailHelp" v-model="facturacion_encargado_factura" @input="facturacion_encargado_factura = formatInputUpperCase($event.target.value)" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <SearchList nombreCampo="¿Requiere anexo de la factura?: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="10"
+                            :consulta="consulta_anexo_factura" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                    </div>
+                </div>
+            </div>
+            <h6 class="tituloseccion" v-if="tipo_cliente == 1">Seguridad y salud en el trabajo</h6>
             <div id="seccion" v-if="tipo_cliente == 1 && cargos[0].requisitos.length > 0">
                 <div class="row">
                     <div class="row">
@@ -373,12 +507,100 @@
                 <div class="row cargos">
                     <div class="row">
                         <h5 style="text-align: left;">Número de cargos registrados: {{ cargos2.length }}</h5>
-                        <div class="col-3">
-                            <SearchList nombreCampo="Riesgo de la empresa: (ARL)" eventoCampo="getRiesgosLaborales"
+                        <div class="col-4">
+                            <SearchList nombreCampo="Riesgo de la empresa: (ARL):" eventoCampo="getRiesgosLaborales"
                                 nombreItem="nombre" :disabled="true" :registros="riesgos_laborales"
                                 :consulta="consulta_riesgo_cliente" @getRiesgosLaborales="getRiesgosLaborales"
                                 placeholder="Seleccionar" />
                         </div>
+                        <div class="col-4">
+                            <SearchList nombreCampo="¿Realizan trabajo de alto riesgo?: *"
+                                eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                                :ordenCampo="11" :consulta="consulta_trabajo_alto_riesgo"
+                                @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                        <div class="col-4">
+                            <SearchList nombreCampo="Accidentalidad: *" eventoCampo="getNivelAccidentalidad"
+                                nombreItem="nombre" :registros="nivelesAccidentalidad" :consulta="consulta_accidentalidad"
+                                @getNivelAccidentalidad="getNivelAccidentalidad"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <SearchList nombreCampo="Cuenta con persona encargada de SST: *"
+                                eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                                :ordenCampo="12" :consulta="consulta_encargado_sst"
+                                @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                        <div class="col-4 mb-3" v-if="encargado_sst_id == 1">
+                            <label class="form-label">Nombre encargado SST: *
+                            </label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                                maxlength="50" aria-describedby="emailHelp" v-model="nombre_encargado_sst" @input="nombre_encargado_sst = formatInputUpperCase($event.target.value)" required />
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3" v-if="encargado_sst_id == 1">
+                            <label class="form-label">Cargo analista SST: *
+                            </label>
+                            <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                                maxlength="50" aria-describedby="emailHelp" v-model="cargo_encargado_sst" @input="cargo_encargado_sst = formatInputUpperCase($event.target.value)" required />
+                            <div class="invalid-feedback">
+                                {{ mensaje_error }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <SearchList nombreCampo="¿Realizan inducción y entrenamiento?: *"
+                                eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                                :ordenCampo="13" :consulta="consulta_induccion_entrenamiento"
+                                @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                        <div class="col-4">
+                            <SearchList nombreCampo="¿Entregan dotación?: *" eventoCampo="getAfirmacionNegacion"
+                                nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="14"
+                                :consulta="consulta_entrega_dotacion" @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                        <div class="col-4">
+                            <SearchList nombreCampo="¿Fue evaluado el SGST por la ARL?: *"
+                                eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                                :ordenCampo="15" :consulta="consulta_evaluado_arl"
+                                @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <SearchList nombreCampo="¿Entrega EPP?: *" eventoCampo="getAfirmacionNegacion"
+                                nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="16"
+                                :consulta="consulta_entrega_epp" @getAfirmacionNegacion="getAfirmacionNegacion"
+                                @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" />
+                        </div>
+                    </div>
+                    <div class="row" v-if="entrega_epp_id == 1">
+                        <div v-for="(item, index) in elementospp" :key="index">
+                            <div class="row" v-if="item.descripcion == '0'">
+                                <h5 style="background-color:rgba(192, 190, 190, 0.767);
+                                text-align:left;padding:15px">{{ item.nombre }}</h5>
+                            </div>
+                            <div class="row" v-else>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
+                                        v-model="elementos_epp[index]">
+                                    <label class="form-check-label" for="inlineCheckbox1"
+                                        style="margin:0px;padding:0px;color:black">{{
+                                            item.nombre }}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin-top:30px">
                     </div>
                     <div class="row" id="contenedor-select" v-for="item, index in cargos2" :key="item.id">
                         <div class="row">
@@ -402,7 +624,7 @@
 
                             </div>
                             <div class="col">
-                                <label for="exampleInputEmail1" class="form-label">Cargo:</label>
+                                <label for="exampleInputEmail1" class="form-label">Cargo: *</label>
                             </div>
                             <div class="col">
                                 <label for="exampleInputEmail1" class="form-label">Riesgo del cargo* (ARL):</label>
@@ -475,9 +697,6 @@
                             <textarea class="form-control" id="exampleFormControlTextarea1" :disabled="true"
                                 v-model="item.nombre"></textarea>
                         </div>
-                        <!-- <span id="validate"
-                            v-if="file[index] == undefined && index != 0 && index != 3 && tipo_cliente == 1 && submitted"
-                            class="error">¡Por favor adjunte el archivo!</span> -->
                     </div>
                     <div class="col">
                         <div class="input-group">
@@ -495,7 +714,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">Información general</h6>
+            <h6 class="tituloseccion">Información financiera</h6>
             <div id="seccion">
                 <div class="row">
                     <h5>Información Social</h5>
@@ -794,7 +1013,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">1.6.1 Datos de tesorería</h6>
+            <h6 class="tituloseccion">1.6 Datos de tesorería</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col mb-3">
@@ -818,7 +1037,7 @@
                     </div>
                 </div>
             </div>
-            <h6 class="tituloseccion">1.7. Datos Financieros (Ultimo periodo contable)</h6>
+            <h6 class="tituloseccion">1.7. Último periodo contable</h6>
             <div id="seccion">
                 <div class="row">
                     <div class="col mb-3">
@@ -919,7 +1138,7 @@
                             mensaje_error }}</span>
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Que operaciones?: *"
+                        <SearchList nombreCampo="¿Que operaciones?: *"
                             @getTiposOperacionesInternacionales="getTiposOperacionesInternacionales"
                             eventoCampo="getTiposOperacionesInternacionales" nombreItem="nombre"
                             :consulta="consulta_operacion_internacional" :registros="tipos_operaciones_internacionales"
@@ -1287,18 +1506,32 @@
                     @setFormularioGuardado="setFormularioGuardado" placeholder="Seleccionar" />
             </div>
             <div class="row">
-                <div class="col">
-                    <button v-if="permisos[1].autorizado" class="btn btn-success"
-                        type="button" style="margin:30px" @click="hideBottons()">Generar pdf</button>
-                </div>
-                <div class="col">
-                    <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success" 
-                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Guardar</button>
-                </div>
-                <div class="col">
-                    <button v-if="ruta_id != undefined && permisos[3].autorizado" class="btn btn-success" 
-                        :disabled="deshabilitar_boton" type="submit" style="margin:30px">Actualizar</button>
-                </div>
+                <!-- <div class="col" style="margin-top:30px">
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button v-if="permisos[1].autorizado" class="btn btn-success" type="button"
+                            @click="hideBottons()">Generar pdf</button>
+                        <button type="button" v-if="permisos[0].autorizado && ruta_id != undefined"
+                            class="btn btn-sm btn-success">
+                            <ConsultaContrato :item_id="ruta_id" />
+                        </button>
+                        <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success"
+                            :disabled="deshabilitar_boton" type="submit">Guardar</button>
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
+                            :disabled="deshabilitar_boton" type="button">
+                            <RegistroCambio @save="save" /> -->
+                <!-- Este boton actualiza los registros de debida diligencia -->
+                <!-- </button>
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
+                            :disabled="deshabilitar_boton" type="button">
+                            <FlotanteContrataciondd @save="save" />
+                        </button>
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" id="registro_cambio"
+                            :disabled="deshabilitar_boton" type="button">
+                            <FlotanteSelecciondd @save="save" />
+                        </button>
+
+                    </div>
+                </div> -->
                 <div v-if="hide_bottons" class="col" style="margin:30px">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                         <button type="button" class="btn btn-success" @click="guardadoParcial">Guardado parcial</button>
@@ -1314,6 +1547,38 @@
                                             item.nombre }}</a></li>
                             </ul>
                         </div>
+                    </div>
+                </div>
+                <div class="col" style="margin:30px">
+                    <div class="btn-group">
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio2"
+                            :disabled="deshabilitar_boton" type="button">
+                            <FlotanteContrataciondd :cliente_id="this.$route.params.id+''" :razon_social="razon_social" @save="save" />
+                        </button>
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
+                            :disabled="deshabilitar_boton" type="button">
+                            <FlotanteSelecciondd :cliente_id="this.$route.params.id+''" :razon_social="razon_social" @save="save" />
+                        </button>
+                        <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success"
+                            :disabled="deshabilitar_boton" type="submit">Guardar</button>
+                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
+                            :disabled="deshabilitar_boton" type="button">
+                            <RegistroCambio @save="save" />
+                            <!-- Este boton actualiza los registros de debida diligencia -->
+                        </button>
+                        <button type="button" class="btn btn-md btn-success dropdown-toggle dropdown-toggle-split"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu lista-menu">
+                            <li v-if="permisos[1].autorizado" @click="hideBottons()">Generar pdf</li>
+                            <li v-if="permisos[0].autorizado && ruta_id != undefined">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li v-if="permisos[0].autorizado && ruta_id != undefined">
+                                <ConsultaContrato class="ct" :item_id="ruta_id" />
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1335,6 +1600,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import EditorTextoHtml from './EditorTextoHtml.vue';
 import { Permisos } from '../Mixins/Permisos.js';
+import ConsultaContrato from './ConsultaContrato.vue'
+import RegistroCambio from './RegistroCambio.vue'
+import FlotanteContrataciondd from './FlotanteContrataciondd.vue'
+import FlotanteSelecciondd from './FlotanteSelecciondd.vue'
 
 export default {
 
@@ -1343,9 +1612,13 @@ export default {
         SearchTable,
         ListaMultiple,
         EditorTextoHtml,
-        Loading
+        ConsultaContrato,
+        Loading,
+        RegistroCambio,
+        FlotanteContrataciondd,
+        FlotanteSelecciondd
     },
-    mixins: [Scroll,Alerts,Token,Permisos],
+    mixins: [Scroll, Alerts, Token, Permisos],
     props: {
         userlogued: {
             default: '',
@@ -1435,7 +1708,46 @@ export default {
             riesgos_laborales: [],
             consulta_riesgo_laboral: [],
             riesgo_laboral: '',
+            consulta_empresa_extranjera: '',
+            empresa_extranjera_id: '',
+            consulta_empresa_exterior: '',
+            numero_empleados_directos: '',
+            consulta_personal_vinculado_temporal: '',
+            personal_vinculado_temporal_id: '',
+            consulta_visita_presencial: '',
+            visita_presencial_id: '',
+            consulta_anexo_factura: '',
+            anexo_factura_id: '',
+            facturacion_contacto: '',
+            facturacion_cargo: '',
+            facturacion_telefono: '',
+            facturacion_celular: '',
+            facturacion_correo: '',
+            facturacion_factura: '',
+            facturacion_fecha_corte: '',
+            facturacion_encargado_factura: '',
+            consulta_trabajo_alto_riesgo: '',
+            trabajo_alto_riesgo_id: '',
+            consulta_accidentalidad: '',
+            accidentalidad_id: '',
+            nivelesAccidentalidad: [],
+            consulta_induccion_entrenamiento: '',
+            induccion_entrenamiento_id: '',
+            consulta_entrega_dotacion: '',
+            entrega_dotacion_id: '',
+            consulta_entrega_epp: '',
+            entrega_epp_id: '',
+            elementos_epp: [],
+            consulta_evaluado_arl: '',
+            evaluado_arl_id: '',
+            empresa_exterior_id: '',
+            consulta_vinculos_empresa: '',
+            vinculos_empresa_id: '',
+            encargado_sst_id: '',
+            consulta_encargado_sst: '',
+            nombre_encargado_sst: '',
             consulta_riesgo_cliente: '',
+            cargo_encargado_sst: '',
             cargos: [{ cargo: '', requisitos: [], examenes: [], riesgo: '' }],
             cargos2: [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }],
             fileInputsCount: [],
@@ -1553,7 +1865,9 @@ export default {
             campo_dinamico: [],
             cargos_id_: [],
             deshabilitar_boton: false,
-            ruta_id:this.$route.params.id,
+            ruta_id: this.$route.params.id,
+            elementospp: [],
+            numero_radicado: '',
         }
     },
     computed: {
@@ -1601,11 +1915,12 @@ export default {
         this.estabilidad_laboral == false
         this.getExamenes()
         this.getRequsitos()
+        this.getElementosPP()
         this.fileInputsCountCopia = [...this.fileInputsCount]
         this.scrollTop()
         if (this.$route.params.id != undefined && this.$route.path != '/formularioregistro') {
             this.loading = true
-           this.scrollTop(true)
+            this.scrollTop(true)
             this.consultaFormulario(this.$route.params.id)
         }
         this.getRiesgosLaborales()
@@ -1835,6 +2150,30 @@ export default {
             self.registroCliente.consulta_departamento_rl = this.consulta_departamento_rl
             self.registroCliente.consulta_municipio_rl = this.consulta_municipio_rl
 
+            self.registroCliente.consulta_empresa_extranjera = this.consulta_empresa_extranjera
+            self.registroCliente.consulta_empresa_exterior = this.consulta_empresa_exterior
+            self.registroCliente.consulta_vinculos_empresa = this.consulta_vinculos_empresa
+            self.registroCliente.numero_empleados_directos = this.numero_empleados_directos
+            self.registroCliente.consulta_personal_vinculado_temporal = this.consulta_personal_vinculado_temporal
+            self.registroCliente.consulta_visita_presencial = this.consulta_visita_presencial
+            self.registroCliente.facturacion_contacto = this.facturacion_contacto
+            self.registroCliente.facturacion_cargo = this.facturacion_cargo
+            self.registroCliente.facturacion_telefono = this.facturacion_telefono
+            self.registroCliente.facturacion_celular = this.facturacion_celular
+            self.registroCliente.facturacion_correo = this.facturacion_correo
+            self.registroCliente.facturacion_factura = this.facturacion_factura
+            self.registroCliente.facturacion_fecha_corte = this.facturacion_fecha_corte
+            self.registroCliente.facturacion_encargado_factura = this.facturacion_encargado_factura
+            self.registroCliente.consulta_anexo_factura = this.consulta_anexo_factura
+            self.registroCliente.consulta_trabajo_alto_riesgo = this.consulta_trabajo_alto_riesgo
+            self.registroCliente.consulta_accidentalidad = this.consulta_accidentalidad
+            self.registroCliente.consulta_encargado_sst = this.consulta_encargado_sst
+            self.registroCliente.nombre_encargado_sst = this.nombre_encargado_sst
+            self.registroCliente.cargo_encargado_sst = this.cargo_encargado_sst
+            self.registroCliente.consulta_induccion_entrenamiento = this.consulta_induccion_entrenamiento
+            self.registroCliente.consulta_entrega_dotacion = this.consulta_entrega_dotacion
+            self.registroCliente.consulta_evaluado_arl = this.consulta_evaluado_arl
+            self.registroCliente.consulta_entrega_epp = this.consulta_entrega_epp
 
             this.cargos2.forEach(function (item, index) {
                 item.tipo_cargo = self.tipo_cargo[index] == 1 ? 'Administrativo' : 'Operativo'
@@ -1859,6 +2198,30 @@ export default {
 
                 });
         },
+        getElementosPP() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/elementospp", config)
+                .then(function (result) {
+                    self.elementospp = result.data
+
+                });
+        },
+        getNivelAccidentalidad(item = null) {
+            if (item != null) {
+                this.accidentalidad_id = item.id
+                this.consulta_accidentalidad = item.nombre
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/nivelaccidentalidad", config)
+                .then(function (result) {
+                    self.nivelesAccidentalidad = result.data
+
+                });
+        },
         getSubCategoriaCargo(id, index = null) {
             if (index != null) {
                 if (this.cargos2[index].cargo_id != '') {
@@ -1866,7 +2229,6 @@ export default {
                     this.consulta_lista_cargos[index] = ' '
                     this.cargos2[index].cargo_id = ''
                 }
-
 
                 this.array_lista_cargos[index] = []
                 this.arry_subcategoria_cargos[index] = []
@@ -2109,6 +2471,7 @@ export default {
                 axios
                     .post(self.URL_API + "api/v1/formulariocliente/doc/" + id, document, config)
                     .then(function (result) {
+                        self.loading = false
                         self.showAlert(result.data.message, result.data.status)
                     });
             } else {
@@ -2116,6 +2479,7 @@ export default {
                     .delete(self.URL_API + "api/v1/formulariocliente/" + id, config)
                     .then(function (result) {
                         console.log(result)
+                        self.loading = false
                         self.cliente_existe = false
                     });
             }
@@ -2155,7 +2519,7 @@ export default {
                 this.consulta_lista_cargos.splice(index, 1)
                 this.consulta_subcategoria_cargos.splice(index, 1)
                 this.array_lista_examenes.splice(index, 1)
-             
+
             }
             array.splice(index, 1)
         },
@@ -2210,6 +2574,55 @@ export default {
                         this.alto_manejo_efectivo = item.id;
                         this.consulta_origen_manejo_efectivo = item.nombre
                         break
+                    case 5:
+                        this.empresa_extranjera_id = item.id;
+                        this.consulta_empresa_extranjera = item.nombre
+                        break
+                    case 6:
+                        this.empresa_exterior_id = item.id;
+                        this.consulta_empresa_exterior = item.nombre
+                        break
+                    case 7:
+                        this.vinculos_empresa_id = item.id;
+                        this.consulta_vinculos_empresa = item.nombre
+                        break
+                    case 8:
+                        this.personal_vinculado_temporal_id = item.id;
+                        this.consulta_personal_vinculado_temporal = item.nombre
+                        break
+                    case 9:
+                        this.visita_presencial_id = item.id;
+                        this.consulta_visita_presencial = item.nombre
+                        break
+                    case 10:
+                        this.anexo_factura_id = item.id;
+                        this.consulta_anexo_factura = item.nombre
+                        break
+                    case 11:
+                        this.trabajo_alto_riesgo_id = item.id;
+                        this.consulta_trabajo_alto_riesgo = item.nombre
+                        break
+                    case 12:
+                        this.encargado_sst_id = item.id;
+                        this.consulta_encargado_sst = item.nombre
+                        break
+                    case 13:
+                        this.induccion_entrenamiento_id = item.id;
+                        this.consulta_induccion_entrenamiento = item.nombre
+                        break
+                    case 14:
+                        this.entrega_dotacion_id = item.id;
+                        this.consulta_entrega_dotacion = item.nombre
+                        break
+                    case 15:
+                        this.evaluado_arl_id = item.id;
+                        this.consulta_evaluado_arl = item.nombre
+                        break
+                    case 16:
+                        this.entrega_epp_id = item.id;
+                        this.consulta_entrega_epp = item.nombre
+                        break
+
                 }
             }
         },
@@ -2783,16 +3196,17 @@ export default {
                 // this.consulta_riesgo_laboral[i] = ''
                 // this.array_lista_examenes[i] = []
                 // this.array_lista_recomendaciones[i] = []
-                this.tipo_cargo.splice(i,1)
+                this.tipo_cargo.splice(i, 1)
                 this.categoria_cargo_id = ''
-                this.consulta_subcategoria_cargos.splice(i,1)
-                this.consulta_lista_cargos.splice(i,1)
+                this.consulta_subcategoria_cargos.splice(i, 1)
+                this.consulta_lista_cargos.splice(i, 1)
                 this.cargos2[i].cargo_id = ''
-                this.consulta_textohtml.splice(i,1)
-                this.consulta_riesgo_laboral.splice(i,1)
-                this.array_lista_examenes.splice(i,1)
-                this.array_lista_recomendaciones.splice(i,1)
+                this.consulta_textohtml.splice(i, 1)
+                this.consulta_riesgo_laboral.splice(i, 1)
+                this.array_lista_examenes.splice(i, 1)
+                this.array_lista_recomendaciones.splice(i, 1)
             }
+            this.ruta_id = undefined
             this.tipo_cliente = ''
             this.cliente = false
             this.consulta_tipo_cliente = ''
@@ -2966,7 +3380,6 @@ export default {
         },
         valida_campos() {
             var self = this
-
             if (this.tipo_cliente == '') {
                 this.showAlert('Error, debe diligenciar el tipo de cliente.', 'error')
                 return true
@@ -3335,8 +3748,10 @@ export default {
             return false
 
         },
-        save() {
+        save(registro_cambios = null) {
             let self = this;
+            this.loading = true
+            this.scrollTop()
             this.submitted = true;
             this.deshabilitar_boton = true;
             setTimeout(() => {
@@ -3344,13 +3759,13 @@ export default {
             }, 3000);
 
             if (this.valida_campos()) {
+                this.loading = false
                 return
             }
 
             try {
                 this.crearCliente()
                 let config = this.configHeader();
-
                 var id = this.$route.params.id
                 if (id == undefined) {
                     axios
@@ -3360,10 +3775,12 @@ export default {
                                 self.guardarArchivos(result.data.client)
                                 self.cliente_existe = true
                             } else {
+                                this.loading = false
                                 self.showAlert(result.data.message, result.data.status)
                             }
                         });
                 } else {
+                    this.registroCliente.registro_cambios = registro_cambios
                     axios
                         .post(self.URL_API + "api/v1/formulariocliente/" + id, this.registroCliente, config)
                         .then(function (result) {
@@ -3408,6 +3825,30 @@ export default {
                 empleados_empresa: this.empleados_empresa,
                 jornada_laboral: this.jornada_laboral,
                 rotacion_personal: this.rotacion_personal,
+                empresa_extranjera: this.consulta_empresa_extranjera,
+                empresa_exterior: this.consulta_empresa_exterior,
+                vinculos_empresa: this.consulta_vinculos_empresa,
+                numero_empleados_directos: this.numero_empleados_directos,
+                visita_presencial: this.consulta_visita_presencial,
+                facturacion_contacto: this.facturacion_contacto,
+                facturacion_cargo: this.facturacion_cargo,
+                facturacion_telefono: this.facturacion_telefono,
+                facturacion_celular: this.facturacion_celular,
+                facturacion_correo: this.facturacion_correo,
+                facturacion_factura: this.facturacion_factura,
+                facturacion_fecha_corte: this.facturacion_fecha_corte,
+                facturacion_encargado_factura: this.facturacion_encargado_factura,
+                anexo_factura: this.consulta_anexo_factura,
+                trabajo_alto_riesgo: this.consulta_trabajo_alto_riesgo,
+                accidentalidad: this.consulta_accidentalidad,
+                encargado_sst: this.consulta_encargado_sst,
+                nombre_encargado_sst: this.nombre_encargado_sst,
+                cargo_encargado_sst: this.cargo_encargado_sst,
+                induccion_entrenamiento: this.consulta_induccion_entrenamiento,
+                entrega_dotacion: this.consulta_entrega_dotacion,
+                evaluado_arl: this.consulta_evaluado_arl,
+                entrega_epp: this.consulta_entrega_epp,
+                personal_vinculado_temporal: this.consulta_personal_vinculado_temporal,
                 riesgo_cliente: this.riesgo_laboral,
                 junta_directiva: this.junta_directiva,
                 responsable_inpuesto_ventas: this.responsable_impuesto_ventas,
@@ -3440,7 +3881,8 @@ export default {
                 patrimonio: this.patrimonio,
                 tipo_cliente_id: this.tipo_cliente,
                 tipo_proveedor_id: this.tipo_proveedor,
-                municipio_prestacion_servicio: this.municipio_prestacion_servicio
+                municipio_prestacion_servicio: this.municipio_prestacion_servicio,
+
             }
             this.registroCliente.cargos = this.cargos
             this.registroCliente.cargos2 = this.cargos2
@@ -3451,6 +3893,7 @@ export default {
             this.registroCliente.referencias_bancarias = this.referencias_bancarias
             this.registroCliente.referencias_comerciales = this.referencias_comerciales
             this.registroCliente.personas_expuestas = this.personas_expuestas
+            this.registroCliente.elementos_epp = this.elementos_epp
         },
         consultaFormulario(id) {
             let self = this;
@@ -3480,7 +3923,7 @@ export default {
             this.cliente_existe = false
             if (item.numero_identificacion != '') {
                 this.getCliente(item.numero_identificacion, 1)
-            }if (item.nit != '') {
+            } if (item.nit != '') {
                 this.getCliente(item.nit, 2)
             }
             if (item.tipo_cliente_id != '') {
@@ -3594,6 +4037,39 @@ export default {
             this.tipo_identificacion_contador = item.tipo_identificacion_contador
             this.municipio_prestacion_servicio = item.municipio_prestacion_servicio
 
+            this.consulta_empresa_extranjera = item.consulta_empresa_extranjera
+            this.consulta_empresa_exterior = item.consulta_empresa_exterior
+            this.consulta_vinculos_empresa = item.consulta_vinculos_empresa
+            this.numero_empleados_directos = item.numero_empleados_directos
+            this.consulta_personal_vinculado_temporal = item.consulta_personal_vinculado_temporal
+            this.consulta_visita_presencial = item.consulta_visita_presencial
+            this.facturacion_contacto = item.facturacion_contacto
+            this.facturacion_cargo = item.facturacion_cargo
+            this.facturacion_telefono = item.facturacion_telefono
+            this.facturacion_celular = item.facturacion_celular
+            this.facturacion_correo = item.facturacion_correo
+            this.facturacion_factura = item.facturacion_factura
+            this.facturacion_fecha_corte = item.facturacion_fecha_corte
+            this.facturacion_encargado_factura = item.facturacion_encargado_factura
+            this.consulta_anexo_factura = item.consulta_anexo_factura
+            this.consulta_trabajo_alto_riesgo = item.consulta_trabajo_alto_riesgo
+            this.consulta_accidentalidad = item.consulta_accidentalidad
+            this.accidentalidad_id = item.accidentalidad
+            this.consulta_encargado_sst = item.consulta_encargado_sst
+            this.nombre_encargado_sst = item.nombre_encargado_sst
+            this.cargo_encargado_sst = item.cargo_encargado_sst
+            this.consulta_induccion_entrenamiento = item.consulta_induccion_entrenamiento
+            this.consulta_entrega_dotacion = item.consulta_entrega_dotacion
+            this.consulta_evaluado_arl = item.consulta_evaluado_arl
+            this.consulta_entrega_epp = item.consulta_entrega_epp
+            item.elementos_epp.forEach(function (item) {
+                if (item == true) {
+                    self.elementos_epp.push(true)
+                } else {
+                    self.elementos_epp.push(false)
+                }
+            });
+
 
             if (item.tipo_persona == 1) {
                 this.persona_natural = true
@@ -3677,8 +4153,9 @@ export default {
             this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].numero_resolucion
             this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha
 
-
         },
+
+        
         llenarFormulario(item = null) {
             let self = this
             this.getActividadesCiiu(item.codigo_ciiu_id)
@@ -3780,6 +4257,52 @@ export default {
             this.consulta_pais_prestacion_servicio = item.pais_prestacion_servicio
             this.referencias_comerciales = item.referencia_comercial
             this.personas_expuestas = item.personas_expuestas
+            this.numero_radicado = item.radicado
+
+            this.consulta_empresa_extranjera = item.empresa_extranjera
+            this.consulta_empresa_exterior = item.empresa_en_exterior
+            this.consulta_vinculos_empresa = item.vinculos_empresa
+            this.numero_empleados_directos = item.numero_empleados_directos
+            this.consulta_visita_presencial = item.visita_presencial
+            this.facturacion_contacto = item.facturacion_contacto
+            this.facturacion_cargo = item.facturacion_cargo
+            this.facturacion_telefono = item.facturacion_telefono
+            this.facturacion_celular = item.facturacion_celular
+            this.facturacion_correo = item.facturacion_correo
+            this.facturacion_factura = item.facturacion_factura_unica
+            this.facturacion_fecha_corte = item.facturacion_fecha_corte
+            this.facturacion_encargado_factura = item.facturacion_encargado_factura
+            this.consulta_anexo_factura = item.requiere_anexo_factura
+            this.consulta_trabajo_alto_riesgo = item.trabajo_alto_riesgo
+            this.consulta_accidentalidad = item.accidentalidad
+            this.consulta_encargado_sst = item.encargado_sst
+            this.nombre_encargado_sst = item.nombre_encargado_sst
+            this.cargo_encargado_sst = item.cargo_encargado_sst
+            this.consulta_induccion_entrenamiento = item.induccion_entrenamiento
+            this.consulta_entrega_dotacion = item.entrega_dotacion
+            this.consulta_evaluado_arl = item.evaluado_arl
+            this.consulta_entrega_epp = item.entrega_epp
+            this.consulta_personal_vinculado_temporal = item.vinculado_empresa_temporal
+
+
+
+            this.empresa_extranjera_id = item.empresa_extranjera == 'Si' ? 1 : 0
+            this.empresa_en_exterior_id = item.empresa_en_exterior == 'Si' ? 1 : 0
+            this.vinculos_empresa_id = item.vinculos_empresa == 'Si' ? 1 : 0
+            this.visita_presencial_id = item.visita_presencial == 'Si' ? 1 : 0
+            this.requiere_anexo_factura_id = item.requiere_anexo_factura == 'Si' ? 1 : 0
+            this.trabajo_alto_riesgo_id = item.trabajo_alto_riesgo == 'Si' ? 1 : 0
+            this.accidentalidad_id = item.accidentalidad == 'Si' ? 1 : 0
+            this.encargado_sst_id = item.encargado_sst == 'Si' ? 1 : 0
+            this.induccion_entrenamiento_id = item.induccion_entrenamiento == 'Si' ? 1 : 0
+            this.entrega_dotacion_id = item.entrega_dotacion == 'Si' ? 1 : 0
+            this.evaluado_arl_id = item.evaluado_arl == 'Si' ? 1 : 0
+            this.entrega_epp_id = item.entrega_epp == 'Si' ? 1 : 0
+            this.vinculado_empresa_temporal_id = item.vinculado_empresa_temporal == 'Si' ? 1 : 0
+
+            item.clientes_epps.forEach(function (item) {
+                self.elementos_epp[item.epp_id] = true
+            });
 
             if (item.tipo_persona_id == 1) {
                 this.persona_natural = true
@@ -3890,7 +4413,7 @@ export default {
             this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
 
         },
-       
+
     }
 };
 </script>
@@ -4026,6 +4549,62 @@ ul li {
     padding: 10px;
     margin-bottom: 10px;
 }
+
+.registro_cambio {
+    background-color: #198754;
+    color: white;
+    border: 1px solid #198754;
+    padding: 0px 10px 0px 10px;
+}
+
+.registro_cambio:hover {
+    background-color: #146c43;
+    border: 1px solid #146c43;
+}
+
+#registro_cambio {
+    background-color: #198754;
+    color: white;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid #198754;
+    padding: 0px 10px 0px 10px;
+}
+
+.registro_cambio2 {
+    background-color: #198754;
+    color: white;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border: 1px solid #198754;
+    padding: 0px 10px 0px 10px;
+}
+
+.registro_cambio2:hover {
+    background-color: #146c43;
+    border: 1px solid #146c43;
+}
+
+#registro_cambio:hover {
+    background-color: #146c43;
+    border: 1px solid #146c43;
+}
+
+.lista-menu li:nth-child(odd) {
+    padding: 5px;
+}
+
+.lista-menu li:nth-child(odd):hover {
+    background-color: #146c43;
+    color: white;
+    cursor: pointer;
+}
+
+.ct >>> span{
+    padding: 10px 60px 10px 0px;
+}
+
+
 
 /* .orientacion{
     text-align: justify;

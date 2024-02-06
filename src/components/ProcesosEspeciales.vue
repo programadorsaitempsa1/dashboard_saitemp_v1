@@ -186,6 +186,7 @@ export default {
                 .get(self.URL_API + "api/v1/ejecutaprocesosespeciales", { params: { parametros } }, config)
                 .then(function (result) {
                     if (result.data.data.length > 0) {
+                        self.tabla = [] // Limpia los encabezados de la tabla que se pasan por props
                         Object.keys(result.data.data[0]).forEach(function (item) {
                             self.tabla.push({ nombre: item, orden: "DESC", tipo: "texto", calculado: 'false' },)
                         })
