@@ -1,9 +1,9 @@
 <template>
     <div>
-        <!-- <button type="button" class="btn btn-success btn-sm " @click="consulta()">
-            <i class="bi bi-eye"></i> Ver contrato
-        </button> -->
-        <span @click="consulta()">Ver contrato</span>
+        <button type="button" class="btn btn-success btn-sm " @click="consulta()">
+             Ver contrato
+        </button>
+        <!-- <span @click="consulta()">Ver contrato</span> -->
     </div>
 </template>
 <script>
@@ -84,6 +84,9 @@ export default {
                     delete result.data.correo_facturacion_electronica
                     delete result.data.id
                     delete result.data.radicado
+                    delete result.data.version_documento
+                    delete result.data.fecha_documento
+                    delete result.data.codigo_documento
                     for (var i = 0; i <= Object.keys(result.data).length; i++) {
                         if (i % 2 == 0) {
                             try {

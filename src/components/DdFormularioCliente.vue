@@ -108,8 +108,9 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">{{persona_natural ? 'Nombre completo':'Razón social'}}: *</label>
-                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social" :placeholder="persona_natural ? 'Apellidos Nombres':'Nombre completo empresa'"
+                        <label class="form-label">{{ persona_natural ? 'Nombre completo' : 'Razón social' }}: *</label>
+                        <textarea class="form-control" required name="" id="razon_social" rows="1" v-model="razon_social"
+                            :placeholder="persona_natural ? 'Apellidos Nombres' : 'Nombre completo empresa'"
                             @input="razon_social = formatInputUpperCase($event.target.value)"></textarea>
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
@@ -339,7 +340,8 @@
                             <label class="form-label">¿Cuántos empleados directos tiene la empresa usuaria?: *
                             </label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                maxlength="50" aria-describedby="emailHelp" v-model="numero_empleados_directos" @input="numero_empleados_directos = validarNumero(numero_empleados_directos)" required />
+                                maxlength="50" aria-describedby="emailHelp" v-model="numero_empleados_directos"
+                                @input="numero_empleados_directos = validarNumero(numero_empleados_directos)" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
@@ -363,6 +365,271 @@
                     </div>
                 </div>
             </div>
+            <h6 class="tituloseccion">Contratación</h6>
+            <div id="seccion">
+                <div class="row">
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Contacto notificación ingreso personal:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            @input="contratacion_contacto = formatInputUpperCase($event.target.value)"
+                            aria-describedby="emailHelp" v-model="contratacion_contacto" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Cargo del contacto:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
+                            @input="contratacion_cargo = formatInputUpperCase($event.target.value)"
+                            aria-describedby="emailHelp" v-model="contratacion_cargo" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Teléfono del contacto:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
+                            aria-describedby="emailHelp" v-model="contratacion_telefono"
+                            @input="contratacion_telefono = validarNumero(contratacion_telefono)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Número celular del contacto:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="20"
+                            aria-describedby="emailHelp" v-model="contratacion_celular"
+                            @input="contratacion_celular = validarNumero(contratacion_celular)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label" style="color: black;">Hora de ingreso del personal primer día: </label>
+                        <input type="time" class="form-control" autocomplete="off" aria-describedby="emailHelp"
+                            id="hora_ingreso" v-model="contratacion_hora_ingreso" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">¿Hasta que horas de debe confirmar el ingreso del
+                            personal?
+                        </label>
+                        <input type="time" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="150"
+                            aria-describedby="emailHelp" v-model="contratacion_confirma_ingreso" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Correo electrónico notificación ingreso personal:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
+                            @input="contratacion_correo_electronico = formatInputUpperCase($event.target.value)"
+                            aria-describedby="emailHelp" v-model="contratacion_correo_electronico" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <!-- <div class="col mb-3">
+                        <label class="form-label" style="color: black;">Correo de confirmación de ingresos del personal:
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="200"
+                            @input="contratacion_correo_ingresos = formatInputUpperCase($event.target.value)"
+                            aria-describedby="emailHelp" v-model="contratacion_correo_ingresos" required />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div> -->
+                    <div class="col">
+                        <!-- :valida_campo="otros_si_agregados.length > 0 ? false : true" -->
+                        <SearchList nombreCampo="Otro si solicitados: *" eventoCampo="getOtroSi" nombreItem="nombre"
+                            :registros="otros_si" :ordenCampo="8" :consulta="consulta_contratacion_otrosi"
+                            @getOtroSi="getOtroSi" placeholder="Seleccionar"
+                            :valida_campo="false" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="mb-3" v-if="otros_si_agregados.length > 0">
+                            <span>Otro si</span>
+                            <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                                <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                                    data-bs-toggle="button" v-for="item, index in otros_si_agregados" :key="index">{{
+                                        item.nombre
+                                    }}
+                                    <i class="bi bi-x" @click="otros_si_agregados.splice(index, 1)"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="¿Necesita carnet de manipulación de alimentos?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="17" :consulta="consulta_contratacion_carnet_alimentos"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="¿se require carnet corporativo con espedificaciones distintas?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="22" :consulta="consulta_contratacion_carnet"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="¿Se requieren tallas de uniformes?: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="18"
+                            :consulta="consulta_contratacion_talla_uniforme" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="¿Empresa suministra transporte?: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="19"
+                            :consulta="consulta_contratacion_transporte" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="¿La empresa suministra alimentación?: *"
+                            eventoCampo="getAfirmacionNegacion" nombreItem="nombre" :registros="afirmacionNegacion"
+                            :ordenCampo="20" :consulta="consulta_contratacion_alimentacion"
+                            @getAfirmacionNegacion="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <!-- :valida_campo="bancos_agregados.length > 0 ? false : true" -->
+                        <SearchList nombreCampo="Seleccione el banco: *" eventoCampo="getConvenioBanco" nombreItem="nombre"
+                            :registros="convenio_bancos" :ordenCampo="8" :consulta="consulta_contratacion_bancos"
+                            @getConvenioBanco="getConvenioBanco" placeholder="Seleccionar"
+                            :valida_campo="false" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="mb-3" v-if="bancos_agregados.length > 0">
+                            <span>Convenio bancos</span>
+                            <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                                <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                                    data-bs-toggle="button" v-for="item, index in bancos_agregados" :key="index">{{
+                                        item.nombre
+                                    }}
+                                    <i class="bi bi-x" @click="bancos_agregados.splice(index, 1)"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="¿Realiza pago en efectivo?: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="21"
+                            :consulta="consulta_contratacion_pago_efectivo" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <!-- :valida_campo="tipos_contratos_agregados.length > 0 ? false : true" -->
+                        <SearchList nombreCampo="Tipo de contrato: *" eventoCampo="getTipoContrato" nombreItem="nombre"
+                            :registros="tipos_contrato" :ordenCampo="8" :consulta="consulta_contratacion_tipo_contrato"
+                            @getTipoContrato="getTipoContrato" placeholder="Seleccionar"
+                            :valida_campo="false" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="mb-3" v-if="tipos_contratos_agregados.length > 0">
+                            <span>Tipos de contrato</span>
+                            <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                                <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                                    data-bs-toggle="button" v-for="item, index in tipos_contratos_agregados" :key="index">{{
+                                        item.nombre
+                                    }}
+                                    <i class="bi bi-x" @click="tipos_contratos_agregados.splice(index, 1)"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="¿La empresa paga los días 31?: *" eventoCampo="getAfirmacionNegacion"
+                            nombreItem="nombre" :registros="afirmacionNegacion" :ordenCampo="23"
+                            :consulta="consulta_contratacion_pago_31" @getAfirmacionNegacion="getAfirmacionNegacion"
+                            @setAfirmacionNegacion="setAfirmacionNegacion" placeholder="Seleccionar" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <!-- :consulta="consulta_pais_rl[index]" -->
+                        <SearchList nombreCampo="Pais ubicación laboratorio médico: *" @getPaises="getPaises"
+                            eventoCampo="getPaises" nombreItem="nombre" :registros="paises"
+                            @getDepartamentos="getDepartamentos" :ordenCampo="4" placeholder="Seleccione una opción"
+                            :consulta="consulta_pais_laboratorio" :valida_campo="false"/>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <!-- :consulta="consulta_departamento_rl[index]" -->
+                        <SearchList nombreCampo="Departamento ubicación laboratorio médico: *" nombreItem="nombre"
+                            eventoCampo="getDepartamentos" :registros="departamentos" @getMunicipios="getMunicipios"
+                            :ordenCampo="4" placeholder="Seleccione una opción"
+                            :consulta="consulta_departamento_laboratorio" :valida_campo="false"/>
+                    </div>
+                    <div class="col">
+                        <!-- :consulta="consulta_municipio_rl[index]" -->
+                        <SearchList nombreCampo="Ciudad ubicación laboratorio médico: *" nombreItem="nombre"
+                            :registros="municipios" @setMunicipios="setMunicipios" eventoCampo="setMunicipios"
+                            :ordenCampo="4" placeholder="Seleccione una opción"
+                            :consulta="consulta_municipio_laboratorio" :valida_campo="false" />
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <!-- :valida_campo="laboratorios_medicos_agregados.length > 0 ? false : true" -->
+                        <!-- :consulta="consulta_municipio_rl[index]" -->
+                        <SearchList nombreCampo="Laboratorio médico: *" nombreItem="nombre"
+                            :registros="laboratorios_medicos" @getLaboratorios="getLaboratorios"
+                            eventoCampo="getLaboratorios" placeholder="Seleccione una opción"
+                            :valida_campo="false" />
+
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label">Observación: *</label>
+                        <textarea class="form-control" name="" id="razon_social" rows="1"
+                            v-model="contratacion_observacion" placeholder=""
+                            @input="contratacion_observacion = formatInputUpperCase($event.target.value)"></textarea>
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="mb-3" v-if="laboratorios_medicos_agregados.length > 0">
+                            <span>Laboratorios médicos</span>
+                            <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                                <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                                    data-bs-toggle="button" v-for="item, index in laboratorios_medicos_agregados"
+                                    :key="index">{{
+                                        item.nombre
+                                    }}
+                                    <i class="bi bi-x"
+                                        @click="laboratorios_medicos_agregados.splice(index, 1)"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <h6 class="tituloseccion">Facturación</h6>
             <div id="seccion" v-if="tipo_cliente == 1">
                 <div class="row">
@@ -370,7 +637,8 @@
                         <label class="form-label">Contacto: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_contacto"  @input="facturacion_contacto = formatInputUpperCase($event.target.value)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_contacto"
+                            @input="facturacion_contacto = formatInputUpperCase($event.target.value)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -379,7 +647,8 @@
                         <label class="form-label">Cargo: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_cargo" @input="facturacion_cargo = formatInputUpperCase($event.target.value)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_cargo"
+                            @input="facturacion_cargo = formatInputUpperCase($event.target.value)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -388,7 +657,8 @@
                         <label class="form-label">Teléfono: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_telefono" @input="facturacion_telefono = validarNumero(facturacion_telefono)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_telefono"
+                            @input="facturacion_telefono = validarNumero(facturacion_telefono)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -399,7 +669,8 @@
                         <label class="form-label">Celular: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_celular" @input="facturacion_celular = validarNumero(facturacion_celular)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_celular"
+                            @input="facturacion_celular = validarNumero(facturacion_celular)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -408,7 +679,8 @@
                         <label class="form-label">Correo electrónico: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_correo" @input="facturacion_correo = formatInputUpperCase($event.target.value)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_correo"
+                            @input="facturacion_correo = formatInputUpperCase($event.target.value)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -417,7 +689,8 @@
                         <label class="form-label">Factura única o por CECO: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_factura" @input="facturacion_factura = formatInputUpperCase($event.target.value)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_factura"
+                            @input="facturacion_factura = formatInputUpperCase($event.target.value)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -428,7 +701,8 @@
                         <label class="form-label">Fecha de corte para recibir las facturas: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_fecha_corte" required @input="facturacion_fecha_corte = formatInputUpperCase($event.target.value)" />
+                            aria-describedby="emailHelp" v-model="facturacion_fecha_corte" required
+                            @input="facturacion_fecha_corte = formatInputUpperCase($event.target.value)" />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -437,7 +711,8 @@
                         <label class="form-label">Persona encargada de recibir la factura: *
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="50"
-                            aria-describedby="emailHelp" v-model="facturacion_encargado_factura" @input="facturacion_encargado_factura = formatInputUpperCase($event.target.value)" required />
+                            aria-describedby="emailHelp" v-model="facturacion_encargado_factura"
+                            @input="facturacion_encargado_factura = formatInputUpperCase($event.target.value)" required />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -539,7 +814,8 @@
                             <label class="form-label">Nombre encargado SST: *
                             </label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                maxlength="50" aria-describedby="emailHelp" v-model="nombre_encargado_sst" @input="nombre_encargado_sst = formatInputUpperCase($event.target.value)" required />
+                                maxlength="50" aria-describedby="emailHelp" v-model="nombre_encargado_sst"
+                                @input="nombre_encargado_sst = formatInputUpperCase($event.target.value)" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
@@ -548,7 +824,8 @@
                             <label class="form-label">Cargo analista SST: *
                             </label>
                             <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                                maxlength="50" aria-describedby="emailHelp" v-model="cargo_encargado_sst" @input="cargo_encargado_sst = formatInputUpperCase($event.target.value)" required />
+                                maxlength="50" aria-describedby="emailHelp" v-model="cargo_encargado_sst"
+                                @input="cargo_encargado_sst = formatInputUpperCase($event.target.value)" required />
                             <div class="invalid-feedback">
                                 {{ mensaje_error }}
                             </div>
@@ -1523,7 +1800,7 @@
                 <!-- </button>
                         <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
                             :disabled="deshabilitar_boton" type="button">
-                            <FlotanteContrataciondd @save="save" />
+                            <FlotanteInteraccionCliente @save="save" />
                         </button>
                         <button v-if="ruta_id != undefined && permisos[3].autorizado" id="registro_cambio"
                             :disabled="deshabilitar_boton" type="button">
@@ -1551,13 +1828,15 @@
                 </div>
                 <div class="col" style="margin:30px">
                     <div class="btn-group">
-                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio2"
+                        <button v-if="ruta_id != undefined && permisos[21].autorizado" class="registro_cambio2"
                             :disabled="deshabilitar_boton" type="button">
-                            <FlotanteContrataciondd :cliente_id="this.$route.params.id+''" :razon_social="razon_social" @save="save" />
+                            <FlotanteInteraccionCliente :cliente_id="this.$route.params.id + ''"
+                                :razon_social="razon_social" @save="save" />
                         </button>
-                        <button v-if="ruta_id != undefined && permisos[3].autorizado" class="registro_cambio"
+                        <button v-if="ruta_id != undefined && permisos[22].autorizado" class="registro_cambio"
                             :disabled="deshabilitar_boton" type="button">
-                            <FlotanteSelecciondd :cliente_id="this.$route.params.id+''" :razon_social="razon_social" @save="save" />
+                            <FlotanteSelecciondd :cliente_id="this.$route.params.id + ''" :razon_social="razon_social"
+                                @save="save" />
                         </button>
                         <button v-if="ruta_id == undefined && permisos[2].autorizado" class="btn btn-success"
                             :disabled="deshabilitar_boton" type="submit">Guardar</button>
@@ -1602,7 +1881,7 @@ import EditorTextoHtml from './EditorTextoHtml.vue';
 import { Permisos } from '../Mixins/Permisos.js';
 import ConsultaContrato from './ConsultaContrato.vue'
 import RegistroCambio from './RegistroCambio.vue'
-import FlotanteContrataciondd from './FlotanteContrataciondd.vue'
+import FlotanteInteraccionCliente from './FlotanteInteraccionCliente.vue'
 import FlotanteSelecciondd from './FlotanteSelecciondd.vue'
 
 export default {
@@ -1615,7 +1894,7 @@ export default {
         ConsultaContrato,
         Loading,
         RegistroCambio,
-        FlotanteContrataciondd,
+        FlotanteInteraccionCliente,
         FlotanteSelecciondd
     },
     mixins: [Scroll, Alerts, Token, Permisos],
@@ -1678,10 +1957,15 @@ export default {
             consulta_municipio: '',
             municipio_prestacion_servicio: '',
             consulta_municipio_prestacion_servicio: '',
+            consulta_municipio_laboratorio: '',
+            laboratorios_medicos: [],
+            municipio_laboratorio_id: '',
             departamento_prestacion_servicio: '',
             consulta_departamento_prestacion_servicio: '',
+            consulta_departamento_laboratorio: '',
             pais_prestacion_servicio: '',
             consulta_pais_prestacion_servicio: '',
+            consulta_pais_laboratorio: '',
             direccion_empresa: '',
             contacto_empresa: '',
             correo_electronico_empresa: '',
@@ -1868,6 +2152,40 @@ export default {
             ruta_id: this.$route.params.id,
             elementospp: [],
             numero_radicado: '',
+            contratacion_contacto: '',
+            contratacion_cargo: '',
+            contratacion_telefono: '',
+            contratacion_celular: '',
+            contratacion_correo_electronico: '',
+            contratacion_hora_ingreso: '',
+            contratacion_correo_ingresos: '',
+            consulta_contratacion_otrosi: '',
+            otros_si: [],
+            otros_si_agregados: [],
+            convenio_bancos: [],
+            bancos_agregados: [],
+            tipos_contrato: [],
+            tipos_contratos_agregados: [],
+            laboratorios_medicos_agregados: [],
+            contratacion_observacion:'',
+            consulta_contratacion_carnet: '',
+            contratacion_carnet_id: '',
+            consulta_contratacion_carnet_alimentos: '',
+            contratacion_carnet_alimentos_id: '',
+            contratacion_confirma_ingreso: '',
+            consulta_contratacion_talla_uniforme: '',
+            contratacion_talla_uniforme_id: '',
+            consulta_contratacion_transporte: '',
+            contratacion_transporte_id: '',
+            consulta_contratacion_alimentacion: '',
+            contratacion_alimentacion_id: '',
+            consulta_contratacion_bancos: '',
+            contratacion_bancos_id: '',
+            consulta_contratacion_pago_efectivo: '',
+            contratacion_pago_efectivo_id: '',
+            consulta_contratacion_tipo_contrato: '',
+            consulta_contratacion_pago_31: '',
+            contratacion_pago_31_id: '',
         }
     },
     computed: {
@@ -1947,16 +2265,16 @@ export default {
             if (item != null) {
                 switch (campo) {
                     case 1:
-                        // this.tipo_identificacion = item.cod_tip;
                         this.consulta_pais = item.nombre
                         break
                     case 2:
-                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
                         this.consulta_pais_prestacion_servicio = item.nombre
                         break
                     case 3:
-                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
                         this.consulta_pais_rl[index] = item.nombre
+                        break
+                    case 4:
+                        this.consulta_pais_laboratorio = item.nombre
                         break
                 }
             }
@@ -1965,16 +2283,16 @@ export default {
             if (item != null) {
                 switch (campo) {
                     case 1:
-                        // this.tipo_identificacion = item.cod_tip;
                         this.consulta_departamento = item.nombre
                         break
                     case 2:
-                        // this.accionistas[index].tipo_identificacion_id = item.cod_tip;
                         this.consulta_departamento_prestacion_servicio = item.nombre
                         break
                     case 3:
-                        // this.representantes_legales[index].tipo_identificacion = item.cod_tip;
                         this.consulta_departamento_rl[index] = item.nombre
+                        break
+                    case 4:
+                        this.consulta_departamento_laboratorio = item.nombre
                         break
                 }
             }
@@ -2446,6 +2764,7 @@ export default {
             this.file[index] = file;
         },
         deleteFile(index) {
+            console.log('prueba')
             this.file.splice(index, 1)
             document.getElementById("seleccionArchivos" + index).value = ''
 
@@ -2556,6 +2875,57 @@ export default {
         getAfirmacionNegacion() {
             this.afirmacionNegacion = [{ id: '1', nombre: 'Si' }, { id: '0', nombre: 'No' }]
         },
+        getOtroSi(item = null) {
+            if (item != null) {
+                var nombreExistente = this.otros_si_agregados.some(function (objeto) {
+                    return objeto.nombre === item.nombre;
+                });
+                if (!nombreExistente) {
+                    this.otros_si_agregados.push({ id: item.id, nombre: item.nombre });
+                }
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/otrosi", config)
+                .then(function (result) {
+                    self.otros_si = result.data
+                });
+        },
+        getConvenioBanco(item = null) {
+            if (item != null) {
+                item.id = item.id.toString().padStart(2, '0');
+                var nombreExistente = this.bancos_agregados.some(function (objeto) {
+                    return objeto.nombre === item.nombre;
+                });
+                if (!nombreExistente) {
+                    this.bancos_agregados.push({ id: item.id, nombre: item.nombre });
+                }
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/conveniobanco", config)
+                .then(function (result) {
+                    self.convenio_bancos = result.data
+                });
+        },
+        getTipoContrato(item = null) {
+            if (item != null) {
+                item.id = item.id.toString().padStart(2, '0');
+                var nombreExistente = this.tipos_contratos_agregados.some(function (objeto) {
+                    return objeto.nombre === item.nombre;
+                });
+                if (!nombreExistente) {
+                    this.tipos_contratos_agregados.push({ id: item.id, nombre: item.nombre });
+                }
+            }
+            let config = this.configHeader();
+            let self = this;
+            axios.get(self.URL_API + "api/v1/tipocontrato", config).then(function (result) {
+                self.tipos_contrato = result.data;
+            });
+        },
         setAfirmacionNegacion(item, campo, index) {
             if (item != null) {
                 switch (campo) {
@@ -2621,6 +2991,34 @@ export default {
                     case 16:
                         this.entrega_epp_id = item.id;
                         this.consulta_entrega_epp = item.nombre
+                        break
+                    case 17:
+                        this.contratacion_carnet_id = item.id;
+                        this.consulta_contratacion_carnet_alimentos = item.nombre
+                        break
+                    case 18:
+                        this.contratacion_talla_uniforme_id = item.id;
+                        this.consulta_contratacion_talla_uniforme = item.nombre
+                        break
+                    case 19:
+                        this.contratacion_transporte_id = item.id;
+                        this.consulta_contratacion_transporte = item.nombre
+                        break
+                    case 20:
+                        this.contratacion_alimentacion_id = item.id;
+                        this.consulta_contratacion_alimentacion = item.nombre
+                        break
+                    case 21:
+                        this.contratacion_pago_efectivo_id = item.id;
+                        this.consulta_contratacion_pago_efectivo = item.nombre
+                        break
+                    case 22:
+                        this.contratacion_carnet_id = item.id;
+                        this.consulta_contratacion_carnet = item.nombre
+                        break
+                    case 23:
+                        this.contratacion_pago_31 = item.id;
+                        this.consulta_contratacion_pago_31 = item.nombre
                         break
 
                 }
@@ -3142,8 +3540,32 @@ export default {
                         this.representantes_legales[index].municipio_id = item.id;
                         this.consulta_municipio_rl[index] = item.nombre
                         break
+                    case 4:
+                        this.municipio_laboratorio_id = item.id;
+                        this.consulta_municipio_laboratorio = item.nombre
+                        this.laboratorios_medicos_agregados = []
+                        this.laboratorios_medicos = []
+                        break
                 }
             }
+        },
+        getLaboratorios(item = null) {
+            if (item != null) {
+
+                var nombreExistente = this.laboratorios_medicos_agregados.some(function (objeto) {
+                    return objeto.nombre === item.nombre;
+                });
+                if (!nombreExistente) {
+                    this.laboratorios_medicos_agregados.push({ id_ciudad: item.ciudad_id, id: item.id, nombre: item.nombre });
+                }
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/laboratorios/" + this.municipio_laboratorio_id, config)
+                .then(function (result) {
+                    self.laboratorios_medicos = result.data
+                });
         },
         setActividadesCiiu(item) {
             var self = this
@@ -3525,17 +3947,17 @@ export default {
                 }
             }
 
-            var mensaje_error = ''
-            this.fileInputsCount.forEach(function (item, index) {
+            // var mensaje_error = ''
+            // this.fileInputsCount.forEach(function (item, index) {
 
-                if (item.nombre.includes("*") && self.file[index] == undefined) {
-                    mensaje_error += item.nombre + ", "
-                }
-            })
-            if (mensaje_error != '') {
-                this.showAlert('Error, los siguientes archivos no fueron adjuntados. ' + mensaje_error, 'error')
-                return true
-            }
+            //     if (item.nombre.includes("*") && self.file[index] == undefined) {
+            //         mensaje_error += item.nombre + ", "
+            //     }
+            // })
+            // if (mensaje_error != '') {
+            //     this.showAlert('Error, los siguientes archivos no fueron adjuntados. ' + mensaje_error, 'error')
+            //     return true
+            // }
             this.file.forEach(function (item) {
                 if (item.size > self.limite) {
                     self.showAlert('El archivo' + item.name + 'es demasiado pesado, el limite es de 3MB', 'error')
@@ -3883,6 +4305,24 @@ export default {
                 tipo_proveedor_id: this.tipo_proveedor,
                 municipio_prestacion_servicio: this.municipio_prestacion_servicio,
 
+                contratacion_contacto: this.contratacion_contacto,
+                contratacion_cargo: this.contratacion_cargo,
+                contratacion_telefono: this.contratacion_telefono,
+                contratacion_celular: this.contratacion_celular,
+                contratacion_correo_electronico: this.contratacion_correo_electronico,
+                contratacion_hora_ingreso: this.contratacion_hora_ingreso,
+                contratacion_correo_ingresos: this.contratacion_correo_ingresos,
+                contratacion_manipulacion_alimentos: this.consulta_contratacion_carnet_alimentos,
+                contratacion_confirma_ingreso: this.contratacion_confirma_ingreso,
+                contratacion_tallas_uniforme: this.consulta_contratacion_talla_uniforme,
+                contratacion_suministra_transporte: this.consulta_contratacion_transporte,
+                contratacion_suministra_alimentacion: this.consulta_contratacion_alimentacion,
+                contratacion_pago_efectivo: this.consulta_contratacion_pago_efectivo,
+                contratacion_carnet_corporativo: this.consulta_contratacion_carnet,
+                contratacion_pagos_31: this.consulta_contratacion_pago_31,
+                laboratorios_medicos: this.laboratorios_medicos_agregados,
+                contratacion_observacion: this.contratacion_observacion
+
             }
             this.registroCliente.cargos = this.cargos
             this.registroCliente.cargos2 = this.cargos2
@@ -3894,6 +4334,10 @@ export default {
             this.registroCliente.referencias_comerciales = this.referencias_comerciales
             this.registroCliente.personas_expuestas = this.personas_expuestas
             this.registroCliente.elementos_epp = this.elementos_epp
+            this.registroCliente.otros_si_agregados = this.otros_si_agregados
+            this.registroCliente.bancos_agregados = this.bancos_agregados
+            this.registroCliente.tipos_contratos_agregados = this.tipos_contratos_agregados
+            
         },
         consultaFormulario(id) {
             let self = this;
@@ -4062,6 +4506,30 @@ export default {
             this.consulta_entrega_dotacion = item.consulta_entrega_dotacion
             this.consulta_evaluado_arl = item.consulta_evaluado_arl
             this.consulta_entrega_epp = item.consulta_entrega_epp
+
+
+            this.contratacion_contacto = item.contratacion_contacto
+            this.contratacion_cargo = item.contratacion_cargo
+            this.contratacion_telefono = item.contratacion_telefono
+            this.contratacion_celular = item.contratacion_celular
+            this.contratacion_correo_electronico = item.contratacion_correo_electronico
+            this.contratacion_hora_ingreso = item.contratacion_hora_ingreso
+            this.contratacion_correo_ingresos = item.contratacion_correo_ingresos
+            this.consulta_contratacion_carnet_alimentos = item.contratacion_manipulacion_alimentos
+            this.contratacion_confirma_ingreso = item.contratacion_confirma_ingreso
+            this.consulta_contratacion_talla_uniforme = item.contratacion_tallas_uniforme
+            this.consulta_contratacion_transporte = item.contratacion_suministra_transporte
+            this.consulta_contratacion_alimentacion = item.contratacion_suministra_alimentacion
+            this.consulta_contratacion_pago_efectivo = item.contratacion_pago_efectivo
+            this.consulta_contratacion_carnet = item.contratacion_carnet_corporativo
+            this.consulta_contratacion_pago_31 = item.contratacion_pagos_31
+            this.contratacion_observacion = item.contratacion_observacion
+
+            this.otros_si_agregados = item.otros_si_agregados
+            this.bancos_agregados = item.bancos_agregados
+            this.tipos_contratos_agregados = item.tipos_contratos_agregados
+
+
             item.elementos_epp.forEach(function (item) {
                 if (item == true) {
                     self.elementos_epp.push(true)
@@ -4155,262 +4623,308 @@ export default {
 
         },
 
-        
+
         llenarFormulario(item = null) {
-            let self = this
-            this.getActividadesCiiu(item.codigo_ciiu_id)
-            this.operacion = item.operacion_id
-            this.consulta_operacion = item.tipo_operacion
-            this.tipo_persona = item.tipo_persona_id
-            this.consulta_tipo_persona = item.tipo_persona
-            this.digito_verificacion = item.digito_verificacion
-            this.razon_social = item.razon_social
-            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
-            this.tipo_identificacion = item.tipo_identificacion_id
-            this.consulta_tipo_identificacion = item.tipo_identificacion
-            this.numero_identificacion = item.numero_identificacion
-            this.fecha_expedicion = item.fecha_exp_documento
-            this.contratacion_directa = item.contratacion_directa == 0 ? false : true
-            this.atraccion_seleccion = item.atraccion_seleccion == 0 ? false : true
-            this.nit = item.nit
-            this.fecha_constitucion = item.fecha_constitucion
-            this.codigo_ciiu_id = item.codigo_ciiu_id
-            this.consulta_codigo_ciiu = item.codigo_ciiu
-            this.consulta_actvidad_ciiu = item.codigo_actividad_ciiu + ' ' + item.actividad_ciiu_descripcion
-            this.actividad_ciiu = item.codigo_actividad_ciiu
-            this.estrato = item.estrato_id
-            this.consulta_estrato = item.estrato
-            this.municipio = item.municipio_id
-            this.consulta_municipio = item.municipio
-            this.direccion_empresa = item.direccion_empresa
-            this.contacto_empresa = item.contacto_empresa
-            this.correo_electronico_empresa = item.correo_empresa
-            this.telefono_empresa = item.telefono_empresa
-            this.celular_empresa = item.celular_empresa
-            this.sociedad_comercial = item.sociedad_comercial_id
-            this.consulta_sociedad_comercial = item.sociedad_comercial
-            this.otra_cual = item.otra
-            this.acuerdo_comercial = item.acuerdo_comercial
-            this.aiu_negociado = item.aiu_negociado
-            this.plazo_pago = item.plazo_pago
-            this.ejecutivo_comercial = item.vendedor_id
-            this.consulta_ejecutivo_comercial = item.vendedor
-            this.empleados_empresa = item.numero_empleados
-            this.jornada_laboral = item.jornada_laboral_id
-            this.consulta_jornada_laboral = item.jornada_laboral
-            this.rotacion_personal = item.rotacion_personal_id
-            this.consulta_rotacion_personal = item.rotacion_personal
-            this.riesgo_laboral = item.riesgo_cliente_id
-            this.consulta_riesgo_cliente = item.riesgo_cliente
-            this.junta_directiva = item.junta_directiva.length > 0 ? true : false
-            this.consulta_responsable_impuesto_ventas = item.responsable_inpuesto_ventas == '1' ? 'Si' : 'No'
-            this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
-            this.correo_factura_electronica = item.correo_facturacion_electronica
-            this.consulta_sucursal_facturacion = item.sucursal_facturacion
-            this.sucursal = item.sucursal_facturacion_id
-            this.declaraciones_autorizaciones = item.declaraciones_autirizaciones == '1' ? true : false
-            this.tratamiento_datos_personales = item.tratamiento_datos_personales == '1' ? true : false
-            this.tipo_operacion_internacional = item.tipo_operacion_internacional_id
-            this.consulta_operacion_internacional = item.tipo_operacion_internacional
-            this.operaciones_modena_extranjera = item.operaciones_internacionales
-            this.consulta_operacion_moneda_extranjera = item.operaciones_internacionales == 1 ? 'Si' : 'No'
-            this.tipo_origen_fondo = item.origen_fondos.tipo_origen_fondos_id
-            this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
-            this.tipo_origen_medios = item.origen_fondos.tipo_origen_medios_id
-            this.otro_tipo_origen_medios = item.origen_fondos.tipo_origen_medios2_id
-            this.alto_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo
-            this.consulta_origen_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo == 1 ? 'Si' : 'No'
-            this.nombre_completo_contador = item.nombre_contador
-            this.identificacion_contador = item.identificacion_contador
-            this.telefono_contador = item.telefono_contador
-            this.tipo_identificacion_contador = item.tipo_identificacion_id_contador
-            this.consulta_contador = item.tipo_identificacion_contador
-            this.nombre_completo_tesorero = item.nombre_tesorero
-            this.telefono_tesorero = item.telefono_tesorero
-            this.correo_tesorero = item.correo_tesorero
-            this.ingreso_mensual = item.ingreso_mensual
-            this.otros_ingresos = item.otros_ingresos
-            this.total_ingresos = item.total_ingresos
-            this.costos_gastos = item.costos_gastos_mensual
-            this.detalle_otros_ingresos = item.detalle_otros_ingresos
-            this.reintegro_costos = item.reintegro_costos_gastos
-            this.activos = item.activos
-            this.pasivos = item.pasivos
-            this.patrimonio = item.patrimonio
-            this.pais = item.pais_id
-            this.consulta_pais = item.pais
-            this.departamento = item.departamento_id
-            this.consulta_departamento = item.departamento
-            this.municipio = item.municipio_id
-            this.consulta_municipio = item.municipio
-            this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
-            this.consulta_periodicidad_pago = item.periodicidad_liquidacion
-            this.tipo_cliente = item.tipo_cliente_id
-            this.tipo_proveedor = item.tipo_proveedor_id
-            this.consulta_tipo_cliente = item.tipo_cliente
-            this.consulta_tipo_proveedor = item.tipo_proveedor
-            this.municipio_prestacion_servicio = item.municipio_prestacion_servicio_id
-            this.departamento_prestacion_servicio = item.departamento_prestacion_servicio_id
-            this.pais_prestacion_servicio = item.pais_prestacion_servicio
-            this.consulta_municipio_prestacion_servicio = item.municipio_prestacion_servicio
-            this.consulta_departamento_prestacion_servicio = item.departamento_prestacion_servicio
-            this.consulta_pais_prestacion_servicio = item.pais_prestacion_servicio
-            this.referencias_comerciales = item.referencia_comercial
-            this.personas_expuestas = item.personas_expuestas
-            this.numero_radicado = item.radicado
+            try {
 
-            this.consulta_empresa_extranjera = item.empresa_extranjera
-            this.consulta_empresa_exterior = item.empresa_en_exterior
-            this.consulta_vinculos_empresa = item.vinculos_empresa
-            this.numero_empleados_directos = item.numero_empleados_directos
-            this.consulta_visita_presencial = item.visita_presencial
-            this.facturacion_contacto = item.facturacion_contacto
-            this.facturacion_cargo = item.facturacion_cargo
-            this.facturacion_telefono = item.facturacion_telefono
-            this.facturacion_celular = item.facturacion_celular
-            this.facturacion_correo = item.facturacion_correo
-            this.facturacion_factura = item.facturacion_factura_unica
-            this.facturacion_fecha_corte = item.facturacion_fecha_corte
-            this.facturacion_encargado_factura = item.facturacion_encargado_factura
-            this.consulta_anexo_factura = item.requiere_anexo_factura
-            this.consulta_trabajo_alto_riesgo = item.trabajo_alto_riesgo
-            this.consulta_accidentalidad = item.accidentalidad
-            this.consulta_encargado_sst = item.encargado_sst
-            this.nombre_encargado_sst = item.nombre_encargado_sst
-            this.cargo_encargado_sst = item.cargo_encargado_sst
-            this.consulta_induccion_entrenamiento = item.induccion_entrenamiento
-            this.consulta_entrega_dotacion = item.entrega_dotacion
-            this.consulta_evaluado_arl = item.evaluado_arl
-            this.consulta_entrega_epp = item.entrega_epp
-            this.consulta_personal_vinculado_temporal = item.vinculado_empresa_temporal
-
-
-
-            this.empresa_extranjera_id = item.empresa_extranjera == 'Si' ? 1 : 0
-            this.empresa_en_exterior_id = item.empresa_en_exterior == 'Si' ? 1 : 0
-            this.vinculos_empresa_id = item.vinculos_empresa == 'Si' ? 1 : 0
-            this.visita_presencial_id = item.visita_presencial == 'Si' ? 1 : 0
-            this.requiere_anexo_factura_id = item.requiere_anexo_factura == 'Si' ? 1 : 0
-            this.trabajo_alto_riesgo_id = item.trabajo_alto_riesgo == 'Si' ? 1 : 0
-            this.accidentalidad_id = item.accidentalidad == 'Si' ? 1 : 0
-            this.encargado_sst_id = item.encargado_sst == 'Si' ? 1 : 0
-            this.induccion_entrenamiento_id = item.induccion_entrenamiento == 'Si' ? 1 : 0
-            this.entrega_dotacion_id = item.entrega_dotacion == 'Si' ? 1 : 0
-            this.evaluado_arl_id = item.evaluado_arl == 'Si' ? 1 : 0
-            this.entrega_epp_id = item.entrega_epp == 'Si' ? 1 : 0
-            this.vinculado_empresa_temporal_id = item.vinculado_empresa_temporal == 'Si' ? 1 : 0
-
-            item.clientes_epps.forEach(function (item) {
-                self.elementos_epp[item.epp_id] = true
-            });
-
-            if (item.tipo_persona_id == 1) {
-                this.persona_natural = true
-            } else {
-                this.persona_juridica = true
-            }
-
-            if (item.documentos_adjuntos.length > 0) {
-                this.fileInputsCount = item.documentos_adjuntos
-            }
-
-            item.documentos_adjuntos.forEach(function (item) {
-                self.convertFile(item.ruta)
-                    .then(archivo => {
-                        self.file.push(archivo);
-                    })
-                    .catch(error => {
-                        this.showAlert('Error al convertir el archivo:', 'error')
-                        console.log(error)
-                    });
-            })
-
-            if (item.cargos.length > 0) {
-                this.cargos = item.cargos
-                for (let i = 0; i < item.cargos.length; i++) {
-                    this.requisitos[i] = item.cargos[i].requisitos
-                    this.examenes[i] = item.cargos[i].examenes
-                    this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
-                    this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                let self = this
+                this.getActividadesCiiu(item.codigo_ciiu_id)
+                this.operacion = item.operacion_id
+                this.consulta_operacion = item.tipo_operacion
+                this.tipo_persona = item.tipo_persona_id
+                this.consulta_tipo_persona = item.tipo_persona
+                this.digito_verificacion = item.digito_verificacion
+                this.razon_social = item.razon_social
+                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+                this.tipo_identificacion = item.tipo_identificacion_id
+                this.consulta_tipo_identificacion = item.tipo_identificacion
+                this.numero_identificacion = item.numero_identificacion
+                this.fecha_expedicion = item.fecha_exp_documento
+                this.contratacion_directa = item.contratacion_directa == 0 ? false : item.contratacion_directa == null ? false : true
+                this.atraccion_seleccion = item.atraccion_seleccion == 0 ? false : item.atraccion_seleccion == null ? false : true
+                this.nit = item.nit
+                this.fecha_constitucion = item.fecha_constitucion
+                this.codigo_ciiu_id = item.codigo_ciiu_id
+                this.consulta_codigo_ciiu = item.codigo_ciiu
+                this.consulta_actvidad_ciiu = item.codigo_actividad_ciiu + ' ' + item.actividad_ciiu_descripcion
+                this.actividad_ciiu = item.codigo_actividad_ciiu
+                this.estrato = item.estrato_id
+                this.consulta_estrato = item.estrato
+                this.municipio = item.municipio_id
+                this.consulta_municipio = item.municipio
+                this.direccion_empresa = item.direccion_empresa
+                this.contacto_empresa = item.contacto_empresa
+                this.correo_electronico_empresa = item.correo_empresa
+                this.telefono_empresa = item.telefono_empresa
+                this.celular_empresa = item.celular_empresa
+                this.sociedad_comercial = item.sociedad_comercial_id
+                this.consulta_sociedad_comercial = item.sociedad_comercial
+                this.otra_cual = item.otra
+                this.acuerdo_comercial = item.acuerdo_comercial
+                this.aiu_negociado = item.aiu_negociado
+                this.plazo_pago = item.plazo_pago
+                this.ejecutivo_comercial = item.vendedor_id
+                this.consulta_ejecutivo_comercial = item.vendedor
+                this.empleados_empresa = item.numero_empleados
+                this.jornada_laboral = item.jornada_laboral_id
+                this.consulta_jornada_laboral = item.jornada_laboral
+                this.rotacion_personal = item.rotacion_personal_id
+                this.consulta_rotacion_personal = item.rotacion_personal
+                this.riesgo_laboral = item.riesgo_cliente_id
+                this.consulta_riesgo_cliente = item.riesgo_cliente
+                this.junta_directiva = item.junta_directiva.length > 0 ? true : false
+                this.consulta_responsable_impuesto_ventas = item.responsable_inpuesto_ventas == '1' ? 'Si' : 'No'
+                this.responsable_impuesto_ventas = item.responsable_inpuesto_ventas
+                this.correo_factura_electronica = item.correo_facturacion_electronica
+                this.consulta_sucursal_facturacion = item.sucursal_facturacion
+                this.sucursal = item.sucursal_facturacion_id
+                this.declaraciones_autorizaciones = item.declaraciones_autirizaciones == '1' ? true : false
+                this.tratamiento_datos_personales = item.tratamiento_datos_personales == '1' ? true : false
+                this.tipo_operacion_internacional = item.tipo_operacion_internacional_id
+                this.consulta_operacion_internacional = item.tipo_operacion_internacional
+                this.operaciones_modena_extranjera = item.operaciones_internacionales
+                this.consulta_operacion_moneda_extranjera = item.operaciones_internacionales == 1 ? 'Si' : 'No'
+                if (item.origen_fondos != null) {
+                    this.tipo_origen_fondo = item.origen_fondos.tipo_origen_fondos_id
+                    this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
+                    this.tipo_origen_medios = item.origen_fondos.tipo_origen_medios_id
+                    this.otro_tipo_origen_medios = item.origen_fondos.tipo_origen_medios2_id
+                    this.alto_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo
+                    this.consulta_origen_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo == 1 ? 'Si' : 'No'
                 }
-            } else {
-                this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
-            }
-
-            if (item.cargos2.length > 0) {
-                this.cargos2 = item.cargos2
-                for (let i = 0; i < item.cargos2.length; i++) {
-                    this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
-                    this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
-                    this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
-                    this.consulta_lista_cargos[i] = item.cargos2[i].cargo
-                    this.cargos2[i].cargo_id = item.cargos2[i].id_cargo
-                    this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
-                    this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
-                    this.array_lista_examenes[i] = item.cargos2[i].examenes
-                    this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                this.nombre_completo_contador = item.nombre_contador
+                this.identificacion_contador = item.identificacion_contador
+                this.telefono_contador = item.telefono_contador
+                this.tipo_identificacion_contador = item.tipo_identificacion_id_contador
+                this.consulta_contador = item.tipo_identificacion_contador
+                this.nombre_completo_tesorero = item.nombre_tesorero
+                this.telefono_tesorero = item.telefono_tesorero
+                this.correo_tesorero = item.correo_tesorero
+                this.ingreso_mensual = item.ingreso_mensual
+                this.otros_ingresos = item.otros_ingresos
+                this.total_ingresos = item.total_ingresos
+                this.costos_gastos = item.costos_gastos_mensual
+                this.detalle_otros_ingresos = item.detalle_otros_ingresos
+                this.reintegro_costos = item.reintegro_costos_gastos
+                this.activos = item.activos
+                this.pasivos = item.pasivos
+                this.patrimonio = item.patrimonio
+                this.pais = item.pais_id
+                this.consulta_pais = item.pais
+                this.departamento = item.departamento_id
+                this.consulta_departamento = item.departamento
+                this.municipio = item.municipio_id
+                this.consulta_municipio = item.municipio
+                this.periodicidad_liquidacion_id = item.periodicidad_liquidacion_id
+                this.consulta_periodicidad_pago = item.periodicidad_liquidacion
+                this.tipo_cliente = item.tipo_cliente_id
+                this.tipo_proveedor = item.tipo_proveedor_id
+                this.consulta_tipo_cliente = item.tipo_cliente
+                this.consulta_tipo_proveedor = item.tipo_proveedor
+                this.municipio_prestacion_servicio = item.municipio_prestacion_servicio_id
+                this.departamento_prestacion_servicio = item.departamento_prestacion_servicio_id
+                this.pais_prestacion_servicio = item.pais_prestacion_servicio
+                this.consulta_municipio_prestacion_servicio = item.municipio_prestacion_servicio
+                this.consulta_departamento_prestacion_servicio = item.departamento_prestacion_servicio
+                this.consulta_pais_prestacion_servicio = item.pais_prestacion_servicio
+                this.referencias_comerciales = item.referencia_comercial
+                this.personas_expuestas = item.personas_expuestas
+                this.numero_radicado = item.radicado
+                this.consulta_empresa_extranjera = item.empresa_extranjera
+                this.consulta_empresa_exterior = item.empresa_en_exterior
+                this.consulta_vinculos_empresa = item.vinculos_empresa
+                this.numero_empleados_directos = item.numero_empleados_directos
+                this.consulta_visita_presencial = item.visita_presencial
+                this.facturacion_contacto = item.facturacion_contacto
+                this.facturacion_cargo = item.facturacion_cargo
+                this.facturacion_telefono = item.facturacion_telefono
+                this.facturacion_celular = item.facturacion_celular
+                this.facturacion_correo = item.facturacion_correo
+                this.facturacion_factura = item.facturacion_factura_unica
+                this.facturacion_fecha_corte = item.facturacion_fecha_corte
+                this.facturacion_encargado_factura = item.facturacion_encargado_factura
+                this.consulta_anexo_factura = item.requiere_anexo_factura
+                this.consulta_trabajo_alto_riesgo = item.trabajo_alto_riesgo
+                this.consulta_accidentalidad = item.accidentalidad
+                this.consulta_encargado_sst = item.encargado_sst
+                this.nombre_encargado_sst = item.nombre_encargado_sst
+                this.cargo_encargado_sst = item.cargo_encargado_sst
+                this.consulta_induccion_entrenamiento = item.induccion_entrenamiento
+                this.consulta_entrega_dotacion = item.entrega_dotacion
+                this.consulta_evaluado_arl = item.evaluado_arl
+                this.consulta_entrega_epp = item.entrega_epp
+                this.consulta_personal_vinculado_temporal = item.vinculado_empresa_temporal
+                this.empresa_extranjera_id = item.empresa_extranjera == 'Si' ? 1 : 0
+                this.empresa_en_exterior_id = item.empresa_en_exterior == 'Si' ? 1 : 0
+                this.vinculos_empresa_id = item.vinculos_empresa == 'Si' ? 1 : 0
+                this.visita_presencial_id = item.visita_presencial == 'Si' ? 1 : 0
+                this.requiere_anexo_factura_id = item.requiere_anexo_factura == 'Si' ? 1 : 0
+                this.trabajo_alto_riesgo_id = item.trabajo_alto_riesgo == 'Si' ? 1 : 0
+                this.accidentalidad_id = item.accidentalidad == 'Si' ? 1 : 0
+                this.encargado_sst_id = item.encargado_sst == 'Si' ? 1 : 0
+                this.induccion_entrenamiento_id = item.induccion_entrenamiento == 'Si' ? 1 : 0
+                this.entrega_dotacion_id = item.entrega_dotacion == 'Si' ? 1 : 0
+                this.evaluado_arl_id = item.evaluado_arl == 'Si' ? 1 : 0
+                this.entrega_epp_id = item.entrega_epp == 'Si' ? 1 : 0
+                this.vinculado_empresa_temporal_id = item.vinculado_empresa_temporal == 'Si' ? 1 : 0
+                this.contratacion_contacto = item.contratacion_contacto
+                this.contratacion_cargo = item.contratacion_cargo
+                this.contratacion_telefono = item.contratacion_telefono
+                this.contratacion_celular = item.contratacion_celular
+                this.contratacion_correo_electronico = item.contratacion_correo
+                this.contratacion_hora_ingreso = item.contratacion_hora_ingreso
+                this.consulta_contratacion_carnet_alimentos = item.contratacion_manipulacion_alimentos
+                this.contratacion_confirma_ingreso = item.contratacion_hora_confirmacion
+                this.consulta_contratacion_talla_uniforme = item.contratacion_tallas_uniforme
+                this.consulta_contratacion_transporte = item.contratacion_suministra_transporte
+                this.consulta_contratacion_alimentacion = item.contratacion_suministra_alimentacion
+                this.consulta_contratacion_pago_efectivo = item.contratacion_pago_efectivo
+                this.consulta_contratacion_carnet = item.contratacion_carnet_corporativo
+                this.consulta_contratacion_pago_31 = item.contratacion_pagos_31
+                this.otros_si_agregados = item.otrosi
+                this.contratacion_observacion = item.contratacion_observacion
+                this.laboratorios_medicos_agregados = item.laboratorios_agregados
+                if (item['ubicacion_laboratorio'][0] != undefined) {
+                    this.consulta_pais_laboratorio = item['ubicacion_laboratorio'][0].pais
+                    this.consulta_departamento_laboratorio = item['ubicacion_laboratorio'][0].departamento
+                    this.consulta_municipio_laboratorio = item['ubicacion_laboratorio'][0].municipio
+                    this.pais_laboratorio_id = item['ubicacion_laboratorio'][0].pais_id
+                    this.departamento_laboratorio_id = item['ubicacion_laboratorio'][0].departamento_id
+                    this.municipio_laboratorio_id = item['ubicacion_laboratorio'][0].municipio_id
                 }
-            } else {
-                this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+
+                item.convenios_banco.forEach(element => {
+                    if (element.id >= 1 && element.id <= 9) {
+                        element.id = '0' + element.id;
+                    }
+                    this.bancos_agregados.push({ id: element.id, nombre: element.nombre });
+                });
+
+                item.tipos_contrato.forEach(element => {
+                    if (element.id >= 1 && element.id <= 9) {
+                        element.id = '0' + element.id;
+                    }
+                    this.tipos_contratos_agregados.push({ id: element.id, nombre: element.nombre });
+                });
+
+                item.clientes_epps.forEach(function (item) {
+                    self.elementos_epp[item.epp_id] = true
+                });
+
+                if (item.tipo_persona_id == 1) {
+                    this.persona_natural = true
+                } else {
+                    this.persona_juridica = true
+                }
+
+                if (item.documentos_adjuntos.length > 0) {
+                    this.fileInputsCount = item.documentos_adjuntos
+                }
+
+                item.documentos_adjuntos.forEach(function (item) {
+                    self.convertFile(item.ruta)
+                        .then(archivo => {
+                            self.file.push(archivo);
+                        })
+                        .catch(error => {
+                            this.showAlert('Error al convertir el archivo:', 'error')
+                            console.log(error)
+                        });
+                })
+
+                if (item.cargos.length > 0) {
+                    this.cargos = item.cargos
+                    for (let i = 0; i < item.cargos.length; i++) {
+                        this.requisitos[i] = item.cargos[i].requisitos
+                        this.examenes[i] = item.cargos[i].examenes
+                        this.consulta_riesgo_laboral[i] = item.cargos[i].riesgo_laboral
+                        this.cargos[i].riesgo = item.cargos[i].riesgo_laboral_id
+                    }
+                } else {
+                    this.cargos = [{ cargo: '', requisitos: [], examenes: [], riesgo_laboral_id: '' }]
+                }
+
+                if (item.cargos2.length > 0) {
+                    this.cargos2 = item.cargos2
+                    for (let i = 0; i < item.cargos2.length; i++) {
+                        this.tipo_cargo[i] = item.cargos2[i].tipo_cargo_id
+                        this.categoria_cargo_id = item.cargos2[i].categoria_cargo_id
+                        this.consulta_subcategoria_cargos[i] = item.cargos2[i].categoria
+                        this.consulta_lista_cargos[i] = item.cargos2[i].cargo
+                        this.cargos2[i].cargo_id = item.cargos2[i].id_cargo
+                        this.consulta_textohtml[i] = item.cargos2[i].funcion_cargo
+                        this.consulta_riesgo_laboral[i] = item.cargos2[i].riesgo_laboral
+                        this.array_lista_examenes[i] = item.cargos2[i].examenes
+                        this.array_lista_recomendaciones[i] = item.cargos2[i].recomendaciones
+                    }
+                } else {
+                    this.cargos2 = [{ cargo_id: '', examenes: [], recomendaciones: [], funcion_cargo: '', riesgo_laboral_id: '' }]
+                }
+                item.documentos_adjuntos.forEach(function (item) {
+                    self.id_archivo.push(item.tipo_documento_id)
+                })
+
+                this.miembros_Junta = item.junta_directiva
+                item.junta_directiva.forEach(function (item) {
+                    self.consulta_tipo_identificacion_miembros_junta.push(item.des_tip)
+                })
+
+                this.representantes_legales = item.representantes_legales
+                item.representantes_legales.forEach(function (item) {
+                    self.consulta_tipo_identificacion_rl.push(item.des_tip)
+                    self.consulta_pais_rl.push(item.pais)
+                    self.consulta_departamento_rl.push(item.departamento)
+                    self.consulta_municipio_rl.push(item.ciudad_expedicion)
+                })
+
+                this.accionistas = item.accionistas;
+                item.accionistas.forEach(function (item) {
+                    self.consulta_tipo_identificacion_ac.push(item.des_tip)
+                })
+
+                this.referencias_bancarias = item.referencia_bancaria
+                item.referencia_bancaria.forEach(function (item, index) {
+                    self.consulta_banco_rb.push(item.banco)
+                    self.consulta_tipo_cuenta_banco_rb.push(item.tipo_cuenta)
+                    self.referencias_bancarias[index].tipo_cuenta = item.tipo_cuenta_banco
+                })
+
+                item.personas_expuestas.forEach(function (item) {
+                    self.consultas_personas_expuestas.push(item.des_tip)
+                })
+
+                if (item.calidad_tributaria[0] != undefined) {
+                    this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : item.calidad_tributaria[0].gran_contribuyente == '0' ? 'No' : ''
+                    this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].gran_contribuyente
+                    this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].resolucion_gran_contribuyente
+                    this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha_gran_contribuyente
+
+                    this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : item.calidad_tributaria[0].auto_retenedor == '0' ? 'No' : ''
+                    this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].auto_retenedor
+                    this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].resolucion_auto_retenedor
+                    this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha_auto_retenedor
+
+                    this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : item.calidad_tributaria[0].exento_impuesto_rent == '0' ? 'No' : ''
+                    this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].exento_impuesto_rent
+                    this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].resolucion_exento_impuesto_rent
+                    this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha_exento_impuesto_rent
+                }
+
+                if (item.origen_fondos != null) {
+                    this.alto_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo
+                    this.consulta_origen_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo == 1 ? 'Si' : 'No'
+                    this.consulta_origen_medios1 = item.origen_fondos.origen_medios
+                    this.consulta_origen_medios2 = item.origen_fondos.origen_medios2
+                    this.consulta_origen_fondos = item.origen_fondos.origen_fondos
+                    this.tipo_origen_medios = item.origen_fondos.tipo_origen_medios_id
+                    this.otro_tipo_origen_medios = item.origen_fondos.tipo_origen_medios2_id
+                    this.tipo_origen_fondo = item.origen_fondos.tipo_origen_fondos_id
+                    this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
+                }
+
+            } catch (error) {
+                console.log(error)
             }
-            item.documentos_adjuntos.forEach(function (item) {
-                self.id_archivo.push(item.tipo_documento_id)
-            })
-
-            this.miembros_Junta = item.junta_directiva
-            item.junta_directiva.forEach(function (item) {
-                self.consulta_tipo_identificacion_miembros_junta.push(item.des_tip)
-            })
-
-            this.representantes_legales = item.representantes_legales
-            item.representantes_legales.forEach(function (item) {
-                self.consulta_tipo_identificacion_rl.push(item.des_tip)
-                self.consulta_pais_rl.push(item.pais)
-                self.consulta_departamento_rl.push(item.departamento)
-                self.consulta_municipio_rl.push(item.ciudad_expedicion)
-            })
-
-            this.accionistas = item.accionistas;
-            item.accionistas.forEach(function (item) {
-                self.consulta_tipo_identificacion_ac.push(item.des_tip)
-            })
-
-            this.referencias_bancarias = item.referencia_bancaria
-            item.referencia_bancaria.forEach(function (item, index) {
-                self.consulta_banco_rb.push(item.banco)
-                self.consulta_tipo_cuenta_banco_rb.push(item.tipo_cuenta)
-                self.referencias_bancarias[index].tipo_cuenta = item.tipo_cuenta_banco
-            })
-
-            item.personas_expuestas.forEach(function (item) {
-                self.consultas_personas_expuestas.push(item.des_tip)
-            })
-
-            this.consulta_calidad_tributaria[0] = item.calidad_tributaria[0].gran_contribuyente == '1' ? 'Si' : item.calidad_tributaria[0].gran_contribuyente == '0' ? 'No' : ''
-            this.calidad_tributaria[0].opcion = item.calidad_tributaria[0].gran_contribuyente
-            this.calidad_tributaria[0].numero_resolucion = item.calidad_tributaria[0].resolucion_gran_contribuyente
-            this.calidad_tributaria[0].fecha = item.calidad_tributaria[0].fecha_gran_contribuyente
-
-            this.consulta_calidad_tributaria[1] = item.calidad_tributaria[0].auto_retenedor == '1' ? 'Si' : item.calidad_tributaria[0].auto_retenedor == '0' ? 'No' : ''
-            this.calidad_tributaria[1].opcion = item.calidad_tributaria[0].auto_retenedor
-            this.calidad_tributaria[1].numero_resolucion = item.calidad_tributaria[0].resolucion_auto_retenedor
-            this.calidad_tributaria[1].fecha = item.calidad_tributaria[0].fecha_auto_retenedor
-
-            this.consulta_calidad_tributaria[2] = item.calidad_tributaria[0].exento_impuesto_rent == '1' ? 'Si' : item.calidad_tributaria[0].exento_impuesto_rent == '0' ? 'No' : ''
-            this.calidad_tributaria[2].opcion = item.calidad_tributaria[0].exento_impuesto_rent
-            this.calidad_tributaria[2].numero_resolucion = item.calidad_tributaria[0].resolucion_exento_impuesto_rent
-            this.calidad_tributaria[2].fecha = item.calidad_tributaria[0].fecha_exento_impuesto_rent
-
-            this.alto_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo
-            this.consulta_origen_manejo_efectivo = item.origen_fondos.alto_manejo_efectivo == 1 ? 'Si' : 'No'
-
-            this.consulta_origen_medios1 = item.origen_fondos.origen_medios
-            this.consulta_origen_medios2 = item.origen_fondos.origen_medios2
-            this.consulta_origen_fondos = item.origen_fondos.origen_fondos
-            this.tipo_origen_medios = item.origen_fondos.tipo_origen_medios_id
-            this.otro_tipo_origen_medios = item.origen_fondos.tipo_origen_medios2_id
-            this.tipo_origen_fondo = item.origen_fondos.tipo_origen_fondos_id
-            this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen
 
         },
 
@@ -4600,8 +5114,13 @@ ul li {
     cursor: pointer;
 }
 
-.ct >>> span{
+.ct>>>span {
     padding: 10px 60px 10px 0px;
+}
+
+#btnMenu {
+    background-color: rgb(28, 146, 77);
+    color: white;
 }
 
 

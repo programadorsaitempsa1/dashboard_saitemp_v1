@@ -219,6 +219,7 @@ label {
     padding: 5px;
     cursor: pointer;
     border-radius: 5px;
+    color:black;
 }
 
 #select1 #lista1:hover,

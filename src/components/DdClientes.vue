@@ -84,7 +84,6 @@ export default {
         .get(self.URL_API + "api/v1/consultaformulariocliente/" + 10, config)
         .then(function (result) {
           self.first_page_url = result.data.first_page_url.replace("\"");
-          console.log( self.first_page_url)
           self.datos = result;
         });
     },

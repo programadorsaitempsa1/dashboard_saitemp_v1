@@ -13,13 +13,104 @@
             <span @click="filtros = !filtros" style="cursor:pointer">Filtro avanzado de búsqueda <i v-if="filtros"
                     class="bi bi-chevron-down"></i><i v-if="!filtros" class="bi bi-chevron-compact-up"></i></span>
         </div>
-        <div v-if="filtros" class="row" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
+        <div class="row" v-if="filtros" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
+            <div v-for="item, index1 in 3" :key="item" class="row">
+                <div class="col-xs-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label" style="float:left">Campo</label>
+                    <select class="form-select form-select-sm" @change="tipoCampo2(indice_campos[index1], index1)"
+                        v-model="indice_campos[index1]" aria-label="Default select example">
+                        <option v-for="item, index in tabla2" :key="index">{{ index == 0 ? 'Por favor seleccione un' +
+            ' campo' : item.nombre }}</option>
+                    </select>
+                </div>
+                <div class="col-xs-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label" style="float:left">Comparación</label>
+                    <select class="form-select form-select-sm" v-model="operadores[index1]"
+                        aria-label="Default select example">
+                        <option v-if="tipos_de_campo[index1] == 'numero'">Menor que</option>
+                        <option v-if="tipos_de_campo[index1] == 'numero'">Mayor que</option>
+                        <option v-if="tipos_de_campo[index1] == 'numero'">Menor o igual que</option>
+                        <option v-if="tipos_de_campo[index1] == 'numero'">Mayor o igual que</option>
+                        <option v-if="tipos_de_campo[index1] == 'numero'">Igual a número</option>
+                        <option v-if="tipos_de_campo[index1] == 'numero' || tipos_de_campo[index1] == 'fecha'">Entre
+                        </option>
+                        <option v-if="tipos_de_campo[index1] == 'texto'">Igual a</option>
+                        <option v-if="tipos_de_campo[index1] == 'fecha'">Igual a fecha</option>
+                        <option v-if="tipos_de_campo[index1] == 'texto' && calculados[index1] == 'false'">Contiene
+                        </option>
+                    </select>
+                </div>
+                <div v-if="tipos_de_campo[index1] == 'fecha'" class="col-xs-3 col-md-3">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operadores[index1] !=
+            'Entre' ?
+            'Fecha' : 'Fecha inicial' }}</label>
+                        <input type="date" class="form-control form-control-sm" id="exampleInputEmail2"
+                            aria-describedby="emailHelp" v-model="valores_comparar[index1]" />
+                    </div>
+                </div>
+                <div v-else class="col-xs-3 col-md-3">
+                    <div v-if="calculados[index1] == 'true'">
+                        <label for="exampleFormControlInput1" class="form-label" style="float:left">Valor</label>
+                        <select class="form-select form-select-sm" @change="idCampo2(valores_comparar2[index1], index1)"
+                            v-model="valores_comparar2[index1]" aria-label="Default select example">
+                            <option v-for="item, index in listaItem" :key="index">{{ item.nombre }}</option>
+                        </select>
+                    </div>
+                    <div v-if="calculados[index1] == 'false'" class="mb-3">
+                        <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operadores[index1] !=
+            'Entre' ?
+            'Valor' : 'Valor inicial' }}</label>
+                        <input type="text" class="form-control form-control-sm" autocomplete="off"
+                            id="exampleInputEmail2" aria-describedby="emailHelp" v-model="valores_comparar[index1]" />
+                    </div>
+                </div>
+                <div v-if="tipos_de_campo[index1] == 'fecha' && operadores[index1] == 'Entre'"
+                    class="col-xs-3 col-md-3">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" style="float:left" class="form-label">Fecha final</label>
+                        <input type="date" class="form-control form-control-sm" id="exampleInputEmail2"
+                            aria-describedby="emailHelp" v-model="valores_comparar2[index1]" />
+                    </div>
+                </div>
+                <div v-if="tipos_de_campo[index1] == 'numero' && operadores[index1] == 'Entre'"
+                    class="col-xs-3 col-md-3">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" style="float:left" class="form-label">Valor final</label>
+                        <input type="text" class="form-control form-control-sm" id="exampleInputEmail2"
+                            aria-describedby="emailHelp" v-model="valores_comparar2[index1]" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 col-md-3">
+                    <button @click="filtrar2()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
+                        Realizar búsqueda
+                    </button>
+                </div>
+                <!-- <div v-if="ruta == '/navbar/debida-diligencia/clientes' && this.campo_ != '' && this.operadores && this.valores_comparar || this.valores_comparar2"
+                    class="col-xs-3 col-md-3">
+                    <button id="exportar" @click="exportar()" type="button" class="btn btn-success btn-sm">
+                        <a :href="URL_API + 'api/v1/' + endpointexport + '/' + base64consulta"
+                            rel="noopener noreferrer">Exportar excel</a>
+                    </button>
+                </div> -->
+                <div class="col-xs-3 col-md-3">
+                    <button @click="getRegistros()" type="button" style="margin-top: 30px"
+                        class="btn btn-success btn-sm">
+                        Borrar búsqueda
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div v-if="filtros && ruta != '/navbar/gestion-ingresosl'" class="row"
+            style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
             <div class="col-xs-3 col-md-3">
                 <label for="exampleFormControlInput1" class="form-label" style="float:left">Campo</label>
                 <select class="form-select form-select-sm" @change="tipoCampo(indice_campo)" v-model="indice_campo"
                     aria-label="Default select example">
                     <option v-for="item, index in tabla2" :key="index">{{ index == 0 ? 'Por favor seleccione un' +
-                        ' campo' : item.nombre }}</option>
+            ' campo' : item.nombre }}</option>
                 </select>
             </div>
             <div class="col-xs-3 col-md-3">
@@ -39,7 +130,7 @@
             <div v-if="tipo_de_campo == 'fecha'" class="col-xs-3 col-md-3">
                 <div class="mb-3">
                     <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operador != 'Entre' ?
-                        'Fecha' : 'Fecha inicial' }}</label>
+            'Fecha' : 'Fecha inicial' }}</label>
                     <input type="date" class="form-control form-control-sm" id="exampleInputEmail2"
                         aria-describedby="emailHelp" v-model="valor_comparar" />
                 </div>
@@ -47,14 +138,14 @@
             <div v-else class="col-xs-3 col-md-3">
                 <div v-if="calculado == 'true'">
                     <label for="exampleFormControlInput1" class="form-label" style="float:left">Valor</label>
-                    <select class="form-select form-select-sm" @change="idCampo(valor_comparar2)" v-model="valor_comparar2"
-                        aria-label="Default select example">
+                    <select class="form-select form-select-sm" @change="idCampo(valor_comparar2)"
+                        v-model="valor_comparar2" aria-label="Default select example">
                         <option v-for="item, index in listaItem" :key="index">{{ item.nombre }}</option>
                     </select>
                 </div>
                 <div v-if="calculado == 'false'" class="mb-3">
                     <label for="exampleInputEmail1" style="float:left" class="form-label">{{ operador != 'Entre' ?
-                        'Valor' : 'Valor inicial' }}</label>
+            'Valor' : 'Valor inicial' }}</label>
                     <input type="text" class="form-control form-control-sm" autocomplete="off" id="exampleInputEmail2"
                         aria-describedby="emailHelp" v-model="valor_comparar" />
                 </div>
@@ -87,7 +178,8 @@
                     </button>
                 </div>
                 <div class="col-xs-3 col-md-3">
-                    <button @click="getRegistros()" type="button" style="margin-top: 30px" class="btn btn-success btn-sm">
+                    <button @click="getRegistros()" type="button" style="margin-top: 30px"
+                        class="btn btn-success btn-sm">
                         Borrar búsqueda
                     </button>
                 </div>
@@ -108,7 +200,7 @@
                     <option v-if="links.total > 1000">500</option>
                 </select>
             </div>
-            <div v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'"
+            <div v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/gestion-ingresosl'"
                 class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px" @click="selectAll((select_all = !select_all))"
                     class="btn btn-success btn-sm">
@@ -131,10 +223,11 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'"
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/gestion-ingresosl'"
                             scope="col">Seleccionar</th>
-                        <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col" v-for="(item, index) in tabla2"
-                            :key="index" :class="{ 'd-none': item.nombre === 'Estado contrato' }">
+                        <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col"
+                            v-for="(item, index) in tabla2" :key="index"
+                            :class="{ 'd-none': item.nombre === 'Estado contrato' }">
                             {{ item.nombre }}
                         </th>
                         <!-- <th v-if="editar || eliminar" -->
@@ -143,9 +236,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in items_tabla2" :key="item.id" >
+                    <tr v-for="(item, index) in items_tabla2" :key="item.id">
                         <td
-                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
+                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/gestion-ingresosl'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -154,10 +247,10 @@
                         <td v-for="(item2) in campos2" :key="item2.id"
                             :style="{ display: shouldDisplayColumn(item2) ? 'table-cell' : 'none' }"
                             style="text-align:justify">{{ item2 == 'id' ? index +
-                                1 : item[item2] ==
-                                    null ? 'Sin datos' : item2.includes('sal_bas') ?
-                                formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
-                                    item[item2] }}
+            1 : item[item2] ==
+                null ? 'Sin datos' : item2.includes('sal_bas') ?
+            formatCurrency(item[item2]) : item[item2].includes('000000Z') ? fecha(item[item2]) :
+                item[item2] }}
                         </td>
                         <!-- <td @click="getAnalista(item['analista'].split('-')[1])" style="color:rgb(9, 107, 22);text-decoration: underline; cursor: pointer;">{{ item['analista'].split('-')[0] }}</td> -->
                         <td v-if="empleados() && !isNaN(search)">
@@ -206,16 +299,23 @@
                                 Ver registro
                             </button>
                         </td>
-                        <td v-if="ruta == '/navbar/debida-diligencia/clientes' && permisos[0].autorizado">
-                            <button type="button" class="btn btn-success btn-sm " @click="consulta()">
-                                <ConsultaContrato :item="item" style="padding: 0px;" />
+                        <td v-if="ruta == '/navbar/gestion-ingresosl'">
+                            <button type="button" class="btn btn-success btn-sm " @click="verOrdenIngreso(item)"
+                                v-if="item.nombre != 'S. Administrador'">
+                                Ver registro
                             </button>
+                        </td>
+                        <td v-if="ruta == '/navbar/debida-diligencia/clientes' && permisos[0].autorizado">
+                            <!-- <button type="button" class="btn btn-success btn-sm " @click="$refs.consultaContrato.consulta()"> -->
+                            <ConsultaContrato :item="item" />
+                            <!-- </button> -->
 
                         </td>
                         <td v-if="ruta == '/navbar/debida-diligencia/clientes'">
                             <div class="btn-group">
                                 <button type="button" class="btn"
-                                    :style="'color:black;background-color:' + item.color_estado_firma">{{ item.nombre_estado_firma }}</button>
+                                    :style="'color:black;background-color:' + item.color_estado_firma">{{
+            item.nombre_estado_firma }}</button>
                                 <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
                                     v-if="permisos[20].autorizado" data-bs-toggle="dropdown" aria-expanded="false"
                                     :style="'color:black;background-color:' + item.color_estado_firma">
@@ -224,7 +324,7 @@
                                 <ul class="dropdown-menu">
                                     <li style="cursor:pointer;" v-for="item2, index in estados_firma" :key="index"> <a
                                             class="dropdown-item" @click="actualizaEstado(item.id, item2.id)">{{
-                                                item2.nombre }}</a></li>
+            item2.nombre }}</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -234,8 +334,51 @@
                                 </ul>
                             </div>
                         </td>
+                        <td v-if="ruta == '/navbar/gestion-ingresosl'">
+                            <!-- <div style="position: absolute;">{{item.estado_ingreso}}</div> -->
+                            <div class="btn-group">
+                                <button type="button" class="btn"
+                                    :style="'color:black;background-color:' + item.color">{{
+            truncateText(item.estado_ingreso, maxCaracteres) }}</button>
+                                <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
+                                    v-if="permisos[20].autorizado" data-bs-toggle="dropdown" aria-expanded="false"
+                                    :style="'color:black;background-color:' + item.color">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li style="cursor:pointer;" v-for="item2, index in estados_ingreso" :key="index"> <a
+                                            class="dropdown-item" @click="actualizaEstado(item.id, item2.id)">{{
+            item2.nombre }}</a></li>
+                                    <!-- <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item"><router-link class="nav-link active"
+                                                :to="'/navbar/timeLine/' + item.id">Historial
+                                                actualizaciones</router-link></a></li> -->
+                                </ul>
+                            </div>
+                        </td>
+                        <td v-if="ruta == '/navbar/gestion-ingresosl'">
+                            <div class="btn-group">
+                                <button type="button" class="btn"
+                                    :style="'color:black;background-color:' + item.color">{{
+            item.responsable_ingreso }}</button>
+                                <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
+                                    v-if="permisos[20].autorizado" data-bs-toggle="dropdown" aria-expanded="false"
+                                    :style="'color:black;background-color:' + item.color" @click="getEncargados(item)">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li style="cursor:pointer;" v-for="item2, index in lista_encargados" :key="index">
+                                        <a class="dropdown-item" @click="actualizaResponsable(item.id, index)">{{
+            item2.nombres }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
                         <td v-if="ruta == '/navbar/reportes'">
-                            <button type="button" class="btn btn-success btn-sm " v-if="item.nombre != 'S. Administrador'">
+                            <button type="button" class="btn btn-success btn-sm "
+                                v-if="item.nombre != 'S. Administrador'">
                                 <a :href="'http://srv-saitemp03:81/ReportServer/Pages/ReportViewer.aspx?%2fSaitemp_V3/ReportesWeb/' + item.cod_rep.substring(0, 3) + '/' + item.cod_rep + '&rs:Command=Render'"
                                     target="_blank">Ver reporte</a>
                             </button>
@@ -251,15 +394,15 @@
                     <ul class="pagination">
                         <li class="page-item">
                             <a :style="item.active == true
-                                ? 'background-color:#d06519'
-                                : 'background-color:#21618C'
-                                " class="page-link" v-for="(item, index) in links.links" :key="index"
+            ? 'background-color:#d06519'
+            : 'background-color:#21618C'
+            " class="page-link" v-for="(item, index) in links.links" :key="index"
                                 @click="pagination(item.url), currentUrl = item.url, goScroll('up')">{{
-                                    index == 0
-                                    ? "Anterior"
-                                    : index == siguiente - 1
-                                        ? "siguiente"
-                                        : item.label
+                                index == 0
+                                ? "Anterior"
+                                : index == siguiente - 1
+                                ? "siguiente"
+                                : item.label
                                 }}</a>
                         </li>
                     </ul>
@@ -280,6 +423,7 @@
         </div>
     </div>
 </template>
+
 <script>
 import axios from 'axios'
 import Modal from './Modal.vue'
@@ -325,7 +469,8 @@ export default {
             default: false,
             type: Boolean
         },
-        estados_firma: []
+        estados_firma: [],
+        estados_ingreso: []
     },
     data() {
         return {
@@ -343,13 +488,20 @@ export default {
             select_all: false,
             spinner: true,
             campo: '',
+            campo_: [],
             operador: '',
+            operadores: [],
             valor_comparar: '',
             valor_comparar2: '',
+            valores_comparar: [],
+            valores_comparar2: [],
             tipo_de_campo: '',
+            tipos_de_campo: [],
             indice_campo: '',
+            indice_campos: [],
             filtros: false,
             calculado: '',
+            calculados: [],
             listaItem: [],
             ruta: this.$route.path,
             base64consulta: '',
@@ -357,7 +509,11 @@ export default {
             url: '',
             analista: [],
             loading: false,
-            columnaOculta: ['color_estado_firma', 'nombre_estado_firma'], // este array contiene los nombres de las columnas queno queremos que se muestren en la tabla
+            columnaOculta: ['color_estado_firma', 'nombre_estado_firma', 'responsable_ingreso', 'estado_ingreso_id'], // este array contiene los nombres de las columnas queno queremos que se muestren en la tabla
+            maxCaracteres: 20,
+            lista_estados_id: {},
+            lista_encargados: [],
+
         };
     },
 
@@ -386,6 +542,33 @@ export default {
         }
     },
     methods: {
+        getEncargados(item) {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/responsableingresos/" + item.estado_ingreso_id, config)
+                .then(function (result) {
+                    self.lista_encargados = result.data
+                });
+        },
+        truncateText(text, maxLength, id) {
+            if (!(id in this.lista_estados_id)) {
+                if (text.length > maxLength) {
+                    // this.$set(this.lista_estados_id, id, text.substring(0, maxLength) + '...');
+                    return 'Estado'
+                } else {
+                    this.$set(this.lista_estados_id, id, text);
+                }
+            }
+            return 'Estado'
+            // return this.lista_estados_id[id];
+        },
+        actualizaResponsable(item_id, index) {
+            this.$emit('actualizaResponsable', item_id, this.lista_encargados[index].nombres, this.currentUrl)
+            setTimeout(() => {
+                this.lista_encargados = [];
+            }, 1000);
+        },
         shouldDisplayColumn(column) {
             if (!this.columnaOculta.includes(column)) {
                 return column;
@@ -432,6 +615,9 @@ export default {
             else if (this.ruta.includes('debida-diligencia')) {
                 return true
             }
+            else if (this.ruta.includes('gestion-ingresosl')) {
+                return true
+            }
         },
         exportar() {
             let self = this;
@@ -462,6 +648,26 @@ export default {
                     self.llenarTabla(result)
                 });
         },
+        filtrar2() {
+            let self = this;
+            this.scrollTop()
+            this.loading = true
+            let config = self.configHeader();
+
+            let indice_campos = JSON.stringify(this.campo_);
+            let operadores = JSON.stringify(this.operadores);
+            let valores_comparar = JSON.stringify(this.valores_comparar);
+            let valores_comparar2 = JSON.stringify(this.valores_comparar2);
+            let cadena = indice_campos + '/' + operadores + '/' + valores_comparar + '/' + valores_comparar2
+            let base64 = (btoa(cadena))
+            axios
+                .get(self.URL_API + "api/v1/" + self.endpoint + "filtro/" + base64, config)
+                .then(function (result) {
+                    self.loading = false
+                    self.currentUrl = result.data.first_page_url
+                    self.llenarTabla(result)
+                });
+        },
         tipoCampo(campo) {
             this.tabla2.forEach((item, index) => {
                 if (item.nombre == campo) {
@@ -474,10 +680,29 @@ export default {
                 }
             })
         },
+        tipoCampo2(campo, index1) {
+            this.tabla2.forEach((item, index) => {
+                if (item.nombre == campo) {
+                    this.tipos_de_campo[index1] = item.tipo
+                    this.campo_[index1] = this.campos2[index]
+                    this.calculados[index1] = item.calculado
+                    if (item.calculado == 'true') {
+                        this.listaItem = this.listas[index1]
+                    }
+                }
+            })
+        },
         idCampo(campo) {
             this.listaItem.forEach(item => {
                 if (campo.trim() == item.nombre.trim()) {
                     this.valor_comparar = item.id
+                }
+            })
+        },
+        idCampo2(campo, index1) {
+            this.listaItem.forEach(item => {
+                if (campo.trim() == item.nombre.trim()) {
+                    this.valores_comparar[index1] = item.id
                 }
             })
         },
@@ -774,6 +999,9 @@ export default {
         verOrdenServicio(item) {
             this.$router.push({ name: 'orden-servicios', params: { id: item.id } })
         },
+        verOrdenIngreso(item) {
+            this.$router.push({ name: 'gestion-ingresos', params: { id: item.id } })
+        },
         exportFormularioDD() {
             // console.log(item)
             let self = this;
@@ -787,6 +1015,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 th {
     white-space: nowrap;
@@ -897,7 +1126,6 @@ a {
 }
 
 .d-none {
-  display: none;
+    display: none;
 }
-
 </style>
