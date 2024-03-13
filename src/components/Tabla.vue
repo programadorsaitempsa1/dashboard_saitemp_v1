@@ -425,6 +425,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import axios from 'axios'
 import Modal from './Modal.vue'
 import ConsultaContrato from './ConsultaContrato.vue'
@@ -653,6 +654,25 @@ export default {
             this.scrollTop()
             this.loading = true
             let config = self.configHeader();
+
+            const longitud = this.campo_.length;
+
+            for (let i = longitud - 1; i >= 0; i--) {
+                if (
+                    this.campo_[i] === undefined ||
+                    this.operadores[i] === undefined ||
+                    this.valores_comparar[i] === undefined ||
+                    this.campo_[i] === '' ||
+                    this.operadores[i] === '' ||
+                    this.valores_comparar[i] === ''
+                ) {
+                    Vue.set(this.campo_, i, undefined);
+                    Vue.set(this.operadores, i, undefined);
+                    Vue.set(this.valores_comparar, i, undefined);
+                    Vue.set(this.valores_comparar2, i, undefined);
+                    Vue.set(this.indice_campos, i, undefined);
+                }
+            }
 
             let indice_campos = JSON.stringify(this.campo_);
             let operadores = JSON.stringify(this.operadores);

@@ -6,6 +6,11 @@
             <h6 class="tituloseccion">Información general</h6>
             <div id="seccion">
                 <div class="row" v-if="$route.params.id != undefined">
+
+                    <h6 style="text-align: left;">Radicado: {{ radicado }}</h6>
+
+                </div>
+                <div class="row" v-if="$route.params.id != undefined">
                     <div class="col">
                         <label class="form-label">Fecha radicado</label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="fecha_expedicion"
@@ -29,6 +34,60 @@
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <SearchList nombreCampo="Empresa usuaria: *" @getEmpresasCliente="getEmpresasCliente"
+                            eventoCampo="getEmpresasCliente" nombreItem="nombre" :consulta="consulta_empresa_cliente"
+                            :registros="empresas_cliente" placeholder="Seleccione una opción" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Tipo de servicio: *" @getTipoServicio="getTipoServicio"
+                            eventoCampo="getTipoServicio" nombreItem="nombre" :consulta="consulta_tipo_servicio"
+                            :registros="tipos_servicio" placeholder="Seleccione una opción" />
+                    </div>
+                    <div class="col" v-if="tipo_servicio_id == 3 || tipo_servicio_id == 4">
+                        <label class="form-label">Número de vacantes</label>
+                        <input type="text" class="form-control" autocomplete="off" id="fecha_expedicion"
+                            aria-describedby="emailHelp" v-model="numero_vacantes"
+                            @input="numero_vacantes = validarNumero(numero_vacantes)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" v-if="tipo_servicio_id == 2">
+                        <label class="form-label">Número de contrataciones</label>
+                        <input type="text" class="form-control" autocomplete="off" id="fecha_expedicion"
+                            aria-describedby="emailHelp" v-model="numero_contrataciones"
+                            @input="numero_contrataciones = validarNumero(numero_contrataciones)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col mb-3" v-if="tipo_servicio_id == 2">
+                        <label class="form-label">Citación entrevista: *
+                        </label>
+                        <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="citacion_entrevista" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col" v-if="tipo_servicio_id == 2">
+                        <SearchList nombreCampo="Profesional: *" @getUsuarios="getUsuarios" eventoCampo="getUsuarios"
+                            nombreItem="nombre" :consulta="consulta_usuario" :registros="usuarios"
+                            placeholder="Seleccione una opción" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3" v-if="tipo_servicio_id == 2">
+                        <label class="form-label">Informe selección: *
+                        </label>
+                        <textarea name="" id="novedades" class="form-control" rows="1" v-model="informe_seleccion"
+                            @input="informe_seleccion = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                 </div>
                 <div class="row">
@@ -61,10 +120,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <SearchList nombreCampo="Empresa usuaria: *" @getEmpresasCliente="getEmpresasCliente"
-                            eventoCampo="getEmpresasCliente" nombreItem="nombre" :consulta="consulta_empresa_cliente"
-                            :registros="empresas_cliente" placeholder="Seleccione una opción" />
+                    <div class="col mb-3">
+                        <label class="form-label">Número contacto: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="celular_candidato"
+                            @input="celular_candidato = validarNumero(celular_candidato)" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Cargo: *
@@ -103,16 +167,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col mb-3">
-                        <label class="form-label">Número contacto: *
-                        </label>
-                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
-                            aria-describedby="emailHelp" v-model="celular_candidato"
-                            @input="celular_candidato = validarNumero(celular_candidato)" />
-                        <div class="invalid-feedback">
-                            {{ mensaje_error }}
-                        </div>
-                    </div>
+
                     <div class="col mb-3">
                         <label class="form-label">EPS: *
                         </label>
@@ -127,8 +182,6 @@
                             :consulta="consulta_afp" :registros="lista_afp" :ordenCampo="1"
                             placeholder="Seleccione una opción" />
                     </div>
-                </div>
-                <div class="row">
                     <div class="col">
                         <SearchList nombreCampo="¿Stradata verificado:? *"
                             @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
@@ -136,6 +189,8 @@
                             :consulta="consulta_stradata" :registros="afirmacionNegacion" :ordenCampo="1"
                             :valida_campo="false" placeholder="Seleccione una opción" />
                     </div>
+                </div>
+                <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Novedades: *
                         </label>
@@ -151,20 +206,28 @@
                             {{ mensaje_error }}
                         </div>
                     </div>
-
-                </div>
-                <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Exámenes: *
                         </label>
                         <textarea name="" id="examenes" class="form-control" rows="1" v-model="examenes"
                             @input="examenes = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col mb-3">
                         <label class="form-label">Fecha examen: *
                         </label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="fecha_examen" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label">Cambio fecha: *
+                        </label>
+                        <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="cambio_fecha" />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
@@ -282,6 +345,18 @@ export default {
             estado: '',
             loading: true,
             fecha_radicado: '',
+            tipos_servicio: [],
+            consulta_tipo_servicio: '',
+            tipo_servicio_id: '',
+            numero_contrataciones: '',
+            numero_vacantes: '',
+            citacion_entrevista: '',
+            usuarios: [],
+            consulta_usuario: '',
+            usuario_id: '',
+            informe_seleccion: '',
+            cambio_fecha: '',
+            radicado: '',
 
         }
     },
@@ -290,7 +365,7 @@ export default {
     },
     watch: {
         $route() {
-           this.limpiarFormulario()
+            this.limpiarFormulario()
             // console.log('limpiando formulario')
         },
     },
@@ -391,7 +466,7 @@ export default {
             if (item != null) {
                 switch (campo) {
                     case 1:
-                        this.verificado_stradata = item.nombre
+                        this.consulta_stradata = item.nombre
                         break
                 }
             }
@@ -516,11 +591,18 @@ export default {
                 numero_contacto: this.celular_candidato,
                 eps: this.eps,
                 afp_id: this.afp_id,
-                verificado_stradata: this.verificado_stradata,
+                consulta_stradata: this.consulta_stradata,
                 novedades: this.novedades,
                 laboratorio: this.laboratorio,
                 examenes: this.examenes,
-                fecha_examen: this.fecha_examen
+                fecha_examen: this.fecha_examen,
+                tipo_servicio_id: this.tipo_servicio_id,
+                numero_contrataciones: this.numero_contrataciones,
+                numero_vacantes: this.numero_vacantes,
+                citacion_entrevista: this.citacion_entrevista,
+                profesional: this.consulta_usuario,
+                informe_seleccion: this.informe_seleccion,
+                cambio_fecha: this.cambio_fecha
             }
         },
         cargarArchivo(event, index) {
@@ -581,6 +663,44 @@ export default {
 
                 });
         },
+        getTipoServicio(item = null) {
+            if (item != null) {
+                this.consulta_tipo_servicio = item.nombre
+                this.tipo_servicio_id = item.id
+                if (item.id == 2) {
+                    this.numero_vacantes = ''
+                } else if (item.id == 3 || item.id == 4) {
+                    this.numero_contrataciones = ''
+                    this.citacion_entrevista = ''
+                    this.consulta_usuario = ''
+                    this.usuario_id = ''
+                    this.informe_seleccion = ''
+
+                }
+            }
+            let self = this
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/tiposserviofi", config)
+                .then(function (result) {
+                    self.tipos_servicio = result.data
+                });
+        },
+        getUsuarios(item = null) {
+            if (item != null) {
+                this.usuario_id = item.id;
+                this.consulta_usuario = item.nombre
+            }
+
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/userslist", config)
+                .then(function (result) {
+                    self.usuarios = result.data
+                });
+
+        },
         llenarFormulario(item) {
             let self = this
             this.fecha_ingreso = item.fecha_ingreso
@@ -596,7 +716,7 @@ export default {
             this.eps = item.eps
             this.afp_id = item.afp_id
             this.consulta_afp = item.afp
-            this.verificado_stradata = item.estradata
+            this.consulta_stradata = item.estradata
             this.novedades = item.novedades
             this.laboratorio = item.laboratorio
             this.examenes = item.examenes
@@ -608,6 +728,15 @@ export default {
             this.responsable = item.responsable_ingreso
             this.estado = item.estado_ingreso
             this.fecha_radicado = item.fecha_radicado
+            this.tipo_servicio_id = item.tipo_servicio_id
+            this.consulta_tipo_servicio = item.nombre_servicio
+            this.numero_vacantes = item.numero_vacantes
+            this.cambio_fecha = item.cambio_fecha
+            this.numero_contrataciones = item.numero_contrataciones
+            this.citacion_entrevista = item.citacion_entrevista
+            this.consulta_usuario = item.profesional
+            this.informe_seleccion = item.informe_seleccion
+            this.radicado = item.numero_radicado
 
             this.fileInputsCount.forEach(function (item2, index) {
                 item.archivos.forEach(function (item3) {
@@ -637,7 +766,7 @@ export default {
             this.eps = ''
             this.afp_id = ''
             this.afp = ''
-            this.estradata = ''
+            this.consulta_stradata = ''
             this.novedades = ''
             this.laboratorio = ''
             this.examenes = ''
