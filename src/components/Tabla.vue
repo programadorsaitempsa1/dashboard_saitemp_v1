@@ -565,7 +565,7 @@ export default {
             // return this.lista_estados_id[id];
         },
         actualizaResponsable(item_id, index) {
-            this.$emit('actualizaResponsable', item_id, this.lista_encargados[index].nombres, this.currentUrl)
+            this.$emit('actualizaResponsable', item_id, this.lista_encargados[index].nombre, this.currentUrl)
             setTimeout(() => {
                 this.lista_encargados = [];
             }, 1000);

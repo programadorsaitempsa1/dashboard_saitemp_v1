@@ -22,12 +22,12 @@
                     <div class="col">
                         <SearchList nombreCampo="Estado: *" @getEstadosIngreso="getEstadosIngreso"
                             eventoCampo="getEstadosIngreso" nombreItem="nombre" :consulta="consulta_estado_ingreso"
-                            :registros="estados_ingreso" placeholder="Seleccione una opción" />
+                            :registros="estados_ingreso" placeholder="Seleccione una opción" :valida_campo="false" />
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="Responsable: *" @getEncargados="getEncargados"
                             eventoCampo="getEncargados" nombreItem="nombre" :consulta="consulta_responsable_ingreso"
-                            :registros="lista_encargados" placeholder="Seleccione una opción" />
+                            :registros="lista_encargados" placeholder="Seleccione una opción" :valida_campo="false"/>
                     </div>
                     <!-- <div class="col">
                         <label class="form-label">Estado</label>
@@ -189,7 +189,7 @@
                     </div>
                     <div class="col">
                         <SearchList nombreCampo="AFP: *" @getAFP="getAFP" eventoCampo="getAFP" nombreItem="nombre"
-                            :consulta="consulta_afp" :registros="lista_afp" :ordenCampo="1"
+                            :consulta="consulta_afp" :registros="lista_afp" :ordenCampo="1" :valida_campo="false"
                             placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
@@ -321,9 +321,7 @@ export default {
             cargo: '',
             salario: '',
             celular_candidato: '',
-            eps: [],
             consulta_eps: '',
-            eps_id: '',
             lista_afp: [],
             consulta_afp: '',
             afp_id: '',
@@ -462,19 +460,6 @@ export default {
                 .get(self.URL_API + "api/v1/empresascliente", config)
                 .then(function (result) {
                     self.empresas_cliente = result.data
-                });
-        },
-        getEPS(item = null) {
-            if (item != null) {
-                this.consulta_eps = item.nombre
-                this.eps_id = item.id
-            }
-            let self = this;
-            let config = this.configHeader();
-            axios
-                .get(self.URL_API + "api/v1/eps", config)
-                .then(function (result) {
-                    self.ingresos_responsables = result.data
                 });
         },
         getAFP(item = null) {
@@ -622,7 +607,6 @@ export default {
                 .then(function (result) {
                     if (result.data.message == 'ok') {
                         self.guardarArchivos(result.data.registro_ingreso_id)
-                        console.log(result.data)
                     }
 
                 });
@@ -637,7 +621,7 @@ export default {
                 salario: this.salario,
                 municipio_id: this.municipio_id,
                 numero_contacto: this.celular_candidato,
-                eps: this.eps,
+                eps: this.consulta_eps,
                 afp_id: this.afp_id,
                 consulta_stradata: this.consulta_stradata,
                 novedades: this.novedades,
@@ -689,6 +673,7 @@ export default {
                     .then(function (result) {
                         self.loading = false
                         self.showAlert(result.data.message, result.data.status)
+                        self.limpiarFormulario()
                     });
             } else {
                 let self = this
@@ -790,6 +775,7 @@ export default {
             this.consulta_responsable_ingreso = item.responsable_ingreso
             this.consulta_estado_ingreso = item.estado_ingreso
             this.estado_ingreso_id = item.estado_ingreso_id
+            this.getEncargados(null, item.estado_ingreso_id)
 
             this.fileInputsCount.forEach(function (item2, index) {
                 item.archivos.forEach(function (item3) {
@@ -810,7 +796,7 @@ export default {
             this.cargo = ''
             this.salario = ''
             this.pais_id = ''
-            this.consulta_pais
+            this.consulta_pais = ''
             this.departamento_id = ''
             this.consulta_departamento = ''
             this.municipio_id = ''
@@ -824,6 +810,9 @@ export default {
             this.laboratorio = ''
             this.examenes = ''
             this.fecha_examen = ''
+            this.consulta_responsable_ingreso = ''
+            this.consulta_estado_ingreso = ''
+            this.estado_ingreso_id = ''
             this.getArchivosIngreso()
 
         }
