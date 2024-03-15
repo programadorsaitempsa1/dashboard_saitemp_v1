@@ -421,7 +421,7 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label" style="color: black;">¿Hasta que horas de debe confirmar el ingreso del
+                        <label class="form-label" style="color: black;">¿Hasta que horas se debe confirmar el ingreso del
                             personal?
                         </label>
                         <input type="time" class="form-control" autocomplete="off" id="exampleInputEmail1" maxlength="150"

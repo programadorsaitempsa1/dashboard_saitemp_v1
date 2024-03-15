@@ -10,8 +10,8 @@
                     <h6 style="text-align: left;">Radicado: {{ radicado }}</h6>
 
                 </div>
-                <div class="row" v-if="$route.params.id != undefined">
-                    <div class="col">
+                <div class="row">
+                    <div class="col" v-if="$route.params.id != undefined">
                         <label class="form-label">Fecha radicado</label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="fecha_expedicion"
                             aria-describedby="emailHelp" v-model="fecha_radicado" disabled />
@@ -20,6 +20,16 @@
                         </div>
                     </div>
                     <div class="col">
+                        <SearchList nombreCampo="Estado: *" @getEstadosIngreso="getEstadosIngreso"
+                            eventoCampo="getEstadosIngreso" nombreItem="nombre" :consulta="consulta_estado_ingreso"
+                            :registros="estados_ingreso" placeholder="Seleccione una opción" />
+                    </div>
+                    <div class="col">
+                        <SearchList nombreCampo="Responsable: *" @getEncargados="getEncargados"
+                            eventoCampo="getEncargados" nombreItem="nombre" :consulta="consulta_responsable_ingreso"
+                            :registros="lista_encargados" placeholder="Seleccione una opción" />
+                    </div>
+                    <!-- <div class="col">
                         <label class="form-label">Estado</label>
                         <input type="Text" class="form-control" autocomplete="off" id="fecha_expedicion"
                             aria-describedby="emailHelp" v-model="estado" disabled />
@@ -34,7 +44,7 @@
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col">
@@ -67,7 +77,7 @@
                             {{ mensaje_error }}
                         </div>
                     </div>
-                    <div class="col mb-3" v-if="tipo_servicio_id == 2">
+                    <div class="col mb-3" v-if="tipo_servicio_id == 3 || tipo_servicio_id == 4">
                         <label class="form-label">Citación entrevista: *
                         </label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
@@ -76,14 +86,14 @@
                             {{ mensaje_error }}
                         </div>
                     </div>
-                    <div class="col" v-if="tipo_servicio_id == 2">
+                    <div class="col" v-if="tipo_servicio_id == 3 || tipo_servicio_id == 4">
                         <SearchList nombreCampo="Profesional: *" @getUsuarios="getUsuarios" eventoCampo="getUsuarios"
                             nombreItem="nombre" :consulta="consulta_usuario" :registros="usuarios"
                             placeholder="Seleccione una opción" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col mb-3" v-if="tipo_servicio_id == 2">
+                    <div class="col mb-3" v-if="tipo_servicio_id == 3 || tipo_servicio_id == 4">
                         <label class="form-label">Informe selección: *
                         </label>
                         <textarea name="" id="novedades" class="form-control" rows="1" v-model="informe_seleccion"
@@ -93,7 +103,7 @@
                 <div class="row">
                     <div class="col">
                         <label class="form-label">Fecha de ingreso: *</label>
-                        <input type="datetime-local" class="form-control" autocomplete="off" id="fecha_expedicion"
+                        <input type="date" class="form-control" autocomplete="off" id="fecha_expedicion"
                             aria-describedby="emailHelp" v-model="fecha_ingreso" />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
@@ -357,6 +367,12 @@ export default {
             informe_seleccion: '',
             cambio_fecha: '',
             radicado: '',
+            estados_ingreso: '',
+            estado_ingreso_id: '',
+            consulta_estado_ingreso: '',
+            lista_encargados: '',
+            consulta_encargado: '',
+            encargado_id: '',
 
         }
     },
@@ -377,6 +393,38 @@ export default {
         this.scrollTop()
     },
     methods: {
+        getEstadosIngreso(item = null) {
+            if (item != null) {
+                this.estado_ingreso_id = item.id
+                this.consulta_estado_ingreso = item.nombre
+                this.consulta_encargado = ''
+                this.encargado_id = ''
+                this.lista_encargados = []
+                this.getEncargados(null, item.id)
+            }
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/estadosingresos", config)
+                .then(function (result) {
+                    self.estados_ingreso = result.data
+                });
+        },
+        getEncargados(item = null, id = null) {
+            if (item != null) {
+                this.encargado_id = item.id
+                this.consulta_encargado = item.nombre
+            }
+            if (id != null) {
+                let self = this;
+                let config = this.configHeader();
+                axios
+                    .get(self.URL_API + "api/v1/responsableingresos/" + id, config)
+                    .then(function (result) {
+                        self.lista_encargados = result.data
+                    });
+            }
+        },
         getResponsablesIngresos(item = null) {
             if (item != null) {
                 this.consulta_responsable_ingreso = item.nombre
@@ -460,7 +508,7 @@ export default {
 
         },
         getAfirmacionNegacion() {
-            this.afirmacionNegacion = [{ id: '1', nombre: 'Si' }, { id: '0', nombre: 'No' }]
+            this.afirmacionNegacion = [{ id: '1', nombre: 'Autorizado' }, { id: '0', nombre: 'No autorizado' }]
         },
         setAfirmacionNegacion(item, campo) {
             if (item != null) {
@@ -602,7 +650,9 @@ export default {
                 citacion_entrevista: this.citacion_entrevista,
                 profesional: this.consulta_usuario,
                 informe_seleccion: this.informe_seleccion,
-                cambio_fecha: this.cambio_fecha
+                cambio_fecha: this.cambio_fecha,
+                consulta_encargado: this.consulta_encargado,
+                estado_id: this.estado_ingreso_id
             }
         },
         cargarArchivo(event, index) {
@@ -737,6 +787,9 @@ export default {
             this.consulta_usuario = item.profesional
             this.informe_seleccion = item.informe_seleccion
             this.radicado = item.numero_radicado
+            this.consulta_responsable_ingreso = item.responsable_ingreso
+            this.consulta_estado_ingreso = item.estado_ingreso
+            this.estado_ingreso_id = item.estado_ingreso_id
 
             this.fileInputsCount.forEach(function (item2, index) {
                 item.archivos.forEach(function (item3) {

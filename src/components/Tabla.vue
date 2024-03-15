@@ -13,7 +13,7 @@
             <span @click="filtros = !filtros" style="cursor:pointer">Filtro avanzado de búsqueda <i v-if="filtros"
                     class="bi bi-chevron-down"></i><i v-if="!filtros" class="bi bi-chevron-compact-up"></i></span>
         </div>
-        <div class="row" v-if="filtros" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
+        <div class="row" v-if="filtros && ruta == '/navbar/gestion-ingresosl'" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
             <div v-for="item, index1 in 3" :key="item" class="row">
                 <div class="col-xs-3 col-md-3">
                     <label for="exampleFormControlInput1" class="form-label" style="float:left">Campo</label>
@@ -371,7 +371,7 @@
                                 <ul class="dropdown-menu">
                                     <li style="cursor:pointer;" v-for="item2, index in lista_encargados" :key="index">
                                         <a class="dropdown-item" @click="actualizaResponsable(item.id, index)">{{
-            item2.nombres }}</a>
+            item2.nombre }}</a>
                                     </li>
                                 </ul>
                             </div>
