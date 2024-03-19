@@ -1,6 +1,6 @@
 <template>
   <div v-if="autoriced">
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #006b3f; heigth: 100px">
+    <nav class="navbar navbar-expand-lg navbar-dark gradient-background" style=" heigth: 100px">
       <div class="container-fluid">
         <a class="navbar-brand" href="">
           <!-- <img
@@ -13,13 +13,14 @@
           <!-- Acá va el nombre-->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" @click="collapese">
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+          @click="collapese">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div :class="collapse
-          ? 'collapse navbar-collapse show'
-          : 'collapse navbar-collapse'
-          " id="navbarNav">
+    ? 'collapse navbar-collapse show'
+    : 'collapse navbar-collapse'
+    " id="navbarNav">
           <ul class="navbar-nav">
             <!-- <li id="menucolapsed" class="nav-item" @click="collapese">
               <router-link class="nav-link active" to="/noticias">Noticias</router-link>
@@ -34,7 +35,7 @@
             <li class="nav-item contrasena" id="menu-lateral" @click="ocultarMenu(), collapese()">
               <!-- <router-link class="nav-link active" to="/"> -->
               <i :class="menu_lateral ? 'bi bi-text-indent-right' : 'bi bi-text-indent-left'"></i> {{ menu_lateral ?
-                'Ocultar menú lateral' : 'Mostrar menú lateral' }}
+    'Ocultar menú lateral' : 'Mostrar menú lateral' }}
               <!-- </router-link> -->
             </li>
             <li class="nav-item contrasena" id="contrasena" @click="actualizar()">
@@ -79,7 +80,8 @@
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i><span>{{ item.nombre == 'rol' ? 'Rol: ' + userlogued.rol : item.nombre }}</span>
             </router-link>
-            <a v-else :href="item.url" target="_blank" rel="noopener noreferrer" style="color:white; text-decoration:none" class="nav-link active"
+            <a v-else :href="item.url" target="_blank" rel="noopener noreferrer"
+              style="color:white; text-decoration:none" class="nav-link active"
               :style="{ 'pointer-events': item.disabled ? 'none' : 'auto' }">
               <i :class="item.icon"></i> <span>{{ item.nombre }}</span>
             </a>
@@ -439,5 +441,21 @@ export default {
 .accordion-button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.gradient-background {
+  /* Fallback para navegadores que no admiten degradados */
+  /* background: rgb(0, 107, 63);
+  background: linear-gradient(90deg, rgba(0, 107, 63, 1) 6%, rgba(26, 150, 56, 1) 16%, rgba(22, 119, 115, 1) 47%, rgba(117, 165, 176, 1) 56%, rgba(4, 66, 105, 1) 66%); */
+  background: rgb(0, 107, 63);
+  background: linear-gradient(95deg, rgba(0, 107, 63, 1) 4%, rgba(26, 150, 56, 1) 19%, rgba(48, 159, 128, 1) 45%, rgba(22, 119, 115, 1) 63%, rgba(4, 66, 105, 1) 88%);
+  /* Para navegadores que no admiten degradados */
+  /* background-image: url('ruta/a/una/imagen-de-fondo.jpg'); */
+  /* En caso de que el navegador no admita degradados, proporciona una imagen de fondo */
+
+  /* Otras propiedades de estilo */
+  /* width: 100%; */
+  /*height: 100vh;  Altura del viewport */
+  /* Puedes ajustar estas propiedades según tus necesidades */
 }
 </style>

@@ -13,7 +13,8 @@
             <span @click="filtros = !filtros" style="cursor:pointer">Filtro avanzado de búsqueda <i v-if="filtros"
                     class="bi bi-chevron-down"></i><i v-if="!filtros" class="bi bi-chevron-compact-up"></i></span>
         </div>
-        <div class="row" v-if="filtros && ruta == '/navbar/gestion-ingresosl'" style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
+        <div class="row" v-if="filtros && ruta == '/navbar/gestion-ingresosl'"
+            style="clear: both;padding:30px;border: solid #D5DBDB 0.5px;border-radius:10px">
             <div v-for="item, index1 in 3" :key="item" class="row">
                 <div class="col-xs-3 col-md-3">
                     <label for="exampleFormControlInput1" class="form-label" style="float:left">Campo</label>
@@ -338,11 +339,11 @@
                             <!-- <div style="position: absolute;">{{item.estado_ingreso}}</div> -->
                             <div class="btn-group">
                                 <button type="button" class="btn"
-                                    :style="'color:black;background-color:' + item.color">{{
-            truncateText(item.estado_ingreso, maxCaracteres) }}</button>
+                                    :style="'color:black;background-color:' + item.color_estado">{{
+            truncateText(item.estado_ingreso, maxCaracteres, item.id) }}</button>
                                 <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
                                     v-if="permisos[20].autorizado" data-bs-toggle="dropdown" aria-expanded="false"
-                                    :style="'color:black;background-color:' + item.color">
+                                    :style="'color:black;background-color:' + item.color_estado">
                                     <span class="visually-hidden">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu">
@@ -361,11 +362,12 @@
                         <td v-if="ruta == '/navbar/gestion-ingresosl'">
                             <div class="btn-group">
                                 <button type="button" class="btn"
-                                    :style="'color:black;background-color:' + item.color">{{
+                                    :style="'color:black;background-color:' + item.color_estado">{{
             item.responsable_ingreso }}</button>
                                 <button type="button" class="btn dropdown-toggle dropdown-toggle-split"
                                     v-if="permisos[20].autorizado" data-bs-toggle="dropdown" aria-expanded="false"
-                                    :style="'color:black;background-color:' + item.color" @click="getEncargados(item)">
+                                    :style="'color:black;background-color:' + item.color_estado"
+                                    @click="getEncargados(item)">
                                     <span class="visually-hidden">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu">
@@ -510,7 +512,7 @@ export default {
             url: '',
             analista: [],
             loading: false,
-            columnaOculta: ['color_estado_firma', 'nombre_estado_firma', 'responsable_ingreso', 'estado_ingreso_id'], // este array contiene los nombres de las columnas queno queremos que se muestren en la tabla
+            columnaOculta: ['color_estado_firma', 'nombre_estado_firma', 'responsable_ingreso', 'estado_ingreso_id', 'color_estado'], // este array contiene los nombres de las columnas queno queremos que se muestren en la tabla
             maxCaracteres: 20,
             lista_estados_id: {},
             lista_encargados: [],
@@ -552,17 +554,20 @@ export default {
                     self.lista_encargados = result.data
                 });
         },
-        truncateText(text, maxLength, id) {
-            if (!(id in this.lista_estados_id)) {
+        truncateText(text, maxLength) {
+            // if (!(id in this.lista_estados_id)) {
                 if (text.length > maxLength) {
-                    // this.$set(this.lista_estados_id, id, text.substring(0, maxLength) + '...');
-                    return 'Estado'
+                    // console.log('dentro del if', this.lista_estados_id[id])
+                    return  text.substring(0, maxLength) + '...';
+                    // return 'Estado'
                 } else {
-                    this.$set(this.lista_estados_id, id, text);
+                    return  text;
+                    // console.log('dentro del else', this.lista_estados_id[id])
                 }
-            }
-            return 'Estado'
+            // }
+            // console.log('por fuera del if', this.lista_estados_id[id])
             // return this.lista_estados_id[id];
+            // return 'Estado'
         },
         actualizaResponsable(item_id, index) {
             this.$emit('actualizaResponsable', item_id, this.lista_encargados[index].nombre, this.currentUrl)

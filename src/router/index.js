@@ -57,6 +57,7 @@ import AdministrarMenu from "../components/AdministrarMenu.vue";
 import TimeLine from "../components/TimeLine.vue";
 import GestionIngresos from "../components/GestionIngresos.vue";
 import GestionIngresosl from "../components/GestionIngresosl.vue";
+import ChatWhatsapp from "../components/ChatWhatsapp.vue";
 
 
 
@@ -347,6 +348,11 @@ const routes = [
         path: "gestion-ingresosl",
         name: "gestion-ingresosl",
         component: GestionIngresosl,
+      },
+      {
+        path: "chat",
+        name: "chat",
+        component: ChatWhatsapp,
       },
       // {
       //   path: "navbar/*",

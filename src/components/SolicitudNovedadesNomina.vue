@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <Loading :loading="loading" />
-        <h2>Gestión de solicitud de novedades nómina</h2>
+        <h2>Gestión de envío de correo</h2>
         <div class="card col-xs-12 col-md-6">
             <form>
                 <div class="row">
@@ -12,8 +12,8 @@
                                 aria-describedby="emailHelp" v-model="destinatario"
                                 @input="capturaCorreo($event.target.value, 1)" rows="1"></textarea>
                             <div class="valida-carreo" v-if="correo_validado" @click="agregaCorreo(destinatario, 1)">{{
-                                destinatario
-                            }}</div>
+            destinatario
+        }}</div>
                             <span v-if="existen_errados" class="error">{{ mensaje_error }}</span>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                     <div class="col lista-correos" v-for="item, index in correos" :key="index">
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <button type="button" @click="editarCorreo(item, index, 1)" class="btn adjunto">{{ item
-                            }}</button>
+                                }}</button>
                             <button type="button" @click="correos.splice(index, 1)" class="btn btn-success"><i
                                     class="bi bi-x"></i></button>
                         </div>
@@ -43,10 +43,10 @@
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">CC</label>
                             <textarea type="text" autocomplete="off" class="form-control" id="focus1"
-                                aria-describedby="emailHelp" v-model="cc_" @input="capturaCorreo($event.target.value, 2)"
-                                rows="1"></textarea>
+                                aria-describedby="emailHelp" v-model="cc_"
+                                @input="capturaCorreo($event.target.value, 2)" rows="1"></textarea>
                             <div class="valida-carreo" v-if="correo_validado1" @click="agregaCorreo(cc_, 2)">{{
-                                cc_ }}</div>
+            cc_ }}</div>
                             <span v-if="existen_errados1" class="error">{{ mensaje_error }}</span>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                         <div class="col lista-correos" v-for="item, index in correos1" :key="index">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" @click="editarCorreo(item, index, 2)" class="btn adjunto">{{ item
-                                }}</button>
+                                    }}</button>
                                 <button type="button" @click="correos1.splice(index, 1)" class="btn btn-success"><i
                                         class="bi bi-x"></i></button>
                             </div>
@@ -64,10 +64,10 @@
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">CCO</label>
                             <textarea type="text" autocomplete="off" class="form-control" id="focus2"
-                                aria-describedby="emailHelp" v-model="cco_" @input="capturaCorreo($event.target.value, 3)"
-                                rows="1"></textarea>
+                                aria-describedby="emailHelp" v-model="cco_"
+                                @input="capturaCorreo($event.target.value, 3)" rows="1"></textarea>
                             <div class="valida-carreo" v-if="correo_validado2" @click="agregaCorreo(cco_, 3)">{{
-                                cco_ }}</div>
+            cco_ }}</div>
                             <span v-if="existen_errados2" class="error">{{ mensaje_error }}</span>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                         <div class="col lista-correos" v-for="item, index in correos2" :key="index">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" @click="editarCorreo(item, index, 3)" class="btn adjunto">{{ item
-                                }}</button>
+                                    }}</button>
                                 <button type="button" @click="correos2.splice(index, 1)" class="btn btn-success"><i
                                         class="bi bi-x"></i></button>
                             </div>
@@ -102,8 +102,8 @@
                     <div class="mb-3">
                         <label for="formFileMultiple" class="form-label">Adjuntar archivos</label>
                         <div class="input-group mb-3">
-                            <input class="form-control" type="file" @change="cargarArchivo($event)" id="formFileMultiple"
-                                multiple>
+                            <input class="form-control" type="file" @change="cargarArchivo($event)"
+                                id="formFileMultiple" multiple>
                             <span style="cursor: pointer" class="input-group-text" @click="quitarAdjuntos()"
                                 id="basic-addon1">Quitar archivos</span>
                         </div>
@@ -112,8 +112,9 @@
                 <div class="row">
                     <div class="col botones" v-for="item, index in file" :key="index">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn adjunto"><i class="bi bi-file-earmark-check"></i> {{ item.name
-                            }} {{ formatearPesoArchivo(item.size) }}</button>
+                            <button type="button" class="btn adjunto"><i class="bi bi-file-earmark-check"></i> {{
+            item.name
+                                }} {{ formatearPesoArchivo(item.size) }}</button>
                             <button type="button" @click="file.splice(index, 1)" class="btn btn-success"><i
                                     class="bi bi-x"></i></button>
                         </div>
@@ -145,7 +146,7 @@ export default {
 
     mixins: [Token, Alerts],
     props: {
-
+        menu: []
     },
     data() {
         return {
@@ -173,14 +174,25 @@ export default {
             existen_errados1: false,
             existen_errados2: false,
             body: '',
-            loading: false
+            loading: false,
+            menu_id: '',
         }
     },
     computed: {
 
     },
     watch: {
-
+        menu() {
+            var self = this
+            var ruta = self.$route.path.split("/")[1] + '/' + self.$route.path.split("/")[2]
+            this.menu.forEach(function (item) {
+                item.opciones.forEach(element => {
+                    if (element.url == ruta) {
+                        self.menu_id = element.id
+                    }
+                });
+            })
+        }
     },
     mounted() {
 
@@ -199,6 +211,9 @@ export default {
             correo.append('body', this.body)
             correo.append('cc', this.correos1)
             correo.append('cco', this.correos2)
+            correo.append('modulo', this.menu_id)
+            correo.append('registro_id', this.$route.params.id)
+            correo.append('formulario_correo', 1)
 
             this.file.forEach(function (item, index) {
                 correo.append('archivo' + index, item)

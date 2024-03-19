@@ -27,24 +27,8 @@
                     <div class="col">
                         <SearchList nombreCampo="Responsable: *" @getEncargados="getEncargados"
                             eventoCampo="getEncargados" nombreItem="nombre" :consulta="consulta_responsable_ingreso"
-                            :registros="lista_encargados" placeholder="Seleccione una opción" :valida_campo="false"/>
+                            :registros="lista_encargados" placeholder="Seleccione una opción" :valida_campo="false" />
                     </div>
-                    <!-- <div class="col">
-                        <label class="form-label">Estado</label>
-                        <input type="Text" class="form-control" autocomplete="off" id="fecha_expedicion"
-                            aria-describedby="emailHelp" v-model="estado" disabled />
-                        <div class="invalid-feedback">
-                            {{ mensaje_error }}
-                        </div>
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Responsable</label>
-                        <input type="Text" class="form-control" autocomplete="off" id="fecha_expedicion"
-                            aria-describedby="emailHelp" v-model="responsable" disabled />
-                        <div class="invalid-feedback">
-                            {{ mensaje_error }}
-                        </div>
-                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col">
@@ -242,10 +226,25 @@
                             {{ mensaje_error }}
                         </div>
                     </div>
+                    <div class="col mb-3">
+                        <label class="form-label">Correo notificación<noscript></noscript>: *
+                        </label>
+                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            aria-describedby="emailHelp" v-model="correo" />
+                        <div class="invalid-feedback">
+                            {{ mensaje_error }}
+                        </div>
+                    </div>
                 </div>
+                <button class="btn btn-success m-4" :disabled="deshabilitar_boton" type="button"
+                    @click="envioCorreo">Enviar formulario</button>
             </div>
-            <h6 class="tituloseccion">Carga de archivos</h6>
-            <div id="seccion">
+            <div class="row" style="text-align:left;clear:both;margin-top: 40px;">
+                <h5 @click="adjuntos = !adjuntos" style="cursor:pointer">Adjuntar archivos <i v-if="adjuntos"
+                        class="bi bi-chevron-down"></i><i v-if="!adjuntos" class="bi bi-chevron-compact-up"></i></h5>
+            </div>
+            <h6 class="tituloseccion" v-if="adjuntos">Carga de archivos</h6>
+            <div id="seccion" v-if="adjuntos">
                 <div class="row upload" v-for="item, index in fileInputsCount" :key="index">
                     <div class="col-2" v-if="$route.params.id != null">
                         <a :href="URL_API + item.ruta" target="_blank" rel="noopener noreferrer"><button type="button"
@@ -280,8 +279,19 @@
                     </div>
                 </div>
             </div>
-            <!-- </div>:disabled="deshabilitar_boton" -->
-            <button class="btn btn-success m-4" :disabled="deshabilitar_boton" type="submit">Guardar</button>
+            <button class="btn btn-success m-4" :disabled="deshabilitar_boton" type="submit">Guardar formulario</button>
+            <div class="row" style="text-align:left;clear:both;margin-bottom: 40px;">
+                <h5 @click="envio_correo = !envio_correo" style="cursor:pointer">Envío correo <i v-if="envio_correo"
+                        class="bi bi-chevron-down"></i><i v-if="!envio_correo" class="bi bi-chevron-compact-up"></i>
+                </h5>
+            </div>
+            <SolicitudNovedadesNomina v-if="$route.params.id != undefined && envio_correo" :menu="menu" />
+            <div class="row" style="text-align:left;clear:both;margin-bottom: 40px;">
+                <h5 @click="historico_correos = !historico_correos" style="cursor:pointer">Historico correos enviados <i
+                        v-if="historico_correos" class="bi bi-chevron-down"></i><i v-if="!historico_correos"
+                        class="bi bi-chevron-compact-up"></i>
+                </h5>
+            </div>
         </form>
     </div>
 </template>
@@ -291,17 +301,19 @@ import axios from 'axios';
 import { Token } from '../Mixins/Token.js';
 import Loading from './Loading.vue';
 import SearchList from './SearchList.vue';
+import SolicitudNovedadesNomina from './SolicitudNovedadesNomina.vue';
 import { Alerts } from '../Mixins/Alerts.js';
 import { Scroll } from '../Mixins/Scroll.js';
 
 export default {
     components: {
         SearchList,
-        Loading
+        Loading,
+        SolicitudNovedadesNomina
     },
     mixins: [Token, Alerts, Scroll],
     props: {
-
+        menu: []
     },
     data() {
         return {
@@ -321,7 +333,7 @@ export default {
             cargo: '',
             salario: '',
             celular_candidato: '',
-            consulta_eps: '',
+            eps: '',
             lista_afp: [],
             consulta_afp: '',
             afp_id: '',
@@ -371,6 +383,11 @@ export default {
             lista_encargados: '',
             consulta_encargado: '',
             encargado_id: '',
+            correo: '',
+            adjuntos: false,
+            envio_correo: false,
+            historico_correos: false,
+            gestioningresocorreos: []
 
         }
     },
@@ -380,17 +397,33 @@ export default {
     watch: {
         $route() {
             this.limpiarFormulario()
-            // console.log('limpiando formulario')
-        },
+        }
     },
     mounted() {
+        window.addEventListener('keydown', this.combinacionGuardado);
+
+    },
+    beforeDestroy() {
+        window.removeEventListener('keydown', this.combinacionGuardado);
+
     },
     created() {
         this.getArchivosIngreso()
         this.fileInputsCountCopia = [...this.fileInputsCount]
         this.scrollTop()
+        this.historicoCorreos()
     },
     methods: {
+
+        envioCorreo() {
+            console.log('prueba')
+        },
+        combinacionGuardado(event) {
+            if (event.ctrlKey && event.key.toLowerCase() === 's') {
+                event.preventDefault();
+                this.save();
+            }
+        },
         getEstadosIngreso(item = null) {
             if (item != null) {
                 this.estado_ingreso_id = item.id
@@ -508,6 +541,11 @@ export default {
             if (item != null) {
                 this.paises_id = item.id
                 this.consulta_pais = item.nombre
+                if (this.consulta_pais == 'No aplica') {
+                    this.consulta_departamento = 'No aplica'
+                    this.consulta_municipio = 'No aplica'
+                    this.municipio_id = 1
+                }
             }
             let self = this;
             let config = this.configHeader();
@@ -593,6 +631,10 @@ export default {
             setTimeout(() => {
                 this.deshabilitar_boton = false;
             }, 3000);
+            if (this.validaCampo()) {
+                this.loading = false
+                return
+            }
             this.crearRegistroIngreso()
 
             var url = '';
@@ -610,6 +652,20 @@ export default {
                     }
 
                 });
+        },
+        validaCampo() {
+            if (this.empresa_cliente_id == '') {
+                this.showAlert('Debe diligenciar el campo de empresa cliente para guardar el formulario', 'error')
+                return true
+            }
+            if (this.tipo_servicio_id == '') {
+                this.showAlert('Debe diligenciar el campo tipo de servicio para guardar el formulario', 'error')
+                return true
+            }
+            if (this.municipio_id == '') {
+                this.showAlert('Debe diligenciar el campo de ciudad para guardar el formulario', 'error')
+                return true
+            }
         },
         crearRegistroIngreso() {
             this.registroIngreso = {
@@ -815,6 +871,15 @@ export default {
             this.estado_ingreso_id = ''
             this.getArchivosIngreso()
 
+        },
+        historicoCorreos() {
+            let self = this;
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/consultacorreo/43/670", config)
+                .then(function (result) {
+                    self.gestioningresocorreos = result.data
+                });
         }
 
     }
@@ -822,11 +887,20 @@ export default {
 </script>
 
 <style scoped>
+/* .seccion {
+    width: 100%;
+    margin: 40px 0px 40px 0px;
+    padding: 30px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+} */
+
 #seccion,
 .orientacion {
     border: solid #D5DBDB 0.5px;
     padding: 30px;
+    margin-bottom: 30px;
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
 .tituloseccion {
@@ -850,5 +924,10 @@ label {
 .ver {
     background-color: #006b3f;
     color: white;
+}
+
+h2 {
+    font-family: "Montserrat", sans-serif;
+    margin: 20px 0px 20px 0px;
 }
 </style>
