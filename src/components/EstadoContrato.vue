@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <div class="container">
             <h2>Administrar Estados de Contratos</h2>
@@ -173,4 +173,4 @@ h2 {
     font-family: "Montserrat", sans-serif;
     margin: 20px 0px 20px 0px;
 }
-</style>
+</style> -->

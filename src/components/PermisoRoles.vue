@@ -1,23 +1,22 @@
 <template>
     <div>
         <div class="container">
+            <Loading :loading="loading" />
             <h2>Roles y permisos</h2>
             <div class="row">
                 <div class="col-xs-12 col-md-3">
-                    <label style="width: 250px; margin-top: 10px; text-align: left">Roles</label>
+                    <label style="width: 250px; margin-top: 25px; text-align: left">Roles</label>
                     <select id="inputState1" class="form-select" v-model="rol_select" @change="rolId(rol_select)">
-                        <!-- <option selected>Por favor seleccione un rol de usuario</option> -->
-                        <option v-for="item in roles" :key="item.id">
+                        <option v-for="item, index in roles" :key="index">
                             {{ item.nombre }}
                         </option>
                     </select>
                 </div>
                 <div class="col-xs-12 col-md-3">
-                    <label style="width: 250px; margin-top: 10px; text-align: left">Permisos</label>
-                    <select id="inputState1" class="form-select" v-model="permiso_select"
+                    <label style="width: 250px; margin-top: 25px; text-align: left">Permisos</label>
+                    <select id="inputState1" class="form-select" :disabled="checks.length > 1" v-model="permiso_select"
                         @change="permisoId(permiso_select)">
-                        <!-- <option selected>Por favor seleccione un rol de usuario</option> -->
-                        <option v-for="item in permisos" :key="item.id">
+                        <option ref="item_select" v-for="item, index in permisos_usuario" :key="index">
                             {{ item.nombre }}
                         </option>
                     </select>
@@ -28,58 +27,72 @@
                 </button>
             </div>
             <div class="row">
+                <div class="mb-3" v-if="asignar_roles.length > 0">
+                    <span>Roles a asignar</span>
+                    <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                        <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                            data-bs-toggle="button" v-for="item, index in asignar_roles" :key="index">{{
+                                item.nombre
+                            }}
+                            <i class="bi bi-x" @click="asignar_roles.splice(index, 1)"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-3" v-if="asignar_permisos.length > 0">
+                    <span>Permisos a asignar</span>
+                    <div class="mb-3" style="padding:10px;border: solid #D5DBDB 0.5px;border-radius:10px">
+                        <button type="button" style="margin:10px 10px 5px 10px" id="btnMenu" class="btn btn-sm"
+                            data-bs-toggle="button" v-for="item, index in asignar_permisos" :key="index">{{
+                                item.nombre
+                            }}
+                            <i class="bi bi-x" @click="asignar_permisos.splice(index, 1)"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-xs-12 col-md-3">
                     <label style="width: 250px; margin-top: 10px; text-align: left">filtrar por rol</label>
-                    <select id="inputState1" class="form-select" v-model="rol" @change="searchRol(rol)">
-                        <option selected>Por favor seleccione un rol de usuario</option>
-                        <option v-for="item in rolesunicos" :key="item.id">
-                            {{ item }}
+                    <select id="inputState1" class="form-select" v-model="rol" @change="filtroRol(rol)">
+                        <option v-for="item, index in rolesunicos" :key="index">
+                            {{ item.rol }}
                         </option>
                     </select>
                 </div>
                 <button type="button" id="reset" class="col-xs-12 col-md-2 btn btn-success" style="margin-top: 33px"
-                    @click="getRolespermisos(), (rol = '')">
+                    @click="getItems(), (rol = '')">
                     <i class="bi bi-arrow-counterclockwise"></i> Borrar busqueda
                 </button>
             </div>
-            <table class="table align-middle table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre rol</th>
-                        <th scope="col">permisos</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(item, index) in rolespermisos" :key="item.id">
-                        <th scope="row">{{ index + 1 }}</th>
-                        <td>{{ item.rol }}</td>
-                        <td>{{ item.permiso }}</td>
-                        <td>
-                            <button v-if="item.rol != 'S. Administrador'" type="button" class="btn btn-danger btn-sm"
-                                @click="messageDelete(item.id_registro)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                            <button v-if="item.rol == 'S. Administrador' && roluserlogued == 'S. Administrador'"
-                                type="button" class="btn btn-danger btn-sm" @click="messageDelete(item.id_registro)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos" :eliminar="permisos[18].autorizado"
+                @response="response" @clear="clear" @check="check" @getMenuNavbar="getMenuNavbar" />
         </div>
     </div>
 </template>
 <script>
 import axios from "axios";
+import Tabla from "./Tabla.vue";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
+import Loading from './Loading.vue'
+import { Scroll } from '../Mixins/Scroll.js';
+import { Permisos } from '../Mixins/Permisos.js';
+// import SearchList from './SearchList.vue'
 export default {
+    props: {
+        menu: []
+    },
+    mixins: [Token, Alerts, Scroll, Permisos],
+    components: {
+        Tabla,
+        Loading,
+        // SearchList
+    },
     data() {
         return {
-            rolespermisos: [],
+            rolesmenu: [],
             permisos_roles: [],
-            permisos: [],
+            permisos_usuario: [],
             rolesunicos: [],
             roles: [],
             rol_select: "",
@@ -87,79 +100,99 @@ export default {
             rolId_: "",
             permisoId_: "",
             rol: "",
-            rows: [],
             URL_API: process.env.VUE_APP_URL_API,
-            roluserlogued: ''
+            roluserlogued: "",
+            result: [],
+            actualiced: false,
+            loading: false,
+            currentUrl: '',
+            cantidad: 10, // Cantidad de datos a listar por defecto en el componente tabla
+            // Campos formulario
+            codigo: '',
+            item: '',
+            unidad_medida: '',
+            valor_unitario: '',
+            descripcion: '',
+            // Fin campos formulario
+            // Info enviada al componente tabla por props
+            datos: [],
+            endpoint: 'rolpermiso',
+            tabla: [
+                { nombre: "#", orden: "DESC" },
+                { nombre: "Nombre rol", orden: "DESC", tipo: "texto", calculado: 'false' },
+                { nombre: "Permiso", orden: "DESC", tipo: "texto", calculado: 'false' },
+            ],
+            // Fin info enviada al componente tabla por props
+            checks: [],
+            massiveUpdate: false,
+            campos: {},
+            ruta: '',
+            asignar_permisos: [],
+            asignar_roles: [],
+            actualizar_menu: false,
         };
     },
+    mounted() {
+        this.ruta = this.$route.path.substring(1)
+    },
     created() {
-        this.userLogued();
-        this.getRolespermisos();
-        this.getPermisos();
+        this.getItems();
+        this.getMenu();
+        this.getRoles()
+        this.getRolesMenu()
     },
     methods: {
-        prueba(index) {
-            console.log(index, "index");
-            if (index == 4) index = 1;
-            return this.rows[index];
+        getMenuNavbar() {
+            this.$emit('getMenu');
         },
-        getRolespermisos() {
+        getItems() {
             let self = this;
+            let urlEndPoint = ''
+            urlEndPoint = self.URL_API + "api/v1/rolpermiso/" + self.cantidad
+            if (this.currentUrl != '') {
+                urlEndPoint = this.currentUrl
+            }
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/rolespermisos", config)
+                .get(urlEndPoint, config)
                 .then(function (result) {
-                    try {
-                        result.data.forEach(function (item) {
-                            if (item.rol != 'S. Administrador' && self.roluserlogued != 'S. Administrador') {
-                                self.rolespermisos.push(item);
-                            }
-                            else if (self.roluserlogued == 'S. Administrador') {
-                                self.rolespermisos = result.data;
-                            }
-                        });
-                        result.data.forEach(function (item) {
-                            if (!self.rolesunicos.includes(item.rol) && self.roluserlogued != 'S. Administrador' && item.rol != 'S. Administrador') {
-                                self.rolesunicos.push(item.rol);
-                            } if (!self.rolesunicos.includes(item.rol) && self.roluserlogued == 'S. Administrador') {
-                                self.rolesunicos.push(item.rol);
-                            }
-                        });
-                        self.rows = [];
-                        self.rolesunicos.forEach(function (item) {
-                            var count = 0;
-                            self.rolespermisos.forEach(function (item2) {
-                                if (item == item2.rol) {
-                                    count++;
-                                }
-                            });
-                            self.rows.push(count);
-                        });
-                    } catch (error) {
-                        console.log(error);
-                    }
+                    self.datos = result;
                 });
         },
-        getPermisos() {
+        response(response) {
+            this.actualizar_menu = true
+            this.currentUrl = response.currentUrl
+            this.rol_select = response.rol
+            this.permiso_select = response.permiso
+            this.idItem = response.id
+            this.actualizar = true
+            this.permisoId(response.menu)
+            this.rolId(response.rol)
+            this.checks = []
+        },
+        getMenu() {
             let self = this;
             let config = this.configHeader();
-            axios.get(self.URL_API + "api/v1/permisos", config).then(function (result) {
+            axios.get(self.URL_API + "api/v1/permisoslista", config).then(function (result) {
                 try {
-                    self.permisos = result.data;
+                    self.permisos_usuario = result.data;
                 } catch (error) {
                     console.log(error);
                 }
             });
         },
-        getRoles(rol) {
+        getRoles() {
             let self = this;
             let config = this.configHeader();
             axios.get(self.URL_API + "api/v1/roleslista", config).then(function (result) {
-                if (rol == 'S. Administrador') {
-                    self.roles = result.data;
-                } else {
-                    self.roles = result.data.slice(1, result.data.length)
-                }
+                self.roles = result.data;
+            });
+        },
+        getRolesMenu() {
+            let self = this;
+            let config = this.configHeader();
+            axios.get(self.URL_API + "api/v1/rolespermisos", config).then(function (result) {
+                self.rolesunicos = result.data;
             });
         },
         messageDelete(id) {
@@ -186,38 +219,38 @@ export default {
             axios
                 .delete(self.URL_API + "api/v1/rolpermiso/" + id, config)
                 .then(function (result) {
+                    self.getRolesMenu();
                     self.showAlert(result.data.message, result.data.status);
-                    self.getRolespermisos();
                 });
         },
         asignarPermiso() {
             let self = this;
-            let config = this.configHeader();
-            if (self.rolId_ != "" && self.permisoId_ != "") {
-                let asignacion = {
-                    rol_id: self.rolId_,
-                    permiso_id: self.permisoId_,
-                };
-                axios
-                    .post(self.URL_API + "api/v1/rolpermiso", asignacion, config)
-                    .then(function (result) {
-                        self.getRolespermisos();
-                        self.showAlert(result.data.message, result.data.status);
-                    });
+            this.loading = true
+            this.scrollTop()
+            if (this.checks.length > 0) { // validación para realizar actualización masiva
+                this.massiveUpdate = !this.massiveUpdate
+                this.campos.rol_id = this.rolId_
             } else {
-                self.message("error", "Debes selecionar un rol y un permiso");
-            }
-        },
-        searchRol(rol) {
-            let self = this;
-            if (rol != "Por favor seleccione un rol de usuario") {
-                var rol_filtrado = [];
-                self.rolespermisos.forEach(function (item) {
-                    if (item.rol == rol) {
-                        rol_filtrado.push(item);
-                    }
-                });
-                self.rolespermisos = rol_filtrado;
+                let urlEndPoint = ''
+                let permiso_rol = []
+                permiso_rol.push(this.asignar_roles)
+                permiso_rol.push(this.asignar_permisos)
+                if (self.actualizar) {
+                    urlEndPoint = self.URL_API + "api/v1/rolpermiso/" + self.idItem
+                } else {
+                    urlEndPoint = self.URL_API + "api/v1/rolpermiso"
+                }
+                let config = this.configHeader();
+                axios
+                    .post(urlEndPoint, permiso_rol, config)
+                    .then(function (result) {
+                        self.loading = false
+                        self.showAlert(result.data.message, result.data.status);
+                        self.getItems();
+                        self.clear()
+                        self.getRolesMenu()
+                        self.$emit('getMenu');
+                    });
             }
         },
         rolId(rol) {
@@ -226,6 +259,15 @@ export default {
             this.roles.forEach(function (element) {
                 if (rol == element.nombre) {
                     self.rolId_ = element.id;
+                    if (!self.actualizar_menu) {
+                        const rol_existe = self.asignar_roles.some(rol => rol.id === element.id);
+                        if (!rol_existe) {
+                            self.asignar_roles.push({ id: element.id, nombre: element.nombre })
+                        }
+                    } else {
+                        self.asignar_permisos = []
+                        self.actualizar_menu = false
+                    }
                     cont++;
                 }
             });
@@ -233,12 +275,34 @@ export default {
                 self.rolId_ = "";
             }
         },
-        permisoId(permiso) {
+        filtroRol(rol) {
+            let self = this;
+            this.roles.forEach(function (element) {
+                if (rol == element.nombre) {
+                    let config = self.configHeader();
+                    axios
+                        .get(self.URL_API + "api/v1/filtrorol/" + element.id + '/' + self.cantidad, config)
+                        .then(function (result) {
+                            self.datos = result;
+                        });
+                }
+            });
+        },
+        permisoId(menu) {
             let self = this;
             var cont = 0;
-            this.permisos.forEach(function (element) {
-                if (permiso == element.nombre) {
+            this.permisos_usuario.forEach(function (element) {
+                if (menu == element.nombre) {
                     self.permisoId_ = element.id;
+                    if (!self.actualizar_menu) {
+                        const permiso_existe = self.asignar_permisos.some(menu => menu.id === element.id);
+                        if (!permiso_existe) {
+                            self.asignar_permisos.push({ id: element.id, nombre: element.nombre })
+                        }
+                    } else {
+                        self.asignar_permisos = []
+                        self.actualizar_menu = false
+                    }
                     cont++;
                 }
             });
@@ -246,37 +310,14 @@ export default {
                 self.permisoId_ = "";
             }
         },
-        userLogued() {
-            let self = this;
-            let config = this.configHeader();
-            axios
-                .get(self.URL_API + 'api/v1/userlogued', config)
-                .then(function (result) {
-                    self.roluserlogued = result.data[0].rol;
-                    self.getRoles(result.data[0].rol);
-                }).catch(function (error) {
-                    if (error.response.data == "Unauthorized.") {
-                        self.$router.push("/");
-                        localStorage.removeItem("access_token");
-                    }
-                });
+        clear() {
+            this.rol_select = ''
+            this.permiso_select = ''
+            this.idItem = ''
+            this.actualizar = false
         },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
+        check(check) {
+            this.checks = check
         },
     },
 };
@@ -294,5 +335,14 @@ export default {
 h2 {
     font-family: "Montserrat", sans-serif;
     margin: 20px 0px 20px 0px;
+}
+
+label {
+    float: left;
+}
+
+#btnMenu {
+    background-color: rgb(28, 146, 77);
+    color: white;
 }
 </style>

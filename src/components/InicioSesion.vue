@@ -33,8 +33,11 @@
 </template>
 <script>
 import axios from "axios";
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
 
 export default ({
+  mixins: [Token, Alerts],
   data() {
     return {
       email: "",
@@ -42,6 +45,12 @@ export default ({
       URL_API: process.env.VUE_APP_URL_API,
       contraseña: false
     }
+  },
+  created() {
+    this.urlExterna()
+    var hashActual = window.location.hash;
+    var nuevoHash = '?' + hashActual;
+    history.replaceState(null, null, nuevoHash);
   },
   methods: {
     login() {
@@ -52,25 +61,16 @@ export default ({
         .then(function (result) {
           if (result.data.access_token != undefined) {
             localStorage.setItem("access_token", result.data.access_token);
-            self.$router.push("/navbar/Estadistica");
+            self.$router.push("/navbar/estadistica");
           }
-           else if (result.data.status == "error") {
-            self.showAlert(result.data.message,result.data.status);
+          else if (result.data.status == "error") {
+            self.showAlert(result.data.message, result.data.status);
           }
         })
         .catch(function (error) {
           console.log(error)
           self.showAlert(error.status, error.message);
         });
-    },
-    showAlert(mensaje, icono) {
-      this.$swal({
-        position: 'top',
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: 1500,
-      })
     },
   }
 })

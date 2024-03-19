@@ -17,8 +17,8 @@
                                 v-model="descripcion"></textarea>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success" @click="save()">
-                        Guardar
+                    <button type="submit" class="btn btn-success" v-if="permisos[11].autorizado || permisos[12].autorizado" @click="save()">
+                        {{!actualizar ? 'Guardar':'Actualizar'}}
                     </button>
                     <button type="submit" class="btn btn-warning" @click="clear">
                         Limpiar
@@ -29,7 +29,7 @@
 
                 </form>
             </div>
-            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos"
+            <Tabla :datos="datos" :tabla="tabla" :endpoint="endpoint" :massiveUpdate="massiveUpdate" :campos="campos" :editar="permisos[12].autorizado" :eliminar="permisos[13].autorizado"
                 @response="response" @clear="clear" @check="check" />
         </div>
     </div>
@@ -37,6 +37,9 @@
 <script>
 import axios from "axios";
 import Tabla from './Tabla.vue';
+import { Alerts } from '../Mixins/Alerts.js';
+import { Token } from '../Mixins/Token.js';
+import { Permisos } from '../Mixins/Permisos.js';
 export default {
     components: {
         Tabla
@@ -44,6 +47,7 @@ export default {
     props: {
         menu: []
     },
+    mixins: [Token, Alerts,Permisos],
     data() {
         return {
             URL_API: process.env.VUE_APP_URL_API,
@@ -67,6 +71,7 @@ export default {
             massiveUpdate: false,
             campos: {},
             ruta: '',
+            actualizar: false,
         };
     },
     mounted() {
@@ -149,23 +154,6 @@ export default {
         },
         back() {
             this.$router.go(-1);
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
-        },
-        showAlert(mensaje, icono) {
-            this.$swal({
-                position: 'top',
-                icon: icono,
-                title: mensaje,
-                showConfirmButton: false,
-                timer: 1500,
-            })
         },
     },
 };

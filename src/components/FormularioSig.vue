@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="container" id="container">
     <h6 class="col-xs-12 col-md-12">
       SISTEMA INTEGRADO DE GESTIÓN PLANIFICACIÓN, EJECUCIÓN, SEGUIMIENTO Y
@@ -1233,4 +1233,4 @@ span {
 .error {
   color: red;
 }
-</style>
+</style> -->

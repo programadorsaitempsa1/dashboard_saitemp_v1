@@ -81,7 +81,9 @@
 </template>
 <script>
 import axios from 'axios'
+import {Token} from '../Mixins/Token'
 export default {
+    mixins:[Token],
     props: {
         datos: [],
         nombreCampo: {},
@@ -184,14 +186,6 @@ export default {
             this.items_tabla2 = datos.data; // lista de registros
             self.links = datos.links;
             self.siguiente = this.links.length;
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
 };

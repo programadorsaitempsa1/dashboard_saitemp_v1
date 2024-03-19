@@ -19,6 +19,26 @@ Vue.use(VueClipboard)
 Vue.use(VueSignature);
 Vue.config.productionTip = false
 
+import Echo from "laravel-echo"
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.VUE_APP_WEBSOCKETS_KEY,
+    wsHost:process.env.VUE_APP_WEBSOCKETS_SERVER,
+    wsPort: 6001,
+    cluster: "mt1",
+    forceTLS: false,
+    disableStats: true,
+    // authEndpoint :'http://127.0.0.1:8000/api/broadcasting/auth',
+    // auth:{
+    //     headers: {
+    //         Authorization: 'Bearer '+ localStorage.getItem ('access_token'), 
+    //     }
+    // },
+ 
+});
+
 new Vue({
   router,
   render: h => h(App)

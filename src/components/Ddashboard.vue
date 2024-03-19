@@ -21,12 +21,13 @@
  <script>
  import axios from 'axios'
 import GraficoCircular from "./GraficoCircular.vue";
+import { Token } from '../Mixins/Token.js';
  export default {
    
   components: {
         GraficoCircular
     },
-    mixins: [],
+    mixins: [Token],
     props: {
       
     },
@@ -69,14 +70,6 @@ import GraficoCircular from "./GraficoCircular.vue";
                 .then(function (result) {
                     self.items.push({ percentaje: result.data, label: 'Clientes registrados' })
                 });
-        },
-        configHeader() {
-            let config = {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token"),
-                },
-            };
-            return config;
         },
     }
  };
