@@ -182,22 +182,33 @@ export default {
 
     },
     watch: {
+        $route() {
+            this.getModulo()
+
+        },
         menu() {
+            this.getModulo()
+        }
+    },
+    mounted() {
+
+    },
+    created() {
+        this.getModulo()
+    },
+    methods: {
+        getModulo() {
             var self = this
             var ruta = self.$route.path.split("/")[1] + '/' + self.$route.path.split("/")[2]
             this.menu.forEach(function (item) {
                 item.opciones.forEach(element => {
                     if (element.url == ruta) {
                         self.menu_id = element.id
+                        self.historicoCorreos()
                     }
                 });
             })
-        }
-    },
-    mounted() {
-
-    },
-    methods: {
+        },
         send() {
             this.enviar_correo = !this.enviar_correo
         },
