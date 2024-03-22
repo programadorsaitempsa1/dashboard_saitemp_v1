@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h2>Registro de ingresos</h2>
+        <h2>Tareas pendientes</h2>
         <Tabla :datos="datos" :tabla="tabla" :userlogued="userlogued" :endpoint="endpoint" :listas="listas"
             :endpointexport="endpointexport" :estados_ingreso="estados_ingreso" @actualizaEstado="actualizaEstado"
             @actualizaResponsable="actualizaResponsable" @filtrando="filtrando" />
@@ -26,8 +26,8 @@ export default {
         return {
             show_table: false,
             datos: [],
-            endpoint: 'formularioingreso',
-            endpointexport: 'formularioingreso',
+            endpoint: 'formularioingresopendientes',
+            endpointexport: 'formularioingresopendientes',
             URL_API: process.env.VUE_APP_URL_API,
             tabla: [
                 { nombre: "#", orden: "DESC" },
@@ -92,7 +92,7 @@ export default {
             let self = this;
             let config = this.configHeader();
             axios
-                .get(self.URL_API + "api/v1/formularioingreso/" + 50, config)
+                .get(self.URL_API + "api/v1/formularioingresopendientes/" + 50, config)
                 .then(function (result) {
                     self.first_page_url = result.data.first_page_url.replace("\"");
                     self.datos = result;

@@ -22,12 +22,12 @@
                     <div class="col">
                         <SearchList nombreCampo="Estado: *" @getEstadosIngreso="getEstadosIngreso"
                             eventoCampo="getEstadosIngreso" nombreItem="nombre" :consulta="consulta_estado_ingreso"
-                            :registros="estados_ingreso" placeholder="Seleccione una opción" :valida_campo="false" />
+                            :registros="estados_ingreso" placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="Responsable: *" @getEncargados="getEncargados"
+                        <SearchList nombreCampo="Responsable: " @getEncargados="getEncargados"
                             eventoCampo="getEncargados" nombreItem="nombre" :consulta="consulta_responsable_ingreso"
-                            :registros="lista_encargados" placeholder="Seleccione una opción" :valida_campo="false" />
+                            :registros="lista_encargados" placeholder="Seleccione una opción" />
                     </div>
                 </div>
                 <div class="row">
@@ -96,7 +96,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <label class="form-label">Fecha de ingreso: *</label>
+                        <label class="form-label">Fecha de ingreso: </label>
                         <input type="date" class="form-control" autocomplete="off" id="fecha_expedicion"
                             aria-describedby="emailHelp" v-model="fecha_ingreso" />
                         <div class="invalid-feedback">
@@ -105,16 +105,17 @@
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Número de
-                            identificación: *</label>
-                        <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
+                            identificación: </label>
+                        <input type="text" class="form-control" autocomplete="off" id="numero_identificacion"
                             aria-describedby="emailHelp" v-model="numero_identificacion"
-                            @input="numero_identificacion = validarNumero(numero_identificacion)" />
+                            @input="numero_identificacion = validarNumero(numero_identificacion)"
+                            @blur="getIdentificacion(numero_identificacion)" />
                         <div class="invalid-feedback">
                             {{ mensaje_error }}
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Apellidos y nombres: *
+                        <label class="form-label">Apellidos y nombres:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="nombres" />
@@ -125,7 +126,7 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">Número contacto: *
+                        <label class="form-label">Número contacto:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="celular_candidato"
@@ -135,7 +136,7 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Cargo: *
+                        <label class="form-label">Cargo:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="cargo" />
@@ -144,7 +145,7 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Salario: *
+                        <label class="form-label">Salario:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="salario" @input="salario = validarNumero(salario)" />
@@ -173,7 +174,7 @@
                 <div class="row">
 
                     <div class="col mb-3">
-                        <label class="form-label">EPS: *
+                        <label class="form-label">EPS:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="eps" />
@@ -187,23 +188,22 @@
                             placeholder="Seleccione una opción" />
                     </div>
                     <div class="col">
-                        <SearchList nombreCampo="¿Stradata verificado:? *"
-                            @getAfirmacionNegacion="getAfirmacionNegacion" eventoCampo="getAfirmacionNegacion"
-                            @setAfirmacionNegacion="setAfirmacionNegacion" nombreItem="nombre"
-                            :consulta="consulta_stradata" :registros="afirmacionNegacion" :ordenCampo="1"
-                            :valida_campo="false" placeholder="Seleccione una opción" />
+                        <SearchList nombreCampo="¿Stradata verificado:? " @getAfirmacionNegacion="getAfirmacionNegacion"
+                            eventoCampo="getAfirmacionNegacion" @setAfirmacionNegacion="setAfirmacionNegacion"
+                            nombreItem="nombre" :consulta="consulta_stradata" :registros="afirmacionNegacion"
+                            :ordenCampo="1" :valida_campo="false" placeholder="Seleccione una opción" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">Novedades stradata: *
+                        <label class="form-label">Novedades stradata:
                         </label>
                         <textarea name="" id="novedades_stradata" class="form-control" rows="1"
                             v-model="novedades_stradata"
                             @input="novedades_stradata = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Laboratorio: *
+                        <label class="form-label">Laboratorio:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="laboratorio" />
@@ -212,7 +212,7 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Dirección laboratorio: *
+                        <label class="form-label">Dirección laboratorio:
                         </label>
                         <input type="text" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="direccion_laboratorio"
@@ -225,13 +225,13 @@
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">Exámenes: *
+                        <label class="form-label">Exámenes:
                         </label>
                         <textarea name="" id="examenes" class="form-control" rows="1" v-model="examenes"
                             @input="examenes = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Fecha examen: *
+                        <label class="form-label">Fecha examen:
                         </label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="fecha_examen" />
@@ -240,21 +240,29 @@
                         </div>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Recomendaciones exámenes: *
+                        <label class="form-label">Recomendaciones exámenes:
                         </label>
-                        <textarea name="" id="recomendaciones_examen" class="form-control" rows="1" v-model="recomendaciones_examen"
+                        <textarea name="" id="recomendaciones_examen" class="form-control" rows="1"
+                            v-model="recomendaciones_examen"
                             @input="recomendaciones_examen = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col mb-3">
-                        <label class="form-label">Novedades: *
+                        <label class="form-label">Novedades:
                         </label>
                         <textarea name="" id="novedades" class="form-control" rows="1" v-model="novedades"
                             @input="novedades = formatInputUpperCase($event.target.value)"></textarea>
                     </div>
                     <div class="col mb-3">
-                        <label class="form-label">Cambio fecha: *
+                        <label class="form-label">Novedades exámenes médicos:
+                        </label>
+                        <textarea name="" id="novedades_examenes" class="form-control" rows="1"
+                            v-model="novedades_examenes"
+                            @input="novedades_examenes = formatInputUpperCase($event.target.value)"></textarea>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="form-label">Cambio fecha:
                         </label>
                         <input type="datetime-local" class="form-control" autocomplete="off" id="exampleInputEmail1"
                             aria-describedby="emailHelp" v-model="cambio_fecha" />
@@ -283,8 +291,18 @@
                         </div>
                     </div>
                 </div>
-                <button v-if="$route.params.id != undefined" class="btn btn-success m-4" :disabled="deshabilitar_boton" type="button"
-                    @click="envioCorreo">Enviar formulario</button>
+                <button v-if="$route.params.id != undefined" class="btn btn-success m-4" :disabled="deshabilitar_boton"
+                    type="button" @click="envioCorreo">Enviar formulario</button>
+                <div v-if="$route.params.id != undefined">
+                    <a :href="URL_API + 'api/v1/gestioningresospdf/' + this.descargarpdf + '/' + this.$route.params.id"
+                        target="_blank" class="white-text">
+                        <button type="button" class="btn btn-success">Descargar pdf</button>
+                    </a>
+                </div>
+                <button type="button" v-if="$route.params.id != undefined" style="background-color:#D4AC0D;color:white"
+                    @click="agregarPendientes()" class="btn">
+                    Añadir a tareas pendientes
+                </button>
             </div>
             <div class="row" style="text-align:left;clear:both;margin-top: 40px;">
                 <h5 @click="adjuntos = !adjuntos" style="cursor:pointer">Archivos adjuntos <i v-if="adjuntos"
@@ -475,8 +493,10 @@ export default {
             correo_empresa: '',
             direccion_empresa: '',
             direccion_laboratorio: '',
-            recomendaciones_examen:'',
-
+            recomendaciones_examen: '',
+            novedades_examenes: '',
+            id_comparar: '',
+            descargarpdf: null,
         }
     },
     computed: {
@@ -508,6 +528,18 @@ export default {
 
     },
     methods: {
+        agregarPendientes() {
+            var self = this
+            console.log(self.check)
+            let config = self.configHeader();
+            var check = []
+            check.push(this.$route.params.id)
+            axios
+                .post(self.URL_API + "api/v1/formularioingresopendientes", check, config)
+                .then(function (result) {
+                    self.showAlert(result.data.message, result.data.status);
+                });
+        },
         getModulo() {
             var self = this
             var ruta = self.$route.path.split("/")[1] + '/' + self.$route.path.split("/")[2]
@@ -522,12 +554,48 @@ export default {
         },
         envioCorreo() {
             let self = this;
+            if (this.valida_envioCorreo()) {
+                return
+            }
+            this.loading = true
+            this.scrollTop()
             let config = this.configHeader();
             axios
                 .get(self.URL_API + "api/v1/gestioningresospdf/" + self.menu_id + '/' + self.$route.params.id, config)
                 .then(function (result) {
-                    self.estados_ingreso = result.data
+                    // self.estados_ingreso = result.data
+                    self.showAlert(result.data.message, result.data.status)
+                    self.loading = false
                 });
+        },
+        getIdentificacion(id_cliente) {
+            let self = this
+            let config = this.configHeader();
+            axios
+                .get(self.URL_API + "api/v1/consulta_id_trump/" + id_cliente, config)
+                .then(function (result) {
+                    if (result.data.bloqueado == 'Si') {
+                        document.getElementById('numero_identificacion').focus();
+                        self.numero_identificacion = ''
+                        self.showAlertmasBoton('Este candidato se encuentra en la lista trump', 'error');
+                    } else if (result.data.numero_identificacion != undefined && self.$route.params.id == undefined) {
+                        var fechaSinHora = new Date(result.data.fecha_radicado).toLocaleDateString();
+                        if (result.data.responsable_ingreso != null) {
+                            self.showAlertmasBoton('El número de identificación ya ha sido registrado en la fecha: \n ' + fechaSinHora + ' y actualmente tiene como responsable a ' + result.data.responsable_ingreso, 'error');
+                        } else {
+                            self.showAlertmasBoton('El número de identificación ya ha sido registrado en la fecha: \n ' + fechaSinHora + ' y actualmente no cuenta con ningun responsable asignado ', 'error');
+                        }
+
+                        return;
+                    }
+                });
+        },
+        valida_envioCorreo() {
+            if (this.correo_empresa == null) {
+                document.getElementById('validacorreo').focus();
+                this.showAlert('Para enviar el correo debe diligenciar por lo menos el correo de la empresa y guardar el formulario', 'error');
+                return true;
+            }
         },
         combinacionGuardado(event) {
             if (event.ctrlKey && event.key.toLowerCase() === 's') {
@@ -809,7 +877,8 @@ export default {
                 correo_empresa: this.correo_empresa,
                 direccion_empresa: this.direccion_empresa,
                 direccion_laboratorio: this.direccion_laboratorio,
-                recomendaciones_examen: this.recomendaciones_examen
+                recomendaciones_examen: this.recomendaciones_examen,
+                novedades_examenes: this.novedades_examenes
             }
         },
         cargarArchivo(event, index) {
@@ -948,13 +1017,14 @@ export default {
             this.consulta_responsable_ingreso = item.responsable_ingreso
             this.consulta_estado_ingreso = item.estado_ingreso
             this.estado_ingreso_id = item.estado_ingreso_id
-            this.novedades_stradata = item.novedades_stradata
-            this.correo_candidato = item.correo_candidato
-            this.correo_empresa = item.correo_empresa
+            this.novedades_stradata = item.novedad_stradata
+            this.correo_candidato = item.correo_notificacion_usuario
+            this.correo_empresa = item.correo_notificacion_empresa
             this.direccion_empresa = item.direccion_empresa
             this.direccion_laboratorio = item.direccion_laboratorio
             this.recomendaciones_examen = item.recomendaciones_examen
-            
+            this.novedades_examenes = item.novedades_examenes
+
             this.getEncargados(null, item.estado_ingreso_id)
 
             this.fileInputsCount.forEach(function (item2, index) {
@@ -984,7 +1054,7 @@ export default {
             this.numero_contacto = ''
             this.eps = ''
             this.afp_id = ''
-            this.afp = ''
+            this.consulta_afp = ''
             this.consulta_stradata = ''
             this.novedades = ''
             this.laboratorio = ''
@@ -1000,6 +1070,7 @@ export default {
             this.direccion_laboratorio = ''
             this.celular_candidato = ''
             this.recomendaciones_examen = ''
+            this.novedades_examenes = ''
             this.getArchivosIngreso()
 
         },

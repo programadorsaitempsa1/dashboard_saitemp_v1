@@ -58,6 +58,7 @@ import TimeLine from "../components/TimeLine.vue";
 import GestionIngresos from "../components/GestionIngresos.vue";
 import GestionIngresosl from "../components/GestionIngresosl.vue";
 import ChatWhatsapp from "../components/ChatWhatsapp.vue";
+import TareasPendientesIngresos from "../components/TareasPendientesIngresos.vue";
 
 
 
@@ -353,6 +354,11 @@ const routes = [
         path: "chat",
         name: "chat",
         component: ChatWhatsapp,
+      },
+      {
+        path: "ingresos-pendientes",
+        name: "ingresos-pendientes",
+        component: TareasPendientesIngresos,
       },
       // {
       //   path: "navbar/*",

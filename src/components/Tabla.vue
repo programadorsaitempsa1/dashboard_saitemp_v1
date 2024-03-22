@@ -186,7 +186,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="!sin_registros && items_tabla2.length > 1" class="row" style="clear: both;">
+        <div v-if="!sin_registros && items_tabla2.length > 0" class="row" style="clear: both;">
             <div v-if="ruta != '/navbar/procesosespeciales'" class="col-xs-3 col-md-3">
                 <label for="exampleFormControlInput1" class="form-label" style="float:left">Cantidad de registros a
                     listar</label>
@@ -208,10 +208,16 @@
                     Seleccionar todo
                 </button>
             </div>
-            <div v-if="check.length > 1" class="col-xs-3 col-md-3">
+            <div v-if="check.length > 0 && ruta != '/navbar/gestion-ingresosl'" class="col-xs-3 col-md-3">
                 <button type="button" style="margin-top: 35px; background-color:#E74C3C;color:white"
                     @click="masiveDeleteMessage()" class="btn btn-sm">
                     Eliminar seleccionados
+                </button>
+            </div>
+            <div v-else-if="check.length > 0 && ruta == '/navbar/gestion-ingresosl'" class="col-xs-3 col-md-3">
+                <button type="button" style="margin-top: 35px; background-color:#D4AC0D;color:white"
+                    @click="agregarPendientes()" class="btn btn-sm">
+                    Añadir a tareas pendientes
                 </button>
             </div>
             <div v-if="cantidad >= 20" class="col-xs-3 col-md-3">
@@ -224,7 +230,7 @@
             <table class="table align-middle table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/gestion-ingresosl'"
+                        <th v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'"
                             scope="col">Seleccionar</th>
                         <th @click="sort(item, index + 1, (sorted = !sorted))" scope="col"
                             v-for="(item, index) in tabla2" :key="index"
@@ -239,7 +245,7 @@
                 <tbody>
                     <tr v-for="(item, index) in items_tabla2" :key="item.id">
                         <td
-                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os' && ruta != '/navbar/gestion-ingresosl'">
+                            v-if="ruta != '/navbar/reporteitems' && !empleados() && ruta != '/navbar/reportes' && ruta != '/navbar/trump' && ruta != '/navbar/procesosespeciales' && ruta != '/navbar/debida-diligencia/clientes' && ruta != '/navbar/correo-novedades-nomina' && ruta != '/navbar/cliente-supervision' && ruta != '/navbar/solicitudes-os'">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" @change="(item.checked = !item.checked), clear()"
                                     v-model="check" type="checkbox" :value="item.id" />
@@ -300,7 +306,7 @@
                                 Ver registro
                             </button>
                         </td>
-                        <td v-if="ruta == '/navbar/gestion-ingresosl'">
+                        <td v-if="ruta == '/navbar/gestion-ingresosl' || ruta == '/navbar/ingresos-pendientes'">
                             <button type="button" class="btn btn-success btn-sm " @click="verOrdenIngreso(item)"
                                 v-if="item.nombre != 'S. Administrador'">
                                 Ver registro
@@ -516,6 +522,7 @@ export default {
             maxCaracteres: 20,
             lista_estados_id: {},
             lista_encargados: [],
+            filtro_gestion_ingresos: false,
 
         };
     },
@@ -536,6 +543,16 @@ export default {
         massiveUpdate: function () {
             this.massiveUpdateMessage()
         },
+        filtro_gestion_ingresos() {
+            var self = this
+            if (self.filtro_gestion_ingresos) {
+                this.interval = setInterval(() => {
+                    self.filtrar2(); // Llama a la función que quieres ejecutar cada 30 segundos
+                }, 30000);
+            } else {
+                clearInterval(this.interval)
+            }
+        }
     },
     created() {
         this.empleados()
@@ -556,14 +573,14 @@ export default {
         },
         truncateText(text, maxLength) {
             // if (!(id in this.lista_estados_id)) {
-                if (text.length > maxLength) {
-                    // console.log('dentro del if', this.lista_estados_id[id])
-                    return  text.substring(0, maxLength) + '...';
-                    // return 'Estado'
-                } else {
-                    return  text;
-                    // console.log('dentro del else', this.lista_estados_id[id])
-                }
+            if (text.length > maxLength) {
+                // console.log('dentro del if', this.lista_estados_id[id])
+                return text.substring(0, maxLength) + '...';
+                // return 'Estado'
+            } else {
+                return text;
+                // console.log('dentro del else', this.lista_estados_id[id])
+            }
             // }
             // console.log('por fuera del if', this.lista_estados_id[id])
             // return this.lista_estados_id[id];
@@ -656,12 +673,15 @@ export default {
         },
         filtrar2() {
             let self = this;
-            this.scrollTop()
-            this.loading = true
+            this.filtro_gestion_ingresos = true
+            this.$emit('filtrando', true)
+
+            if (!self.filtro_gestion_ingresos) {
+                this.scrollTop()
+                this.loading = true
+            }
             let config = self.configHeader();
-
             const longitud = this.campo_.length;
-
             for (let i = longitud - 1; i >= 0; i--) {
                 if (
                     this.campo_[i] === undefined ||
@@ -882,6 +902,22 @@ export default {
                     }
                 });
         },
+        agregarPendientes() {
+            var self = this
+            console.log(self.check)
+            let config = self.configHeader();
+            axios
+                .post(self.URL_API + "api/v1/" + self.endpoint + "pendientes", self.check, config)
+                .then(function (result) {
+                    self.showAlert(result.data.message, result.data.status);
+                    self.getRegistros();
+                    if (result.data.status == "success") {
+                        self.check = [];
+                        self.select_all = false;
+                        self.clear();
+                    }
+                });
+        },
         massiveUpdateMessage() {
             let self = this;
             this.$swal
@@ -921,6 +957,8 @@ export default {
         getRegistros() {
             let self = this;
             this.scrollTop()
+            this.filtro_gestion_ingresos = false
+            this.$emit('filtrando', false)
             this.loading = true
             let config = this.configHeader();
             let url = ''
