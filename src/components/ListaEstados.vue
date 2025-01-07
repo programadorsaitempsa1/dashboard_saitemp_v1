@@ -4,7 +4,6 @@
       <div class="col">
         <div class="containerFlujo">
           <draggable
-            :move="onMove"
             class="list-group"
             tag="ul"
             v-model="lista1"
@@ -20,7 +19,6 @@
                 :key="element.id"
                 :class="{ 'green-background': (index + 1) % 2 !== 0 }"
               >
-                <label class="spanDrag">{{ index + 1 }}</label>
                 {{ element.nombre }}
               </li>
             </transition-group>
@@ -45,7 +43,6 @@
                 :key="element.id"
                 :class="{ 'green-background': (index + 1) % 2 !== 0 }"
               >
-                <label class="spanDrag">{{ index + lista1.length + 1 }}</label>
                 {{ element.nombre }}
               </li>
             </transition-group>
@@ -107,8 +104,15 @@ export default {
 </script>
 <style scoped>
 .container {
+  margin-top: 2em;
   animation: fadeIn;
   animation-duration: 2s;
+  border: solid #d5dbdb 0.5px;
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 .flip-list-move {
   transition: transform 0.5s;

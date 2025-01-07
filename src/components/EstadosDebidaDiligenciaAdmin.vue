@@ -200,7 +200,10 @@
               </button>
             </div>
             <div class="row">
-              <ListaEstados :lista="estados"></ListaEstados>
+              <ListaEstados
+                :lista="estados"
+                @cambiarOrden="cambiarOrdenEstados"
+              ></ListaEstados>
             </div>
           </div>
         </div>
@@ -256,6 +259,20 @@ export default {
     this.getEstados();
   },
   methods: {
+    async cambiarOrdenEstados(lista) {
+      let self = this;
+      let config = this.configHeader();
+      this.loading = true;
+      const formLista = { estados: lista };
+      const response = await axios.put(
+        self.URL_API + `api/v1/estadosfirma`,
+        formLista,
+        config
+      );
+      this.getEstados();
+      this.showAlert(response.data.message, response.data.status);
+      this.loading = false;
+    },
     changeTipoTiempo(option) {
       this.tipo_tiempo = option;
       if (this.id_estado == "") {
