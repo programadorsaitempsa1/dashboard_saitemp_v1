@@ -209,7 +209,7 @@ export default {
       } else {
         axios
           .post(
-            self.URL_API + "api/v1/formularioIngreso/filtrofechaingreso/" + 50,
+            self.URL_API + "api/v1/formularioIngreso/filtrofechaingreso/" + 500,
             filtro,
             config
           )

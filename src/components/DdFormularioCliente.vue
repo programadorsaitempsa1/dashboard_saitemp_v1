@@ -34,20 +34,9 @@
       v-if="seguimiento.length > 0"
     >
       <div v-if="!divExpandido">Seguimiento guardado</div>
-      <div v-for="(item, index) in seguimiento" :key="index">
-        <div v-if="divExpandido" style="text-align: left">
-          {{ item.estado }}
-        </div>
-        <div v-if="divExpandido" style="text-align: left">
-          {{ item.actualiza }}
-        </div>
-        <div v-if="divExpandido" style="text-align: left">
-          {{ reformatearFecha(item.updated_at) }}
-        </div>
-        <div v-if="divExpandido" style="text-align: left">
-          {{ item.observaciones }}
-        </div>
-        <hr v-if="divExpandido" />
+
+      <div v-if="divExpandido" style="text-align: left">
+        <ModalHistoricoActualizaciones></ModalHistoricoActualizaciones>
       </div>
     </div>
     <div
@@ -106,6 +95,7 @@
               :consulta="consulta_estado_firma"
               :registros="estados_firma_debida_diligencia"
               placeholder="Seleccione una opción"
+              :disabled="bloquea_campos && !permisos[2].autorizado"
             />
           </div>
           <div class="col">
@@ -3827,6 +3817,7 @@
 </template>
 <script>
 import axios from "axios";
+import ModalHistoricoActualizaciones from "./ModalHistoricoActualizaciones.vue";
 import ModalCorreos from "./ModalCorreos.vue";
 import SearchList from "./SearchList.vue";
 import SearchTable from "./SearchTable.vue";
@@ -3858,6 +3849,7 @@ export default {
     RegistroCambio,
     FlotanteInteraccionCliente,
     FlotanteSelecciondd,
+    ModalHistoricoActualizaciones,
   },
   mixins: [Scroll, Alerts, Token, Permisos],
   props: {
@@ -5135,7 +5127,12 @@ export default {
     },
     getTipoContrato(item = null) {
       if (item != null) {
-        item.id = item.id.toString().padStart(2, "0");
+        /*    if (item.id == 0 || item.id == "CT") {
+          item.id = item.id.toString();
+        } else { */
+        item.tip_con = item.tip_con.toString().padStart(2, "0");
+        /*    }
+         */
         var nombreExistente = this.tipos_contratos_agregados.some(function (
           objeto
         ) {
@@ -5143,7 +5140,7 @@ export default {
         });
         if (!nombreExistente) {
           this.tipos_contratos_agregados.push({
-            id: item.id,
+            id: item.tip_con,
             nombre: item.nombre,
           });
         }
@@ -6895,6 +6892,7 @@ export default {
     },
     crearCliente() {
       this.registroCliente = {
+        responsable_corregir: this.consulta_encargado_corregir,
         consulta_estado_firma: this.consulta_estado_firma,
         novedad_servicio: this.novedad_servicio,
         usuario_corregir_id: this.encargado_id,
@@ -7041,33 +7039,33 @@ export default {
         );
         const tipoArchivoId = data.tipo_cliente_id || data.tipo_proveedor_id;
         this.getTipoArchivo(tipoArchivoId, data);
-        if (
+        /*  if (
           data.contrato?.length > 0 &&
           !data.contrato[0].ruta_contrato &&
           data.contrato[0].transaccion_id
-        ) {
-          await axios.get(
+        ) { */
+        /*  await axios.get(
             `${apiUrl}api/v1/consultaFirmantes/${data.contrato[0].transaccion_id}`,
             config
           );
           await axios.get(
             `${apiUrl}api/v1/consultaProcesoFirma/${data.contrato[0].transaccion_id}`,
             config
-          );
-          const { data: updatedData } = await axios.get(
+          ); */
+        /*     const { data: updatedData } = await axios.get(
             `${apiUrl}api/v1/formulariocliente/${id}`,
             config
           );
           const updatedTipoArchivoId =
             updatedData.tipo_cliente_id || updatedData.tipo_proveedor_id;
           this.getTipoArchivo(updatedTipoArchivoId, updatedData);
-        }
+        } */
       } catch (error) {
         console.error("Error al consultar el formulario:", error);
       } finally {
         // Asegurar que el scroll se habilite siempre
         document.body.style.overflow = "auto";
-        this.loading = false;
+        /*     this.loading = false; */
       }
     },
     convertFile(url) {
@@ -7756,11 +7754,11 @@ export default {
         });
 
         item.tipos_contrato.forEach((element) => {
-          if (element.id >= 1 && element.id <= 9) {
-            element.id = "0" + element.id;
+          if (element.tip_con >= 1 && element.tip_con <= 9) {
+            element.tip_con = "0" + element.tip_con;
           }
           this.tipos_contratos_agregados.push({
-            id: element.id,
+            id: element.tip_con,
             nombre: element.nombre,
           });
         });
@@ -7923,6 +7921,7 @@ export default {
           this.tipo_origen_fondo = item.origen_fondos.tipo_origen_fondos_id;
           this.otro_tipo_origen_fondos = item.origen_fondos.otro_origen;
         }
+        this.loading = false;
       } catch (error) {
         console.log(error);
       }
