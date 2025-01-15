@@ -225,6 +225,8 @@
           <div class="col mb-3">
             <label class="form-label">Fecha de expedición: *</label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control"
               id="fecha_expedicion"
@@ -298,6 +300,8 @@
           <div class="col mb-3">
             <label class="form-label">Fecha de constitución: * </label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control"
               aria-describedby="emailHelp"
@@ -2501,6 +2505,8 @@
           <div class="col">
             <label for="exampleInputEmail1" class="form-label">Fecha</label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control"
               id="exampleInputEmail1"
@@ -4371,6 +4377,9 @@ export default {
         }
       }
     },
+    abrirCalendario(event) {
+      event.target.showPicker(); // Abre el selector de fecha
+    },
     setLabelDepartamento(item = null, campo = null, index = null) {
       if (item != null) {
         switch (campo) {
@@ -5109,12 +5118,12 @@ export default {
     },
     getConvenioBanco(item = null) {
       if (item != null) {
-        item.id = item.id.toString().padStart(2, "0");
+        /* item.cod_ban = item.id.toString().padStart(2, "0") ; */
         var nombreExistente = this.bancos_agregados.some(function (objeto) {
           return objeto.nombre === item.nombre;
         });
         if (!nombreExistente) {
-          this.bancos_agregados.push({ id: item.id, nombre: item.nombre });
+          this.bancos_agregados.push({ id: item.cod_ban, nombre: item.nombre });
         }
       }
       let self = this;
@@ -7744,11 +7753,11 @@ export default {
         }
 
         item.convenios_banco.forEach((element) => {
-          if (element.id >= 1 && element.id <= 9) {
+          /*  if (element.id >= 1 && element.id <= 9) {
             element.id = "0" + element.id;
-          }
+          } */
           this.bancos_agregados.push({
-            id: element.id,
+            id: element.cod_ban,
             nombre: element.nombre,
           });
         });

@@ -316,6 +316,8 @@
           <div class="col">
             <label class="form-label">Fecha de ingreso: </label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               max="9999-12-31"
               type="date"
               class="form-control"
@@ -662,6 +664,8 @@
             <label class="form-label">Fecha examen: </label>
             <input
               max="9999-12-31"
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control"
               autocomplete="off"
@@ -1982,6 +1986,10 @@ export default {
         return true;
       }
     },
+    abrirCalendario(event) {
+      event.target.showPicker(); // Abre el selector de fecha
+    },
+
     crearRegistroIngreso() {
       this.registroIngreso = {
         fecha_ingreo: this.fecha_ingreso,

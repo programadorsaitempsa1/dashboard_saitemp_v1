@@ -121,6 +121,8 @@
               }}</label
             >
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control form-control-sm"
               id="exampleInputEmail2"
@@ -181,6 +183,8 @@
               >Fecha final</label
             >
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="date"
               class="form-control form-control-sm"
               id="exampleInputEmail2"
@@ -325,6 +329,8 @@
             >{{ operador != "Entre" ? "Fecha" : "Fecha inicial" }}</label
           >
           <input
+            @keydown.prevent
+            @click="abrirCalendario"
             type="date"
             class="form-control form-control-sm"
             id="exampleInputEmail2"
@@ -378,6 +384,8 @@
             >Fecha final</label
           >
           <input
+            @keydown.prevent
+            @click="abrirCalendario"
             type="date"
             class="form-control form-control-sm"
             id="exampleInputEmail2"
@@ -2154,6 +2162,9 @@ export default {
     clear() {
       this.$emit("clear");
       this.$emit("check", this.check);
+    },
+    abrirCalendario(event) {
+      event.target.showPicker();
     },
     selectAll() {
       let self = this;

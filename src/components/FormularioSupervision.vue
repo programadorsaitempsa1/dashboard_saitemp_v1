@@ -10,6 +10,8 @@
             <div class="col-sm-12 col-md-6">
               <label class="form-label">Fecha y hora:</label>
               <input
+                @keydown.prevent
+                @click="abrirCalendario"
                 type="datetime-local"
                 class="form-control"
                 autocomplete="off"
@@ -748,7 +750,9 @@ export default {
       this.show_pad1 = false;
       this.show_pad2 = false;
     },
-
+    abrirCalendario(event) {
+      event.target.showPicker(); // Abre el selector de fecha
+    },
     funcionGenericaUrlaArchivo(firma, campo) {
       var self = this;
       this.urltoFile(firma, campo + ".png", "image/png").then(function (file) {

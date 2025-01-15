@@ -981,6 +981,8 @@
             <label class="form-label">Última revisión: *</label>
             <input
               type="date"
+              @keydown.prevent
+              @click="abrirCalendario"
               class="form-control"
               id="direccion_empresa"
               required
@@ -994,7 +996,14 @@
         </div>
       </div>
       <!-- :disabled="deshabilitar_boton" -->
-      <button class="btn btn-success m-4" type="submit" v-if="(permisos[35].autorizado && $route.params.id != undefined) || (permisos[36].autorizado && $route.params.id == undefined)">
+      <button
+        class="btn btn-success m-4"
+        type="submit"
+        v-if="
+          (permisos[35].autorizado && $route.params.id != undefined) ||
+          (permisos[36].autorizado && $route.params.id == undefined)
+        "
+      >
         Guardar formulario
       </button>
       <button
@@ -1092,7 +1101,7 @@ export default {
       divExpandido: false,
       seguimiento_guardado: [],
       contador: 0,
-      clasificaciones:[]
+      clasificaciones: [],
     };
   },
   computed: {},
@@ -1248,7 +1257,6 @@ export default {
         this.clasificaciones,
         formulario.oportunidad_2
       );
-
 
       this.tipo_proceso = this.filteredArray(
         this.tipos_proceso,
@@ -1504,6 +1512,9 @@ export default {
             self.metodos_identificacion = result.data;
           });
       }
+    },
+    abrirCalendario(event) {
+      event.target.showPicker(); // Abre el selector de fecha
     },
     getFactores() {
       if (this.factores.length <= 0) {

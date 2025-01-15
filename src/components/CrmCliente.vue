@@ -23,6 +23,8 @@
           <div class="col mb-3">
             <label class="form-label">Fecha de radicado: </label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="datetime-local"
               class="form-control"
               autocomplete="off"
@@ -38,6 +40,8 @@
           <div class="col mb-3">
             <label class="form-label">Fecha de cierre: </label>
             <input
+              @keydown.prevent
+              @click="abrirCalendario"
               type="datetime-local"
               class="form-control"
               autocomplete="off"
@@ -549,6 +553,8 @@
                 <div class="col-3 mb-3" v-if="$route.params.id != undefined">
                   <label class="form-label">Fecha de apertura: </label>
                   <input
+                    @keydown.prevent
+                    @click="abrirCalendario"
                     type="datetime-local"
                     class="form-control"
                     autocomplete="off"
@@ -2119,6 +2125,9 @@ export default {
           self.limite_compromisos = result.data.limites.limite_compromisos;
           self.limite_evidencias = result.data.limites.limite_evidencias;
         });
+    },
+    abrirCalendario(event) {
+      event.target.showPicker(); // Abre el selector de fecha
     },
     getEmpresasCliente(item = null) {
       if (item != null) {
