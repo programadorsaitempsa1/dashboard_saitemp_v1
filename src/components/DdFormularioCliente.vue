@@ -3495,28 +3495,28 @@
             conformidad con lo establecido en la ley. El responsable del
             tratamiento de sus datos personales es SAITEMP S.A. sociedad
             legalmente existente de acuerdo con la leyes Colombianas,
-            domiciliado en la ciudad de MEDELLÍN, en la CALLE 51 # 49-11 PISO
-            10, quien recogerá dichos datos a través de sus diferentes canales y
-            serán usados para a) Ofrecer o informarle productos b) Para hacerle
-            llegar información publicitaria sobre promociones c) Atender o
-            formalizar cualquier solicitud relacionada con nuestro objeto social
-            e) Controles estadísticos sobre proveedores, clientes f) Establecer
-            rotación de los empleados. Usted podrá ejercer los derechos que la
-            ley prevé, siguiendo los procedimientos establecidos en nuestras
-            políticas y procedimientos de Protección de datos Personales
-            publicados en la página web de la empresa, http://www.saitempsa.com,
-            o solicitando la información que requiera a través de nuestro correo
-            misdatos@saitempsa.com o llamando al teléfono: (4) 4485744 Tenga en
-            cuenta que el ejercicio de sus derechos no es requisito previo ni
-            impide el ejercicio de otros derechos y que cualquier modificación
-            al presente aviso le será avisado a través de nuestra página Web.
-            Leído lo anterior, autorizo de manera previa, explicita e inequívoca
-            a la sociedad SAITEMP S.A., para el tratamiento de los datos
-            personales suministrados por mi persona para las finalidades aquí
-            establecidas. Declaro que soy el titular de la información reportada
-            en este formato para autorizar el tratamiento de datos personales y
-            que la he suministrado de forma voluntaria y es completa, veraz,
-            exacta y verídica.
+            domiciliado en la ciudad de MEDELLÍN, en la CALLE 51 # 49-11 oficina
+            1005 , quien recogerá dichos datos a través de sus diferentes
+            canales y serán usados para a) Ofrecer o informarle productos b)
+            Para hacerle llegar información publicitaria sobre promociones c)
+            Atender o formalizar cualquier solicitud relacionada con nuestro
+            objeto social e) Controles estadísticos sobre proveedores, clientes
+            f) Establecer rotación de los empleados. Usted podrá ejercer los
+            derechos que la ley prevé, siguiendo los procedimientos establecidos
+            en nuestras políticas y procedimientos de Protección de datos
+            Personales publicados en la página web de la empresa,
+            http://www.saitempsa.com, o solicitando la información que requiera
+            a través de nuestro correo misdatos@saitempsa.com o llamando al
+            teléfono: (4) 4485744 Tenga en cuenta que el ejercicio de sus
+            derechos no es requisito previo ni impide el ejercicio de otros
+            derechos y que cualquier modificación al presente aviso le será
+            avisado a través de nuestra página Web. Leído lo anterior, autorizo
+            de manera previa, explicita e inequívoca a la sociedad SAITEMP S.A.,
+            para el tratamiento de los datos personales suministrados por mi
+            persona para las finalidades aquí establecidas. Declaro que soy el
+            titular de la información reportada en este formato para autorizar
+            el tratamiento de datos personales y que la he suministrado de forma
+            voluntaria y es completa, veraz, exacta y verídica.
           </p>
           <div style="display: flex">
             <div class="form-check m-2">
@@ -3542,6 +3542,80 @@
               />
               No acepto
             </div>
+          </div>
+        </div>
+      </div>
+      <h6 v-if="$route.params.id != undefined" class="tituloseccion">
+        Profesionales encargados.
+      </h6>
+      <div id="seccion" v-if="$route.params.id != undefined">
+        <div class="row">
+          <div class="col">
+            <SearchList
+              nombreCampo="Profesional de selección:"
+              nombreItem="nombre"
+              :consulta="consulta_sociedad_comercial"
+              :registros="sociedades_comerciales"
+              eventoCampo="getSociedadesComerciales"
+              @getSociedadesComerciales="getSociedadesComerciales"
+              placeholder="Seleccione una opción"
+            />
+          </div>
+          <div class="col">
+            <label for="" class="form-label">Anotaciones de selección</label>
+            <textarea
+              class="form-control"
+              id="exampleInputEmail1"
+              maxlength="400"
+              aria-describedby="emailHelp"
+              v-model="anotaciones_seleccion"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <SearchList
+              nombreCampo="Profesional de cartera:"
+              nombreItem="nombre"
+              :consulta="consulta_sociedad_comercial"
+              :registros="sociedades_comerciales"
+              eventoCampo="getSociedadesComerciales"
+              @getSociedadesComerciales="getSociedadesComerciales"
+              placeholder="Seleccione una opción"
+            />
+          </div>
+          <div class="col">
+            <label for="" class="form-label">Anotaciones de cartera</label>
+            <textarea
+              class="form-control"
+              id="exampleInputEmail1"
+              maxlength="400"
+              aria-describedby="emailHelp"
+              v-model="anotaciones_cartera"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <SearchList
+              nombreCampo="Profesional de SST:"
+              nombreItem="nombre"
+              :consulta="consulta_sociedad_comercial"
+              :registros="sociedades_comerciales"
+              eventoCampo="getSociedadesComerciales"
+              @getSociedadesComerciales="getSociedadesComerciales"
+              placeholder="Seleccione una opción"
+            />
+          </div>
+          <div class="col">
+            <label for="" class="form-label">Anotaciones de SST</label>
+            <textarea
+              class="form-control"
+              id="exampleInputEmail1"
+              maxlength="400"
+              aria-describedby="emailHelp"
+              v-model="anotaciones_sst"
+            />
           </div>
         </div>
       </div>
@@ -3866,6 +3940,9 @@ export default {
   },
   data() {
     return {
+      anotaciones_sst: "",
+      anotaciones_cartera: "",
+      anotaciones_seleccion: "",
       novedadesToggle: true,
       novedades: [],
       tamano_texto_version: "",
