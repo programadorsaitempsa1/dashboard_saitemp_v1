@@ -7621,6 +7621,12 @@ export default {
           });
         });
         if (item.historico_profesionales) {
+          this.consulta_profesional_nomina =
+            item.historico_profesionales.profesional_nomina;
+          this.profesional_nomina_id =
+            item.historico_profesionales.usuario_nomina_id;
+          this.anotaciones_nomina =
+            item.historico_profesionales.anotacion_nomina;
           this.consulta_profesional_cartera =
             item.historico_profesionales.profesional_cartera;
           this.consulta_profesional_sst =
