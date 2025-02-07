@@ -3552,23 +3552,23 @@
         <div class="row">
           <div class="col">
             <SearchList
-              nombreCampo="Profesional de selección:"
+              nombreCampo="Profesional de nómina:"
               nombreItem="nombre"
-              :consulta="consulta_sociedad_comercial"
-              :registros="sociedades_comerciales"
-              eventoCampo="getSociedadesComerciales"
-              @getSociedadesComerciales="getSociedadesComerciales"
+              :consulta="consulta_profesional_nomina"
+              :registros="profesionales_nomina"
+              eventoCampo="getProfesionalNomina"
+              @getProfesionalNomina="getProfesionalNomina"
               placeholder="Seleccione una opción"
             />
           </div>
           <div class="col">
-            <label for="" class="form-label">Anotaciones de selección</label>
+            <label for="" class="form-label">Anotaciones de nomina</label>
             <textarea
               class="form-control"
               id="exampleInputEmail1"
               maxlength="400"
               aria-describedby="emailHelp"
-              v-model="anotaciones_seleccion"
+              v-model="anotaciones_nomina"
             />
           </div>
         </div>
@@ -3577,10 +3577,10 @@
             <SearchList
               nombreCampo="Profesional de cartera:"
               nombreItem="nombre"
-              :consulta="consulta_sociedad_comercial"
-              :registros="sociedades_comerciales"
-              eventoCampo="getSociedadesComerciales"
-              @getSociedadesComerciales="getSociedadesComerciales"
+              :consulta="consulta_profesional_cartera"
+              :registros="profesionales_cartera"
+              eventoCampo="getProfesionalCartera"
+              @getProfesionalCartera="getProfesionalCartera"
               placeholder="Seleccione una opción"
             />
           </div>
@@ -3600,10 +3600,10 @@
             <SearchList
               nombreCampo="Profesional de SST:"
               nombreItem="nombre"
-              :consulta="consulta_sociedad_comercial"
-              :registros="sociedades_comerciales"
-              eventoCampo="getSociedadesComerciales"
-              @getSociedadesComerciales="getSociedadesComerciales"
+              :consulta="consulta_profesional_sst"
+              :registros="profesionales_sst"
+              eventoCampo="getProfesionalesSST"
+              @getProfesionalesSST="getProfesionalesSST"
               placeholder="Seleccione una opción"
             />
           </div>
@@ -3940,9 +3940,18 @@ export default {
   },
   data() {
     return {
+      profesionales_sst: [],
+      profesionales_cartera: [],
+      profesionales_nomina: [],
+      profesional_sst_id: "",
+      profesional_cartera_id: "",
+      profesional_nomina_id: "",
+      consulta_profesional_nomina: "",
+      consulta_profesional_cartera: "",
+      consulta_profesional_sst: "",
       anotaciones_sst: "",
       anotaciones_cartera: "",
-      anotaciones_seleccion: "",
+      anotaciones_nomina: "",
       novedadesToggle: true,
       novedades: [],
       tamano_texto_version: "",
@@ -7096,6 +7105,17 @@ export default {
         laboratorios_medicos: this.laboratorios_medicos_agregados,
         contratacion_observacion: this.contratacion_observacion,
       };
+      this.registroCliente.profesional_sst_id = this.profesional_sst_id;
+      this.registroCliente.profesional_cartera_id = this.profesional_cartera_id;
+      this.registroCliente.profesional_nomina_id = this.profesional_nomina_id;
+      this.registroCliente.profesional_sst = this.consulta_profesional_sst;
+      this.registroCliente.profesional_cartera =
+        this.consulta_profesional_cartera;
+      this.registroCliente.profesional_nomina =
+        this.consulta_profesional_nomina;
+      this.registroCliente.anotacion_sst = this.anotaciones_sst;
+      this.registroCliente.anotacion_cartera = this.anotaciones_cartera;
+      this.registroCliente.anotacion_nomina = this.anotaciones_nomina;
       this.registroCliente.cargos = this.cargos;
       this.registroCliente.cargos2 = this.cargos2;
       this.registroCliente.accionistas = this.accionistas;
@@ -7600,8 +7620,20 @@ export default {
             }
           });
         });
+        if (item.historico_profesionales) {
+          this.consulta_profesional_cartera =
+            item.historico_profesionales.profesional_cartera;
+          this.consulta_profesional_sst =
+            item.historico_profesionales.profesional_sst;
+          this.profesional_cartera_id =
+            item.historico_profesionales.usuario_cartera_id;
+          this.profesional_sst_id = item.historico_profesionales.usuario_sst_id;
+          this.anotaciones_cartera =
+            item.historico_profesionales.anotacion_cartera;
+          this.anotaciones_sst = item.historico_profesionales.anotacion_sst;
+          this.novedades = item.novedades;
+        }
 
-        this.novedades = item.novedades;
         /* this.consulta_observacion_estado = item.nombre_novedad_servicio;
         this.novedad_servicio = item.novedad_servicio; */
         this.contrato = item.contrato;
@@ -7840,9 +7872,9 @@ export default {
         });
 
         item.tipos_contrato.forEach((element) => {
-          if (element.tip_con >= 1 && element.tip_con <= 9) {
+          /*      if (element.tip_con >= 1 && element.tip_con <= 9) {
             element.tip_con = "0" + element.tip_con;
-          }
+          } */
           this.tipos_contratos_agregados.push({
             id: element.tip_con,
             nombre: element.nombre,
@@ -8020,6 +8052,45 @@ export default {
     toggleDiv2() {
       this.divExpandido2 = !this.divExpandido2;
       this.divExpandido = false;
+    },
+    getProfesionalesSST(item = null) {
+      if (item != null) {
+        this.consulta_profesional_sst = item.nombre;
+        this.profesional_sst_id = item.id;
+      }
+      let self = this;
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + "api/v1/usersbyrolinterno/5", config)
+        .then((result) => {
+          self.profesionales_sst = result.data;
+        });
+    },
+    getProfesionalNomina(item = null) {
+      if (item != null) {
+        this.consulta_profesional_nomina = item.nombre;
+        this.profesional_nomina_id = item.id;
+      }
+      let self = this;
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + "api/v1/usersbyrolinterno/8", config)
+        .then((result) => {
+          self.profesionales_nomina = result.data;
+        });
+    },
+    getProfesionalCartera(item = null) {
+      if (item != null) {
+        this.consulta_profesional_cartera = item.nombre;
+        this.profesional_cartera_id = item.id;
+      }
+      let self = this;
+      let config = this.configHeader();
+      axios
+        .get(self.URL_API + "api/v1/usersbyrolinterno/6", config)
+        .then((result) => {
+          self.profesionales_cartera = result.data;
+        });
     },
   },
 };
